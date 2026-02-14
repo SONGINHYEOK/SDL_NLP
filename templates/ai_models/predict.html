@@ -1,0 +1,328 @@
+{% extends "base/base.html" %}
+{% block title %}OmniLNP - AI Predict{% endblock %}
+{% block breadcrumb %}AI Models / <strong class="text-dark-50">Predict</strong>{% endblock %}
+
+{% block content %}
+<div class="flex justify-between items-end mb-6">
+  <div>
+    <h2 class="text-[22px] font-bold tracking-tight">AI Property Prediction</h2>
+    <p class="text-[13px] text-dark-100 mt-1">Predict molecular properties from SMILES or select from database</p>
+  </div>
+</div>
+
+<div class="grid grid-cols-12 gap-5">
+  <!-- LEFT: INPUT PANEL (8 cols) -->
+  <div class="col-span-8 space-y-4">
+    <!-- SMILES Input -->
+    <div class="bg-dark-600 border border-dark-400 rounded-xl">
+      <div class="px-5 py-3 border-b border-dark-400">
+        <div class="text-[13px] font-semibold">Molecular Input</div>
+        <div class="text-[10px] text-dark-200">Enter SMILES or select a known lipid</div>
+      </div>
+      <div class="p-5">
+        <div class="mb-4">
+          <label class="text-[10px] text-dark-200 font-semibold uppercase tracking-wide block mb-1.5">SMILES String</label>
+          <textarea id="smiles-input" rows="3" placeholder="e.g. CCCCCCCC/C=C\CCCCCCCCCC(=O)OCC(COC(=O)CCCCCCCCC/C=C\CCCCCCCC)OC(=O)CCCCCCCCC/C=C\CCCCCCCC"
+            class="w-full bg-dark-700 border border-dark-400 rounded-lg px-3.5 py-2.5 text-[12px] font-mono text-dark-50 placeholder-dark-200 focus:border-blue-500 focus:outline-none resize-none"></textarea>
+        </div>
+
+        <!-- 2D Structure Preview -->
+        <div class="mb-4">
+          <div class="text-[10px] text-dark-200 font-semibold uppercase tracking-wide mb-2">Structure Preview</div>
+          <div class="bg-dark-700 rounded-lg p-4 flex items-center justify-center min-h-[180px]">
+            <canvas id="smiles-canvas" width="380" height="160"></canvas>
+            <div id="smiles-placeholder" class="text-[11px] text-dark-200">Enter SMILES to preview structure</div>
+          </div>
+        </div>
+
+        <!-- Quick Select -->
+        <div>
+          <div class="text-[10px] text-dark-200 font-semibold uppercase tracking-wide mb-2">Or Select Known Lipid</div>
+          <div class="relative">
+            <input type="text" id="lipid-search" placeholder="Search lipid by name (e.g. MC3, ALC-0315)..."
+              class="w-full bg-dark-700 border border-dark-400 rounded-lg px-3.5 py-2 text-[13px] text-dark-50 placeholder-dark-200 focus:border-blue-500 focus:outline-none"
+              oninput="searchLipid(this.value)">
+            <div id="lipid-results" class="absolute top-full left-0 right-0 mt-1 bg-dark-700 border border-dark-400 rounded-lg max-h-48 overflow-y-auto z-30 hidden"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Formulation Parameters -->
+    <div class="bg-dark-600 border border-dark-400 rounded-xl">
+      <div class="px-5 py-3 border-b border-dark-400">
+        <div class="text-[13px] font-semibold">Formulation Parameters</div>
+        <div class="text-[10px] text-dark-200">Optional: specify LNP composition for efficacy prediction</div>
+      </div>
+      <div class="p-5 grid grid-cols-4 gap-4">
+        <div>
+          <label class="text-[10px] text-dark-200 font-semibold uppercase tracking-wide block mb-1.5">IL Mol%</label>
+          <input type="number" id="param-il" value="50" min="0" max="100" step="0.5"
+            class="w-full bg-dark-700 border border-dark-400 rounded-lg px-3 py-2 text-[13px] font-mono text-blue-400 focus:border-blue-500 focus:outline-none">
+        </div>
+        <div>
+          <label class="text-[10px] text-dark-200 font-semibold uppercase tracking-wide block mb-1.5">HL Mol%</label>
+          <input type="number" id="param-hl" value="10" min="0" max="100" step="0.5"
+            class="w-full bg-dark-700 border border-dark-400 rounded-lg px-3 py-2 text-[13px] font-mono text-violet-400 focus:border-blue-500 focus:outline-none">
+        </div>
+        <div>
+          <label class="text-[10px] text-dark-200 font-semibold uppercase tracking-wide block mb-1.5">Chol Mol%</label>
+          <input type="number" id="param-ch" value="38.5" min="0" max="100" step="0.5"
+            class="w-full bg-dark-700 border border-dark-400 rounded-lg px-3 py-2 text-[13px] font-mono text-amber-400 focus:border-blue-500 focus:outline-none">
+        </div>
+        <div>
+          <label class="text-[10px] text-dark-200 font-semibold uppercase tracking-wide block mb-1.5">PEG Mol%</label>
+          <input type="number" id="param-pg" value="1.5" min="0" max="100" step="0.1"
+            class="w-full bg-dark-700 border border-dark-400 rounded-lg px-3 py-2 text-[13px] font-mono text-cyan-400 focus:border-blue-500 focus:outline-none">
+        </div>
+      </div>
+    </div>
+
+    <!-- Predict Button -->
+    <button onclick="runPrediction()" class="w-full px-5 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-[13px] font-semibold transition-colors">
+      Run Prediction
+    </button>
+
+    <!-- Recent Predictions -->
+    {% if recent_predictions %}
+    <div class="bg-dark-600 border border-dark-400 rounded-xl">
+      <div class="px-5 py-3 border-b border-dark-400">
+        <div class="text-[13px] font-semibold">Recent Predictions</div>
+        <div class="text-[10px] text-dark-200">Last {{ recent_predictions|length }} predictions</div>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="w-full text-[12px]">
+          <thead><tr class="border-b border-dark-400">
+            <th class="text-left px-4 py-2.5 text-[10px] text-dark-200 uppercase font-semibold">Model</th>
+            <th class="text-left px-4 py-2.5 text-[10px] text-dark-200 uppercase font-semibold">Input</th>
+            <th class="text-right px-4 py-2.5 text-[10px] text-dark-200 uppercase font-semibold">Confidence</th>
+            <th class="text-right px-4 py-2.5 text-[10px] text-dark-200 uppercase font-semibold">Date</th>
+          </tr></thead>
+          <tbody>
+            {% for p in recent_predictions %}
+            <tr class="border-b border-white/[0.03] hover:bg-blue-500/[0.03]">
+              <td class="px-4 py-2.5 text-blue-400 font-medium">{{ p.ai_model.name }}</td>
+              <td class="px-4 py-2.5 font-mono text-[10px] text-dark-200 max-w-[200px] truncate">{{ p.input_data }}</td>
+              <td class="px-4 py-2.5 text-right font-mono">{% if p.confidence %}{{ p.confidence|floatformat:2 }}{% else %}-{% endif %}</td>
+              <td class="px-4 py-2.5 text-right text-dark-200">{{ p.created_at|timesince }} ago</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- RIGHT: RESULTS PANEL (4 cols) -->
+  <div class="col-span-4 space-y-4">
+    <!-- Model Info -->
+    {% for m in models %}
+    <div class="bg-dark-600 border border-dark-400 rounded-xl">
+      <div class="px-5 py-3 border-b border-dark-400">
+        <div class="text-[13px] font-semibold">{{ m.name }}</div>
+        <div class="text-[10px] text-dark-200">v{{ m.version }}</div>
+      </div>
+      <div class="p-5">
+        <p class="text-[11px] text-dark-100 mb-3">{{ m.description|default:"Property prediction model" }}</p>
+        {% if m.metrics %}
+        <div class="grid grid-cols-2 gap-2 mb-3">
+          {% for key, val in m.metrics.items %}
+          <div class="bg-dark-700 rounded-lg px-3 py-2">
+            <div class="text-[9px] text-dark-200 uppercase">{{ key }}</div>
+            <div class="text-[14px] font-mono font-bold text-emerald-400">{{ val }}</div>
+          </div>
+          {% endfor %}
+        </div>
+        {% endif %}
+        <div class="text-[10px] text-dark-200">Trained on {{ m.training_data_count }} samples</div>
+      </div>
+    </div>
+    {% empty %}
+    <div class="bg-dark-600 border border-dark-400 rounded-xl p-5">
+      <div class="text-[11px] text-dark-200 text-center">No active models</div>
+    </div>
+    {% endfor %}
+
+    <!-- Prediction Results -->
+    <div class="bg-dark-600 border border-dark-400 rounded-xl" id="results-panel">
+      <div class="px-5 py-3 border-b border-dark-400">
+        <div class="text-[13px] font-semibold">Prediction Results</div>
+        <div class="text-[10px] text-dark-200" id="result-source">Run a prediction to see results</div>
+      </div>
+      <div class="p-5" id="results-container">
+        <div class="text-center py-8 text-dark-200">
+          <div class="text-[28px] mb-2">&#9881;</div>
+          <div class="text-[11px]">Enter SMILES and click Predict</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Confidence Gauge -->
+    <div class="bg-dark-600 border border-dark-400 rounded-xl p-5 hidden" id="confidence-panel">
+      <div class="text-[10px] text-dark-200 uppercase font-semibold tracking-wide mb-3">Confidence Score</div>
+      <div class="flex items-center justify-center">
+        <div class="relative w-28 h-28">
+          <canvas id="confidence-canvas" width="112" height="112"></canvas>
+          <div class="absolute inset-0 flex items-center justify-center">
+            <span class="text-[20px] font-extrabold font-mono text-blue-400" id="confidence-value">-</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://unpkg.com/smiles-drawer@2.1.7/dist/smiles-drawer.min.js"></script>
+<script>
+const smilesInput = document.getElementById('smiles-input');
+const canvas = document.getElementById('smiles-canvas');
+const placeholder = document.getElementById('smiles-placeholder');
+let drawer;
+
+// Initialize SmilesDrawer
+try {
+  drawer = new SmilesDrawer.SmiDrawer({width:380, height:160, bondThickness:1.2, bondLength:15, fontSizeLarge:9, fontSizeSmall:5, padding:10, compactDrawing:true});
+} catch(e) {}
+
+// Live preview SMILES
+smilesInput.addEventListener('input', function() {
+  const smiles = this.value.trim();
+  if (smiles && drawer) {
+    placeholder.classList.add('hidden');
+    canvas.classList.remove('hidden');
+    SmilesDrawer.parse(smiles, function(tree) {
+      drawer.draw(tree, 'smiles-canvas', 'dark');
+    }, function() {
+      canvas.classList.add('hidden');
+      placeholder.classList.remove('hidden');
+      placeholder.textContent = 'Invalid SMILES';
+    });
+  } else {
+    canvas.classList.add('hidden');
+    placeholder.classList.remove('hidden');
+    placeholder.textContent = 'Enter SMILES to preview structure';
+  }
+});
+
+// Lipid search
+let searchTimer;
+function searchLipid(q) {
+  clearTimeout(searchTimer);
+  const resultsEl = document.getElementById('lipid-results');
+  if (q.length < 2) { resultsEl.classList.add('hidden'); return; }
+  searchTimer = setTimeout(() => {
+    fetch('/formulations/api/search-lipids/?q=' + encodeURIComponent(q))
+      .then(r => r.json())
+      .then(data => {
+        if (!data.results || data.results.length === 0) { resultsEl.classList.add('hidden'); return; }
+        resultsEl.innerHTML = data.results.map(l =>
+          `<div class="px-4 py-2.5 hover:bg-dark-500 cursor-pointer border-b border-dark-400/50 last:border-0" onclick="selectLipid('${l.smiles.replace(/'/g, "\\'")}', '${l.name}')">
+            <div class="text-[12px] font-semibold text-dark-50">${l.name}</div>
+            <div class="text-[10px] font-mono text-dark-200 truncate">${l.smiles.substring(0,60)}...</div>
+          </div>`
+        ).join('');
+        resultsEl.classList.remove('hidden');
+      });
+  }, 300);
+}
+
+function selectLipid(smiles, name) {
+  smilesInput.value = smiles;
+  smilesInput.dispatchEvent(new Event('input'));
+  document.getElementById('lipid-results').classList.add('hidden');
+  document.getElementById('lipid-search').value = name;
+}
+
+// Run prediction
+function runPrediction() {
+  const smiles = smilesInput.value.trim();
+  if (!smiles) { alert('Please enter a SMILES string'); return; }
+
+  const container = document.getElementById('results-container');
+  const sourceEl = document.getElementById('result-source');
+  container.innerHTML = '<div class="text-center py-8 text-blue-400 text-[11px]">Predicting...</div>';
+
+  const formData = new FormData();
+  formData.append('smiles', smiles);
+
+  fetch('{% url "ai_models:predict_api" %}', {
+    method: 'POST',
+    headers: {'X-CSRFToken': getCookie('csrftoken')},
+    body: formData
+  })
+  .then(r => r.json())
+  .then(data => {
+    if (data.error) {
+      container.innerHTML = `<div class="text-center py-8 text-rose-400 text-[11px]">${data.error}</div>`;
+      return;
+    }
+
+    sourceEl.textContent = data.source === 'database_match' ? 'Exact match from LNPDB' : 'AI Model Prediction';
+
+    // Build result cards
+    const props = [
+      {key:'molecular_weight', label:'MW', unit:'g/mol', color:'blue'},
+      {key:'logp', label:'LogP', unit:'', color:'emerald'},
+      {key:'tpsa', label:'TPSA', unit:'\u00c5\u00b2', color:'violet'},
+      {key:'hbd', label:'HBD', unit:'', color:'amber'},
+      {key:'hba', label:'HBA', unit:'', color:'cyan'},
+      {key:'rotatable_bonds', label:'RotBonds', unit:'', color:'rose'},
+      {key:'rings', label:'Rings', unit:'', color:'blue'},
+      {key:'heavy_atoms', label:'Heavy Atoms', unit:'', color:'emerald'},
+      {key:'fsp3', label:'Fsp3', unit:'', color:'violet'},
+      {key:'molar_refractivity', label:'MR', unit:'', color:'amber'},
+      {key:'nitrogen_count', label:'N Count', unit:'', color:'cyan'},
+    ];
+
+    let html = '<div class="grid grid-cols-2 gap-2">';
+    props.forEach(p => {
+      const val = data[p.key];
+      if (val !== undefined && val !== null) {
+        const display = typeof val === 'number' ? (Number.isInteger(val) ? val : val.toFixed(2)) : val;
+        html += `<div class="bg-dark-700 rounded-lg px-3 py-2">
+          <div class="text-[9px] text-dark-200 uppercase">${p.label}</div>
+          <div class="text-[14px] font-mono font-bold text-${p.color}-400">${display}<span class="text-[9px] text-dark-200 ml-1">${p.unit}</span></div>
+        </div>`;
+      }
+    });
+    html += '</div>';
+
+    if (data.note) {
+      html += `<div class="mt-3 px-3 py-2 bg-amber-500/5 border border-amber-500/20 rounded-lg text-[10px] text-amber-400">${data.note}</div>`;
+    }
+
+    container.innerHTML = html;
+
+    // Update confidence
+    if (data.confidence) {
+      const confPanel = document.getElementById('confidence-panel');
+      confPanel.classList.remove('hidden');
+      document.getElementById('confidence-value').textContent = (data.confidence * 100).toFixed(0) + '%';
+      drawConfidence(data.confidence);
+    }
+  })
+  .catch(err => {
+    container.innerHTML = `<div class="text-center py-8 text-rose-400 text-[11px]">Error: ${err.message}</div>`;
+  });
+}
+
+function drawConfidence(value) {
+  const c = document.getElementById('confidence-canvas');
+  const ctx = c.getContext('2d');
+  ctx.clearRect(0, 0, 112, 112);
+  const cx = 56, cy = 56, r = 46;
+  // Background arc
+  ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI*2); ctx.strokeStyle='rgba(255,255,255,0.05)'; ctx.lineWidth=8; ctx.stroke();
+  // Value arc
+  ctx.beginPath(); ctx.arc(cx, cy, r, -Math.PI/2, -Math.PI/2 + Math.PI*2*value); ctx.strokeStyle='#3b82f6'; ctx.lineWidth=8; ctx.lineCap='round'; ctx.stroke();
+}
+
+function getCookie(name) {
+  let v = document.cookie.match('(^|;) ?' + name + '=([^;]*)(;|$)');
+  return v ? v[2] : '';
+}
+</script>
+{% endblock %}

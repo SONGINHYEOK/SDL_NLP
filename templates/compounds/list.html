@@ -1,0 +1,92 @@
+{% extends "base/base.html" %}
+{% block title %}OmniLNP - Lipid Explorer{% endblock %}
+{% block breadcrumb %}Data / <strong class="text-dark-50">Lipid Explorer</strong>{% endblock %}
+{% block content %}
+<div class="flex justify-between items-end mb-6">
+  <div>
+    <h2 class="text-[22px] font-bold tracking-tight">Lipid Explorer</h2>
+    <p class="text-[13px] text-dark-100 mt-1">{{ total_count|default:"0" }} ionizable lipids</p>
+  </div>
+</div>
+<div class="bg-dark-600 border border-dark-400 rounded-xl p-4 mb-4">
+  <form method="get" class="flex flex-wrap gap-3 items-end">
+    <div class="flex-1 min-w-[240px]">
+      <label class="text-[10px] text-dark-200 font-semibold uppercase tracking-wide block mb-1.5">Search</label>
+      <input type="text" name="q" value="{{ query }}" placeholder="Name or SMILES..." class="w-full bg-dark-700 border border-dark-400 rounded-lg px-3.5 py-2 text-[13px] text-dark-50 placeholder-dark-200 focus:border-blue-500 focus:outline-none">
+    </div>
+    <div class="w-28">
+      <label class="text-[10px] text-dark-200 font-semibold uppercase tracking-wide block mb-1.5">MW Min</label>
+      <input type="number" name="mw_min" value="{{ request.GET.mw_min }}" placeholder="200" class="w-full bg-dark-700 border border-dark-400 rounded-lg px-3 py-2 text-[13px] text-dark-50 focus:border-blue-500 focus:outline-none">
+    </div>
+    <div class="w-28">
+      <label class="text-[10px] text-dark-200 font-semibold uppercase tracking-wide block mb-1.5">MW Max</label>
+      <input type="number" name="mw_max" value="{{ request.GET.mw_max }}" placeholder="2000" class="w-full bg-dark-700 border border-dark-400 rounded-lg px-3 py-2 text-[13px] text-dark-50 focus:border-blue-500 focus:outline-none">
+    </div>
+    <div class="w-32">
+      <label class="text-[10px] text-dark-200 font-semibold uppercase tracking-wide block mb-1.5">Structure</label>
+      <select name="struct" class="w-full bg-dark-700 border border-dark-400 rounded-lg px-3 py-2 text-[13px] text-dark-50 focus:border-blue-500 focus:outline-none">
+        <option value="">All</option>
+        <option value="ester" {% if current_struct == 'ester' %}selected{% endif %}>Ester</option>
+        <option value="carbonate" {% if current_struct == 'carbonate' %}selected{% endif %}>Carbonate</option>
+        <option value="disulfide" {% if current_struct == 'disulfide' %}selected{% endif %}>Disulfide</option>
+      </select>
+    </div>
+    <div class="w-36">
+      <label class="text-[10px] text-dark-200 font-semibold uppercase tracking-wide block mb-1.5">Sort</label>
+      <select name="sort" class="w-full bg-dark-700 border border-dark-400 rounded-lg px-3 py-2 text-[13px] text-dark-50 focus:border-blue-500 focus:outline-none">
+        <option value="name" {% if sort == 'name' %}selected{% endif %}>Name A-Z</option>
+        <option value="-molecular_weight" {% if sort == '-molecular_weight' %}selected{% endif %}>MW High-Low</option>
+        <option value="molecular_weight" {% if sort == 'molecular_weight' %}selected{% endif %}>MW Low-High</option>
+        <option value="-logp" {% if sort == '-logp' %}selected{% endif %}>LogP High-Low</option>
+      </select>
+    </div>
+    <button type="submit" class="px-5 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-[13px] font-semibold">Filter</button>
+    <a href="{% url 'compounds:list' %}" class="px-4 py-2 border border-dark-400 hover:border-dark-300 rounded-lg text-[13px] text-dark-100">Reset</a>
+  </form>
+</div>
+<div class="bg-dark-600 border border-dark-400 rounded-xl overflow-hidden">
+  <div class="overflow-x-auto">
+    <table class="w-full text-[12px]">
+      <thead><tr class="border-b border-dark-400">
+        <th class="text-left px-4 py-3 text-[10px] text-dark-200 uppercase font-semibold">Name</th>
+        <th class="text-left px-4 py-3 text-[10px] text-dark-200 uppercase font-semibold">Head</th>
+        <th class="text-right px-4 py-3 text-[10px] text-dark-200 uppercase font-semibold">MW</th>
+        <th class="text-right px-4 py-3 text-[10px] text-dark-200 uppercase font-semibold">LogP</th>
+        <th class="text-right px-4 py-3 text-[10px] text-dark-200 uppercase font-semibold">TPSA</th>
+        <th class="text-right px-4 py-3 text-[10px] text-dark-200 uppercase font-semibold">HBD/HBA</th>
+        <th class="text-center px-4 py-3 text-[10px] text-dark-200 uppercase font-semibold">Linker</th>
+        <th class="text-left px-4 py-3 text-[10px] text-dark-200 uppercase font-semibold">SMILES</th>
+      </tr></thead>
+      <tbody>
+        {% for lipid in page %}
+        <tr class="border-b border-white/[0.03] hover:bg-blue-500/[0.03] cursor-pointer" onclick="window.location='{% url 'compounds:detail' lipid.pk %}'">
+          <td class="px-4 py-2.5 font-semibold text-blue-400">{{ lipid.name|truncatechars:30 }}</td>
+          <td class="px-4 py-2.5 text-dark-100">{{ lipid.head_group.name|default:"-" }}</td>
+          <td class="px-4 py-2.5 text-right font-mono">{{ lipid.molecular_weight|floatformat:1|default:"-" }}</td>
+          <td class="px-4 py-2.5 text-right font-mono">{{ lipid.logp|floatformat:2|default:"-" }}</td>
+          <td class="px-4 py-2.5 text-right font-mono">{{ lipid.tpsa|floatformat:1|default:"-" }}</td>
+          <td class="px-4 py-2.5 text-right font-mono text-dark-100">{{ lipid.hbd|default:"-" }}/{{ lipid.hba|default:"-" }}</td>
+          <td class="px-4 py-2.5 text-center">
+            {% if lipid.has_ester %}<span class="px-1.5 py-0.5 rounded text-[9px] font-semibold bg-emerald-500/10 text-emerald-400">EST</span>{% endif %}
+            {% if lipid.has_carbonate %}<span class="px-1.5 py-0.5 rounded text-[9px] font-semibold bg-amber-500/10 text-amber-400">CRB</span>{% endif %}
+            {% if lipid.has_disulfide %}<span class="px-1.5 py-0.5 rounded text-[9px] font-semibold bg-rose-500/10 text-rose-400">DSS</span>{% endif %}
+          </td>
+          <td class="px-4 py-2.5 font-mono text-[10px] text-dark-200 max-w-[300px] truncate">{{ lipid.smiles|truncatechars:60 }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="8" class="px-4 py-8 text-center text-dark-200">No lipids found. Run seed_db.py first.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% if page.has_other_pages %}
+  <div class="px-4 py-3 border-t border-dark-400 flex items-center justify-between">
+    <span class="text-[11px] text-dark-200">Page {{ page.number }} of {{ page.paginator.num_pages }}</span>
+    <div class="flex gap-1">
+      {% if page.has_previous %}<a href="?page={{ page.previous_page_number }}&q={{ query }}&sort={{ sort }}&struct={{ current_struct }}" class="px-3 py-1 rounded bg-dark-500 text-[11px] hover:bg-dark-400">Prev</a>{% endif %}
+      {% if page.has_next %}<a href="?page={{ page.next_page_number }}&q={{ query }}&sort={{ sort }}&struct={{ current_struct }}" class="px-3 py-1 rounded bg-dark-500 text-[11px] hover:bg-dark-400">Next</a>{% endif %}
+    </div>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

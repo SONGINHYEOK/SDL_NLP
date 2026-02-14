@@ -1,0 +1,389 @@
+{% extends "base/base.html" %}
+{% block title %}{{ lipid.name }} - OmniLNP{% endblock %}
+{% block breadcrumb %}Data / Lipid Explorer / <strong class="text-dark-50">{{ lipid.name|truncatechars:40 }}</strong>{% endblock %}
+
+{% block extra_head %}
+<script src="https://unpkg.com/smiles-drawer@2.1.7/dist/smiles-drawer.min.js"></script>
+<style>
+  .prop-card { transition: all .15s; }
+  .prop-card:hover { border-color: #253352; }
+  .tag-ester { background: rgba(52,211,153,.1); color: #34d399; }
+  .tag-carbonate { background: rgba(245,158,11,.1); color: #f59e0b; }
+  .tag-disulfide { background: rgba(244,63,94,.1); color: #f43f5e; }
+  .tag-mrna { background: rgba(59,130,246,.1); color: #60a5fa; }
+  .tag-sirna { background: rgba(139,92,246,.1); color: #a78bfa; }
+  .tag-pdna { background: rgba(20,184,166,.1); color: #2dd4bf; }
+  #mol-canvas { background: rgba(255,255,255,.03); border-radius: 12px; }
+  .glow-blue { box-shadow: 0 0 20px rgba(59,130,246,.08); }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- HEADER -->
+<div class="flex items-start justify-between mb-6">
+  <div class="flex-1">
+    <div class="flex items-center gap-3 mb-2">
+      {% if prev_lipid %}<a href="{% url 'compounds:detail' prev_lipid.pk %}" class="w-7 h-7 rounded-lg border border-dark-400 flex items-center justify-center text-dark-200 hover:border-dark-300 hover:text-white text-xs">&larr;</a>{% endif %}
+      <h2 class="text-[22px] font-bold tracking-tight">{{ lipid.name }}</h2>
+      {% if next_lipid %}<a href="{% url 'compounds:detail' next_lipid.pk %}" class="w-7 h-7 rounded-lg border border-dark-400 flex items-center justify-center text-dark-200 hover:border-dark-300 hover:text-white text-xs">&rarr;</a>{% endif %}
+    </div>
+    <div class="flex items-center gap-2 text-[11px]">
+      <span class="px-2 py-0.5 rounded bg-blue-500/10 text-blue-400 font-semibold">{{ lipid.get_source_display }}</span>
+      {% if lipid.has_ester %}<span class="px-2 py-0.5 rounded tag-ester font-semibold">Ester</span>{% endif %}
+      {% if lipid.has_carbonate %}<span class="px-2 py-0.5 rounded tag-carbonate font-semibold">Carbonate</span>{% endif %}
+      {% if lipid.has_disulfide %}<span class="px-2 py-0.5 rounded tag-disulfide font-semibold">Disulfide</span>{% endif %}
+      <span class="text-dark-200 ml-2">{{ total_results }} experiment results</span>
+    </div>
+  </div>
+  <a href="{% url 'compounds:list' %}" class="px-4 py-2 border border-dark-400 hover:border-dark-300 rounded-lg text-[12px] text-dark-100 transition">Back to Explorer</a>
+</div>
+
+<!-- ROW 1: Structure + Radar + Properties -->
+<div class="grid grid-cols-3 gap-4 mb-4">
+
+  <!-- 2D STRUCTURE (SmilesDrawer) -->
+  <div class="bg-dark-600 border border-dark-400 rounded-xl glow-blue">
+    <div class="px-5 py-3 border-b border-dark-400">
+      <div class="text-[13px] font-semibold">2D Structure</div>
+    </div>
+    <div class="p-4 flex items-center justify-center" style="min-height: 320px">
+      <canvas id="mol-canvas" width="420" height="300"></canvas>
+    </div>
+    <div class="px-5 pb-4">
+      <div class="text-[10px] text-dark-200 font-semibold uppercase tracking-wide mb-1.5">SMILES</div>
+      <div class="bg-dark-700 rounded-lg px-3 py-2 font-mono text-[10px] text-dark-100 break-all select-all max-h-16 overflow-y-auto leading-relaxed">{{ lipid.smiles }}</div>
+    </div>
+  </div>
+
+  <!-- RADAR CHART (vs DB Average) -->
+  <div class="bg-dark-600 border border-dark-400 rounded-xl">
+    <div class="px-5 py-3 border-b border-dark-400">
+      <div class="text-[13px] font-semibold">Descriptor Profile</div>
+      <div class="text-[10px] text-dark-200">vs. LNPDB Average ({{ lipid.name|truncatechars:15 }} = blue)</div>
+    </div>
+    <div class="p-4 flex items-center justify-center">
+      <canvas id="radar-chart" width="360" height="330"></canvas>
+    </div>
+  </div>
+
+  <!-- PROPERTY CARDS -->
+  <div class="space-y-2.5">
+    <div class="grid grid-cols-2 gap-2">
+      <div class="prop-card bg-dark-600 border border-dark-400 rounded-xl px-4 py-3">
+        <div class="text-[10px] text-dark-200 font-semibold uppercase tracking-wide">Molecular Weight</div>
+        <div class="text-[20px] font-extrabold font-mono text-blue-400 mt-1">{{ lipid.molecular_weight|floatformat:1|default:"-" }}</div>
+        <div class="text-[10px] text-dark-200">Da</div>
+      </div>
+      <div class="prop-card bg-dark-600 border border-dark-400 rounded-xl px-4 py-3">
+        <div class="text-[10px] text-dark-200 font-semibold uppercase tracking-wide">LogP</div>
+        <div class="text-[20px] font-extrabold font-mono text-cyan-400 mt-1">{{ lipid.logp|floatformat:2|default:"-" }}</div>
+        <div class="text-[10px] text-dark-200">Lipophilicity</div>
+      </div>
+    </div>
+    <div class="grid grid-cols-2 gap-2">
+      <div class="prop-card bg-dark-600 border border-dark-400 rounded-xl px-4 py-3">
+        <div class="text-[10px] text-dark-200 font-semibold uppercase tracking-wide">TPSA</div>
+        <div class="text-[20px] font-extrabold font-mono text-emerald-400 mt-1">{{ lipid.tpsa|floatformat:1|default:"-" }}</div>
+        <div class="text-[10px] text-dark-200">Angstrom^2</div>
+      </div>
+      <div class="prop-card bg-dark-600 border border-dark-400 rounded-xl px-4 py-3">
+        <div class="text-[10px] text-dark-200 font-semibold uppercase tracking-wide">HBD / HBA</div>
+        <div class="text-[20px] font-extrabold font-mono text-violet-400 mt-1">{{ lipid.hbd|default:"-" }} / {{ lipid.hba|default:"-" }}</div>
+        <div class="text-[10px] text-dark-200">H-Bond Donors / Acceptors</div>
+      </div>
+    </div>
+    <div class="grid grid-cols-3 gap-2">
+      <div class="prop-card bg-dark-600 border border-dark-400 rounded-xl px-3 py-2.5">
+        <div class="text-[9px] text-dark-200 font-semibold uppercase">Rot. Bonds</div>
+        <div class="text-[16px] font-bold font-mono text-amber-400 mt-0.5">{{ lipid.rotatable_bonds|default:"-" }}</div>
+      </div>
+      <div class="prop-card bg-dark-600 border border-dark-400 rounded-xl px-3 py-2.5">
+        <div class="text-[9px] text-dark-200 font-semibold uppercase">Rings</div>
+        <div class="text-[16px] font-bold font-mono text-amber-400 mt-0.5">{{ lipid.rings|default:"-" }}</div>
+      </div>
+      <div class="prop-card bg-dark-600 border border-dark-400 rounded-xl px-3 py-2.5">
+        <div class="text-[9px] text-dark-200 font-semibold uppercase">Fsp3</div>
+        <div class="text-[16px] font-bold font-mono text-amber-400 mt-0.5">{{ lipid.fsp3|floatformat:2|default:"-" }}</div>
+      </div>
+    </div>
+    <div class="grid grid-cols-3 gap-2">
+      <div class="prop-card bg-dark-600 border border-dark-400 rounded-xl px-3 py-2.5">
+        <div class="text-[9px] text-dark-200 font-semibold uppercase">Heavy Atoms</div>
+        <div class="text-[16px] font-bold font-mono text-dark-50 mt-0.5">{{ lipid.heavy_atoms|default:"-" }}</div>
+      </div>
+      <div class="prop-card bg-dark-600 border border-dark-400 rounded-xl px-3 py-2.5">
+        <div class="text-[9px] text-dark-200 font-semibold uppercase">N Count</div>
+        <div class="text-[16px] font-bold font-mono text-dark-50 mt-0.5">{{ lipid.nitrogen_count|default:"-" }}</div>
+      </div>
+      <div class="prop-card bg-dark-600 border border-dark-400 rounded-xl px-3 py-2.5">
+        <div class="text-[9px] text-dark-200 font-semibold uppercase">Molar Ref</div>
+        <div class="text-[16px] font-bold font-mono text-dark-50 mt-0.5">{{ lipid.molar_refractivity|floatformat:0|default:"-" }}</div>
+      </div>
+    </div>
+
+    <!-- Structural Components -->
+    <div class="bg-dark-600 border border-dark-400 rounded-xl px-4 py-3">
+      <div class="text-[10px] text-dark-200 font-semibold uppercase tracking-wide mb-2">Structural Components</div>
+      <div class="space-y-1.5 text-[11px]">
+        <div class="flex justify-between">
+          <span class="text-dark-200">Head Group</span>
+          <span class="font-mono text-dark-50">{{ lipid.head_group.name|default:"N/A" }}</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-dark-200">Linker</span>
+          <span class="font-mono text-dark-50">{{ lipid.linker.name|default:"N/A" }}</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-dark-200">Tail 1</span>
+          <span class="font-mono text-dark-50">{{ lipid.tail1.name|default:"N/A" }}</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-dark-200">Tail 2</span>
+          <span class="font-mono text-dark-50">{{ lipid.tail2.name|default:"N/A" }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ROW 2: Experiment Summary Cards -->
+<div class="grid grid-cols-3 gap-4 mb-4">
+
+  <!-- By Method -->
+  <div class="bg-dark-600 border border-dark-400 rounded-xl">
+    <div class="px-5 py-3 border-b border-dark-400">
+      <div class="text-[13px] font-semibold">By Assay Method</div>
+    </div>
+    <div class="p-4 space-y-2">
+      {% for m in method_summary %}
+      <div class="flex items-center gap-2">
+        <span class="text-[10px] text-dark-100 w-40 text-right truncate">{{ m.method }}</span>
+        <div class="flex-1 h-1.5 bg-white/5 rounded-full overflow-hidden">
+          <div class="h-full rounded-full bg-blue-500" style="width:{% widthratio m.count method_summary.0.count 100 %}%"></div>
+        </div>
+        <span class="text-[10px] font-mono text-dark-200 w-8 text-right">{{ m.count }}</span>
+      </div>
+      {% empty %}
+      <div class="text-[11px] text-dark-200 text-center py-4">No experiment data</div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- By Model -->
+  <div class="bg-dark-600 border border-dark-400 rounded-xl">
+    <div class="px-5 py-3 border-b border-dark-400">
+      <div class="text-[13px] font-semibold">By Model System</div>
+    </div>
+    <div class="p-4 space-y-2">
+      {% for m in model_summary %}
+      <div class="flex items-center gap-2">
+        <span class="text-[10px] text-dark-100 w-28 text-right truncate">{{ m.experiment__model_name }}</span>
+        <div class="flex-1 h-1.5 bg-white/5 rounded-full overflow-hidden">
+          <div class="h-full rounded-full bg-emerald-500" style="width:{% widthratio m.count model_summary.0.count 100 %}%"></div>
+        </div>
+        <span class="text-[10px] font-mono text-dark-200 w-8 text-right">{{ m.count }}</span>
+        <span class="text-[9px] font-mono text-dark-200 w-14 text-right">avg {{ m.avg_val|floatformat:2 }}</span>
+      </div>
+      {% empty %}
+      <div class="text-[11px] text-dark-200 text-center py-4">No experiment data</div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- Value Distribution (Luminescence) -->
+  <div class="bg-dark-600 border border-dark-400 rounded-xl">
+    <div class="px-5 py-3 border-b border-dark-400">
+      <div class="text-[13px] font-semibold">Value Distribution</div>
+      <div class="text-[10px] text-dark-200">Luminescence (normalized)</div>
+    </div>
+    <div class="p-4 flex items-center justify-center">
+      <canvas id="value-hist" width="320" height="220"></canvas>
+    </div>
+  </div>
+</div>
+
+<!-- ROW 3: Full Results Table -->
+<div class="bg-dark-600 border border-dark-400 rounded-xl">
+  <div class="px-5 py-3 border-b border-dark-400 flex justify-between items-center">
+    <div>
+      <div class="text-[13px] font-semibold">Experiment Results</div>
+      <div class="text-[10px] text-dark-200">Showing up to 50 of {{ total_results }} results for {{ lipid.name|truncatechars:20 }}</div>
+    </div>
+    <div class="flex gap-2">
+      {% for c in cargo_summary %}
+      <span class="px-2 py-0.5 rounded text-[10px] font-semibold
+        {% if c.experiment__cargo == 'mRNA' %}tag-mrna{% elif c.experiment__cargo == 'siRNA' %}tag-sirna{% else %}tag-pdna{% endif %}">
+        {{ c.experiment__cargo }} ({{ c.count }})
+      </span>
+      {% endfor %}
+    </div>
+  </div>
+  <div class="overflow-x-auto">
+    <table class="w-full text-[12px]">
+      <thead><tr class="border-b border-dark-400">
+        <th class="text-left px-4 py-2.5 text-[10px] text-dark-200 uppercase font-semibold">LNP ID</th>
+        <th class="text-left px-4 py-2.5 text-[10px] text-dark-200 uppercase font-semibold">Formulation</th>
+        <th class="text-left px-4 py-2.5 text-[10px] text-dark-200 uppercase font-semibold">Cargo</th>
+        <th class="text-left px-4 py-2.5 text-[10px] text-dark-200 uppercase font-semibold">Model</th>
+        <th class="text-left px-4 py-2.5 text-[10px] text-dark-200 uppercase font-semibold">Method</th>
+        <th class="text-right px-4 py-2.5 text-[10px] text-dark-200 uppercase font-semibold">Value</th>
+      </tr></thead>
+      <tbody>
+        {% for r in results %}
+        <tr class="border-b border-white/[0.03] hover:bg-blue-500/[0.03]">
+          <td class="px-4 py-2 font-mono text-[11px] text-blue-400">{{ r.lnp_id }}</td>
+          <td class="px-4 py-2 font-mono text-[10px] text-dark-100">{{ r.formulation.formulation_id|truncatechars:20 }}</td>
+          <td class="px-4 py-2">
+            <span class="px-1.5 py-0.5 rounded text-[9px] font-semibold
+              {% if r.experiment.cargo == 'mRNA' %}tag-mrna{% elif r.experiment.cargo == 'siRNA' %}tag-sirna{% else %}tag-pdna{% endif %}">{{ r.experiment.cargo }}</span>
+          </td>
+          <td class="px-4 py-2 text-dark-100 text-[11px]">{{ r.experiment.model_name }}</td>
+          <td class="px-4 py-2 text-[10px] text-dark-200">{{ r.method|truncatechars:25 }}</td>
+          <td class="px-4 py-2 text-right font-mono font-semibold">
+            {% if r.value >= 1.0 %}
+            <span class="text-emerald-400">{{ r.value|floatformat:4 }}</span>
+            {% elif r.value >= 0.5 %}
+            <span class="text-amber-400">{{ r.value|floatformat:4 }}</span>
+            {% else %}
+            <span class="text-dark-100">{{ r.value|floatformat:4 }}</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="6" class="px-4 py-8 text-center text-dark-200">No experiment results for this lipid.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+
+  // ── 1. SmilesDrawer: 2D Structure ──
+  const smilesStr = "{{ lipid.smiles|escapejs }}";
+  if (smilesStr) {
+    const smilesDrawer = new SmilesDrawer.SmiDrawer({
+      width: 420, height: 300,
+      bondThickness: 1.2,
+      bondLength: 18,
+      shortBondLength: 0.8,
+      bondSpacing: 4.5,
+      fontSizeLarge: 7,
+      fontSizeSmall: 4,
+      padding: 20,
+      themes: {
+        dark: {
+          C: '#9ca8c0',
+          O: '#f43f5e',
+          N: '#3b82f6',
+          S: '#f59e0b',
+          F: '#34d399',
+          Cl: '#34d399',
+          Br: '#a78bfa',
+          I: '#a78bfa',
+          P: '#fb923c',
+          H: '#4e5d78',
+          BACKGROUND: '#0d1117'
+        }
+      }
+    });
+    smilesDrawer.draw(smilesStr, "#mol-canvas", "dark");
+  }
+
+  // ── 2. Radar Chart ──
+  const radarLabels = {{ radar_labels_json|safe }};
+  const lipidData = {{ lipid_radar_json|safe }};
+  const avgData = {{ avg_radar_json|safe }};
+
+  new Chart(document.getElementById("radar-chart"), {
+    type: "radar",
+    data: {
+      labels: radarLabels,
+      datasets: [
+        {
+          label: "{{ lipid.name|truncatechars:20|escapejs }}",
+          data: lipidData,
+          borderColor: "#3b82f6",
+          backgroundColor: "rgba(59,130,246,0.12)",
+          borderWidth: 2,
+          pointRadius: 3,
+          pointBackgroundColor: "#3b82f6",
+        },
+        {
+          label: "LNPDB Average",
+          data: avgData,
+          borderColor: "#4e5d78",
+          backgroundColor: "rgba(78,93,120,0.08)",
+          borderWidth: 1.5,
+          borderDash: [4, 4],
+          pointRadius: 2,
+          pointBackgroundColor: "#4e5d78",
+        }
+      ]
+    },
+    options: {
+      responsive: false,
+      plugins: {
+        legend: {
+          position: "bottom",
+          labels: { color: "#9ca8c0", font: { size: 10, family: "Plus Jakarta Sans" }, boxWidth: 12, padding: 12 }
+        }
+      },
+      scales: {
+        r: {
+          min: 0, max: 1,
+          ticks: { display: false, stepSize: 0.25 },
+          grid: { color: "rgba(255,255,255,0.04)" },
+          angleLines: { color: "rgba(255,255,255,0.06)" },
+          pointLabels: { color: "#9ca8c0", font: { size: 9, family: "JetBrains Mono" } }
+        }
+      }
+    }
+  });
+
+  // ── 3. Value Histogram ──
+  const values = {{ lum_values_json|safe }};
+  if (values.length > 0) {
+    const bins = 20;
+    const vmin = Math.min(...values);
+    const vmax = Math.max(...values);
+    const step = (vmax - vmin) / bins || 1;
+    const counts = new Array(bins).fill(0);
+    const labels = [];
+    for (let i = 0; i < bins; i++) {
+      const lo = vmin + i * step;
+      labels.push(lo.toFixed(2));
+      values.forEach(v => { if (v >= lo && v < lo + step) counts[i]++; });
+    }
+    // last bin catches max
+    values.forEach(v => { if (v === vmax) counts[bins-1]++; });
+
+    const ctx = document.getElementById("value-hist").getContext("2d");
+    const grad = ctx.createLinearGradient(0, 0, 0, 220);
+    grad.addColorStop(0, "rgba(59,130,246,0.5)");
+    grad.addColorStop(1, "rgba(59,130,246,0.05)");
+
+    new Chart(ctx, {
+      type: "bar",
+      data: {
+        labels: labels,
+        datasets: [{ data: counts, backgroundColor: grad, borderColor: "rgba(59,130,246,0.3)", borderWidth: 1, borderRadius: 2 }]
+      },
+      options: {
+        responsive: false,
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { grid: { display: false }, ticks: { color: "#4e5d78", font: { size: 7, family: "JetBrains Mono" }, maxRotation: 45 } },
+          y: { grid: { color: "rgba(255,255,255,0.03)" }, ticks: { color: "#4e5d78", font: { size: 8, family: "JetBrains Mono" } } }
+        }
+      }
+    });
+  } else {
+    document.getElementById("value-hist").parentElement.innerHTML = '<div class="text-[11px] text-dark-200 text-center py-8">No luminescence data</div>';
+  }
+});
+</script>
+{% endblock %}

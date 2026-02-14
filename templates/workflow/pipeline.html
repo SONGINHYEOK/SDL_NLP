@@ -1,0 +1,152 @@
+{% extends "base/base.html" %}
+{% block title %}OmniLNP - Workflow Pipeline{% endblock %}
+{% block breadcrumb %}Lab / <strong class="text-dark-50">Workflow Pipeline</strong>{% endblock %}
+
+{% block extra_head %}
+<style>
+@keyframes stepPulse { 0%,100%{box-shadow:0 0 0 0 rgba(59,130,246,0.4)} 50%{box-shadow:0 0 0 8px rgba(59,130,246,0)} }
+.step-running { animation: stepPulse 2s infinite; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="flex justify-between items-end mb-6">
+  <div>
+    <h2 class="text-[22px] font-bold tracking-tight">Workflow Pipeline</h2>
+    <p class="text-[13px] text-dark-100 mt-1">Closed-loop optimization: Design &rarr; Synthesize &rarr; Formulate &rarr; Analyze &rarr; Learn</p>
+  </div>
+  <a href="{% url 'workflow:create_run' %}" class="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-[12px] font-semibold rounded-lg transition">+ New Workflow</a>
+</div>
+
+<!-- STAT CARDS -->
+<div class="grid grid-cols-3 gap-3.5 mb-6">
+  {% with active=0 completed=0 failed=0 %}
+  <div class="stat-card bg-dark-600 border border-dark-400 rounded-xl p-5">
+    <div class="text-[11px] text-dark-200 font-semibold uppercase tracking-wide mb-2">Total Runs</div>
+    <div class="text-[28px] font-extrabold font-mono tracking-tighter text-blue-400">{{ runs|length }}</div>
+    <div class="text-[11px] text-dark-100 mt-1.5">Optimization cycles</div>
+  </div>
+  <div class="stat-card bg-dark-600 border border-dark-400 rounded-xl p-5">
+    <div class="text-[11px] text-dark-200 font-semibold uppercase tracking-wide mb-2">Active</div>
+    <div class="text-[28px] font-extrabold font-mono tracking-tighter text-emerald-400" id="active-count">-</div>
+    <div class="text-[11px] text-dark-100 mt-1.5">Currently running</div>
+  </div>
+  <div class="stat-card bg-dark-600 border border-dark-400 rounded-xl p-5">
+    <div class="text-[11px] text-dark-200 font-semibold uppercase tracking-wide mb-2">Completed</div>
+    <div class="text-[28px] font-extrabold font-mono tracking-tighter text-violet-400" id="completed-count">-</div>
+    <div class="text-[11px] text-dark-100 mt-1.5">Finished cycles</div>
+  </div>
+  {% endwith %}
+</div>
+
+<!-- WORKFLOW RUNS -->
+<div class="space-y-4">
+  {% for run in runs %}
+  <div class="bg-dark-600 border border-dark-400 rounded-xl overflow-hidden">
+    <!-- Run Header -->
+    <div class="px-5 py-4 border-b border-dark-400 flex items-center justify-between">
+      <div class="flex items-center gap-4">
+        <div>
+          <div class="text-[14px] font-semibold">{{ run.name }}</div>
+          <div class="text-[11px] text-dark-200">Iteration {{ run.iteration }}{% if run.ai_model %} &middot; {{ run.ai_model.name }}{% endif %}</div>
+        </div>
+      </div>
+      <div class="flex items-center gap-3">
+        <span class="px-2.5 py-1 rounded-lg text-[11px] font-semibold
+          {% if run.status == 'completed' %}bg-emerald-500/10 text-emerald-400
+          {% elif run.status == 'running' %}bg-blue-500/10 text-blue-400
+          {% elif run.status == 'failed' %}bg-rose-500/10 text-rose-400
+          {% elif run.status == 'analyzing' %}bg-violet-500/10 text-violet-400
+          {% elif run.status == 'queued' %}bg-amber-500/10 text-amber-400
+          {% elif run.status == 'paused' %}bg-yellow-500/10 text-yellow-400
+          {% elif run.status == 'cancelled' %}bg-gray-500/10 text-gray-400
+          {% else %}bg-dark-500 text-dark-100{% endif %}">{{ run.get_status_display }}</span>
+        <a href="{% url 'workflow:detail' run.pk %}" class="px-3 py-1.5 border border-dark-400 hover:border-blue-500 rounded-lg text-[11px] text-dark-100 hover:text-blue-400">Details</a>
+      </div>
+    </div>
+
+    <!-- Progress Bar -->
+    <div class="px-5 py-3 border-b border-dark-400">
+      <div class="flex items-center gap-3">
+        <div class="flex-1 h-1.5 bg-white/5 rounded-full overflow-hidden">
+          <div class="h-full rounded-full transition-all duration-500
+            {% if run.status == 'completed' %}bg-emerald-400
+            {% elif run.status == 'failed' %}bg-rose-500
+            {% else %}bg-blue-500{% endif %}" style="width:{{ run.progress_pct }}%"></div>
+        </div>
+        <span class="text-[11px] font-mono text-dark-200 w-10 text-right">{{ run.progress_pct }}%</span>
+      </div>
+    </div>
+
+    <!-- 5-Step Pipeline -->
+    <div class="px-5 py-5">
+      <div class="flex items-center justify-between">
+        {% for step in run.steps.all %}
+        {% if not forloop.first %}
+        <div class="flex-1 h-px mx-2
+          {% if step.status == 'completed' %}bg-emerald-400/50
+          {% elif step.status == 'running' %}bg-blue-500/50
+          {% else %}bg-dark-400{% endif %}"></div>
+        {% endif %}
+        <div class="flex flex-col items-center gap-2">
+          <div class="w-11 h-11 rounded-full flex items-center justify-center text-[13px] font-bold
+            {% if step.status == 'completed' %}bg-emerald-500/15 text-emerald-400 border-2 border-emerald-500/30
+            {% elif step.status == 'running' %}bg-blue-500/15 text-blue-400 border-2 border-blue-500/30 step-running
+            {% elif step.status == 'failed' %}bg-rose-500/15 text-rose-400 border-2 border-rose-500/30
+            {% elif step.status == 'awaiting_approval' %}bg-amber-500/15 text-amber-400 border-2 border-amber-500/30
+            {% else %}bg-dark-500 text-dark-200 border-2 border-dark-400{% endif %}">
+            {% if step.status == 'completed' %}&#10003;
+            {% elif step.status == 'running' %}&#9654;
+            {% elif step.status == 'failed' %}&#10007;
+            {% elif step.status == 'awaiting_approval' %}&#9208;
+            {% else %}{{ step.step_order }}{% endif %}
+          </div>
+          <div class="text-center">
+            <div class="text-[10px] font-semibold
+              {% if step.status == 'completed' %}text-emerald-400
+              {% elif step.status == 'running' %}text-blue-400
+              {% elif step.status == 'failed' %}text-rose-400
+              {% elif step.status == 'awaiting_approval' %}text-amber-400
+              {% else %}text-dark-200{% endif %}">{{ step.get_step_type_display }}</div>
+            {% if step.equipment %}
+            <div class="text-[9px] text-dark-200 mt-0.5">{{ step.equipment.name }}</div>
+            {% endif %}
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Timestamps -->
+    <div class="px-5 py-3 border-t border-dark-400 flex items-center justify-between text-[10px] text-dark-200">
+      <span>Created {{ run.created_at|timesince }} ago</span>
+      {% if run.completed_at %}
+      <span>Completed {{ run.completed_at|timesince }} ago</span>
+      {% endif %}
+    </div>
+  </div>
+  {% empty %}
+  <div class="bg-dark-600 border border-dark-400 rounded-xl p-8 text-center text-dark-200">
+    No workflow runs yet. Start a new optimization cycle.
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function() {
+  let active = 0, completed = 0;
+  document.querySelectorAll('[class*="bg-blue-500/10"]').forEach(el => {
+    if (el.textContent.trim() === 'Running') active++;
+  });
+  document.querySelectorAll('[class*="bg-emerald-500/10"]').forEach(el => {
+    if (el.textContent.trim() === 'Completed') completed++;
+  });
+  const activeEl = document.getElementById('active-count');
+  const completedEl = document.getElementById('completed-count');
+  if (activeEl) activeEl.textContent = active;
+  if (completedEl) completedEl.textContent = completed;
+})();
+</script>
+{% endblock %}

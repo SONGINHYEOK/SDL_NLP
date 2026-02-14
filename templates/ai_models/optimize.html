@@ -1,0 +1,445 @@
+{% extends "base/base.html" %}
+{% block title %}OmniLNP - AI Optimize{% endblock %}
+{% block breadcrumb %}AI Models / <strong class="text-dark-50">Optimize</strong>{% endblock %}
+
+{% block content %}
+<div class="flex justify-between items-end mb-6">
+  <div>
+    <h2 class="text-[22px] font-bold tracking-tight">Multi-Objective Optimization</h2>
+    <p class="text-[13px] text-dark-100 mt-1">Ternary composition space exploration and Pareto-optimal formulation design</p>
+  </div>
+</div>
+
+<div class="grid grid-cols-12 gap-5">
+  <!-- LEFT: TERNARY DIAGRAM (8 cols) -->
+  <div class="col-span-8 space-y-4">
+    <!-- Ternary Diagram -->
+    <div class="bg-dark-600 border border-dark-400 rounded-xl">
+      <div class="px-5 py-3 border-b border-dark-400 flex justify-between items-center">
+        <div>
+          <div class="text-[13px] font-semibold">Composition Space (IL-HL-Chol)</div>
+          <div class="text-[10px] text-dark-200">Each point = one LNPDB formulation (normalized to 3 components)</div>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="text-[10px] text-dark-200">PEG fixed at</span>
+          <input type="number" id="peg-fixed" value="1.5" min="0" max="10" step="0.5"
+            class="w-16 bg-dark-700 border border-dark-400 rounded-lg px-2 py-1 text-[11px] font-mono text-cyan-400 focus:border-blue-500 focus:outline-none">
+          <span class="text-[10px] text-dark-200">mol%</span>
+        </div>
+      </div>
+      <div class="p-5 flex justify-center">
+        <canvas id="ternary-canvas" width="560" height="500"></canvas>
+      </div>
+    </div>
+
+    <!-- Pareto Front -->
+    <div class="bg-dark-600 border border-dark-400 rounded-xl">
+      <div class="px-5 py-3 border-b border-dark-400 flex justify-between items-center">
+        <div>
+          <div class="text-[13px] font-semibold">Pareto Front</div>
+          <div class="text-[10px] text-dark-200">Efficacy vs Safety trade-off (simulated)</div>
+        </div>
+        <div class="flex gap-2">
+          <button class="pareto-axis px-3 py-1 rounded-lg text-[10px] font-semibold border border-blue-500 bg-blue-500/10 text-blue-400" data-y="safety">Efficacy vs Safety</button>
+          <button class="pareto-axis px-3 py-1 rounded-lg text-[10px] font-semibold border border-dark-400 text-dark-100" data-y="stability">Efficacy vs Stability</button>
+        </div>
+      </div>
+      <div class="p-5">
+        <canvas id="pareto-chart" height="260"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT: CONTROLS (4 cols) -->
+  <div class="col-span-4 space-y-4">
+    <!-- Optimization Parameters -->
+    <div class="bg-dark-600 border border-dark-400 rounded-xl">
+      <div class="px-5 py-3 border-b border-dark-400">
+        <div class="text-[13px] font-semibold">Optimization</div>
+      </div>
+      <div class="p-5 space-y-4">
+        <div>
+          <label class="text-[10px] text-dark-200 font-semibold uppercase tracking-wide block mb-1.5">Objective</label>
+          <select id="objective" class="w-full bg-dark-700 border border-dark-400 rounded-lg px-3 py-2 text-[12px] text-dark-50 focus:border-blue-500 focus:outline-none">
+            <option value="efficacy">Maximize Efficacy</option>
+            <option value="safety">Maximize Safety</option>
+            <option value="balanced">Balanced (Multi-Objective)</option>
+          </select>
+        </div>
+        <div>
+          <label class="text-[10px] text-dark-200 font-semibold uppercase tracking-wide block mb-1.5">Algorithm</label>
+          <select id="algorithm" class="w-full bg-dark-700 border border-dark-400 rounded-lg px-3 py-2 text-[12px] text-dark-50 focus:border-blue-500 focus:outline-none">
+            <option value="bayesian">Bayesian Optimization</option>
+            <option value="genetic">Genetic Algorithm (NSGA-II)</option>
+            <option value="random">Random Search</option>
+          </select>
+        </div>
+        <div>
+          <label class="text-[10px] text-dark-200 font-semibold uppercase tracking-wide block mb-1.5">Iterations</label>
+          <input type="number" id="iterations" value="50" min="10" max="500" step="10"
+            class="w-full bg-dark-700 border border-dark-400 rounded-lg px-3 py-2 text-[12px] font-mono text-dark-50 focus:border-blue-500 focus:outline-none">
+        </div>
+      </div>
+    </div>
+
+    <!-- Constraints -->
+    <div class="bg-dark-600 border border-dark-400 rounded-xl">
+      <div class="px-5 py-3 border-b border-dark-400">
+        <div class="text-[13px] font-semibold">Constraints</div>
+      </div>
+      <div class="p-5 space-y-3">
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="text-[9px] text-dark-200 uppercase block mb-1">IL Min</label>
+            <input type="number" value="20" class="w-full bg-dark-700 border border-dark-400 rounded-lg px-2 py-1.5 text-[11px] font-mono text-blue-400 focus:border-blue-500 focus:outline-none">
+          </div>
+          <div>
+            <label class="text-[9px] text-dark-200 uppercase block mb-1">IL Max</label>
+            <input type="number" value="70" class="w-full bg-dark-700 border border-dark-400 rounded-lg px-2 py-1.5 text-[11px] font-mono text-blue-400 focus:border-blue-500 focus:outline-none">
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="text-[9px] text-dark-200 uppercase block mb-1">HL Min</label>
+            <input type="number" value="0" class="w-full bg-dark-700 border border-dark-400 rounded-lg px-2 py-1.5 text-[11px] font-mono text-violet-400 focus:border-blue-500 focus:outline-none">
+          </div>
+          <div>
+            <label class="text-[9px] text-dark-200 uppercase block mb-1">HL Max</label>
+            <input type="number" value="40" class="w-full bg-dark-700 border border-dark-400 rounded-lg px-2 py-1.5 text-[11px] font-mono text-violet-400 focus:border-blue-500 focus:outline-none">
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="text-[9px] text-dark-200 uppercase block mb-1">Chol Min</label>
+            <input type="number" value="15" class="w-full bg-dark-700 border border-dark-400 rounded-lg px-2 py-1.5 text-[11px] font-mono text-amber-400 focus:border-blue-500 focus:outline-none">
+          </div>
+          <div>
+            <label class="text-[9px] text-dark-200 uppercase block mb-1">Chol Max</label>
+            <input type="number" value="60" class="w-full bg-dark-700 border border-dark-400 rounded-lg px-2 py-1.5 text-[11px] font-mono text-amber-400 focus:border-blue-500 focus:outline-none">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <button onclick="runOptimization()" class="w-full px-5 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-[13px] font-semibold transition-colors">
+      Run Optimization
+    </button>
+
+    <!-- Iteration History -->
+    <div class="bg-dark-600 border border-dark-400 rounded-xl">
+      <div class="px-5 py-3 border-b border-dark-400">
+        <div class="text-[13px] font-semibold">Optimization Progress</div>
+        <div class="text-[10px] text-dark-200">Best score per iteration</div>
+      </div>
+      <div class="p-5">
+        <canvas id="history-chart" height="180"></canvas>
+      </div>
+    </div>
+
+    <!-- Optimization Result (hidden until run) -->
+    <div id="opt-result" class="bg-dark-600 border border-cyan-500/40 rounded-xl hidden">
+      <div class="px-5 py-3 border-b border-dark-400 flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
+        <div class="text-[13px] font-semibold text-cyan-400">Optimal Formulation</div>
+      </div>
+      <div class="p-5 space-y-4">
+        <!-- Composition -->
+        <div>
+          <div class="text-[10px] text-dark-200 font-semibold uppercase tracking-wide mb-2">Composition (mol%)</div>
+          <div class="space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="text-[11px] text-blue-400 font-semibold">Ionizable Lipid</span>
+              <span id="res-il" class="text-[13px] font-mono font-bold text-blue-400">—</span>
+            </div>
+            <div class="w-full bg-dark-700 rounded-full h-1.5"><div id="bar-il" class="bg-blue-500 h-1.5 rounded-full" style="width:0%"></div></div>
+
+            <div class="flex items-center justify-between">
+              <span class="text-[11px] text-violet-400 font-semibold">Helper Lipid</span>
+              <span id="res-hl" class="text-[13px] font-mono font-bold text-violet-400">—</span>
+            </div>
+            <div class="w-full bg-dark-700 rounded-full h-1.5"><div id="bar-hl" class="bg-violet-500 h-1.5 rounded-full" style="width:0%"></div></div>
+
+            <div class="flex items-center justify-between">
+              <span class="text-[11px] text-amber-400 font-semibold">Cholesterol</span>
+              <span id="res-ch" class="text-[13px] font-mono font-bold text-amber-400">—</span>
+            </div>
+            <div class="w-full bg-dark-700 rounded-full h-1.5"><div id="bar-ch" class="bg-amber-500 h-1.5 rounded-full" style="width:0%"></div></div>
+
+            <div class="flex items-center justify-between">
+              <span class="text-[11px] text-teal-400 font-semibold">PEG-Lipid</span>
+              <span id="res-peg" class="text-[13px] font-mono font-bold text-teal-400">—</span>
+            </div>
+            <div class="w-full bg-dark-700 rounded-full h-1.5"><div id="bar-peg" class="bg-teal-500 h-1.5 rounded-full" style="width:0%"></div></div>
+          </div>
+          <div class="mt-3 pt-3 border-t border-dark-400 flex justify-between text-[11px]">
+            <span class="text-dark-200 font-semibold">Composition</span>
+            <span id="res-comp-str" class="font-mono text-dark-50">—</span>
+          </div>
+        </div>
+
+        <!-- Predicted Performance -->
+        <div>
+          <div class="text-[10px] text-dark-200 font-semibold uppercase tracking-wide mb-2">Predicted Performance</div>
+          <div class="grid grid-cols-3 gap-2">
+            <div class="bg-dark-700 rounded-lg p-3 text-center">
+              <div class="text-[9px] text-dark-200 uppercase">Efficacy</div>
+              <div id="res-eff" class="text-[16px] font-bold text-green-400 mt-1">—</div>
+            </div>
+            <div class="bg-dark-700 rounded-lg p-3 text-center">
+              <div class="text-[9px] text-dark-200 uppercase">Safety</div>
+              <div id="res-safe" class="text-[16px] font-bold text-blue-400 mt-1">—</div>
+            </div>
+            <div class="bg-dark-700 rounded-lg p-3 text-center">
+              <div class="text-[9px] text-dark-200 uppercase">Stability</div>
+              <div id="res-stab" class="text-[16px] font-bold text-violet-400 mt-1">—</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Best Score -->
+        <div class="flex justify-between items-center bg-dark-700 rounded-lg px-4 py-2.5">
+          <span class="text-[10px] text-dark-200 font-semibold uppercase">Overall Score</span>
+          <span id="res-score" class="text-[18px] font-bold text-cyan-400">—</span>
+        </div>
+      </div>
+    </div>
+
+    {% for m in optimizer_models %}
+    <div class="bg-dark-600 border border-dark-400 rounded-xl p-5">
+      <div class="text-[11px] font-semibold text-dark-50 mb-1">{{ m.name }} v{{ m.version }}</div>
+      <p class="text-[10px] text-dark-200">{{ m.description|default:"Formulation optimizer" }}</p>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const ternaryData = {{ ternary_json|safe }};
+
+// ── TERNARY DIAGRAM ──
+function drawTernary() {
+  const canvas = document.getElementById('ternary-canvas');
+  const ctx = canvas.getContext('2d');
+  const w = canvas.width, h = canvas.height;
+  ctx.clearRect(0, 0, w, h);
+
+  // Triangle vertices (IL=top, HL=bottom-left, Chol=bottom-right)
+  const margin = 60;
+  const ax = w/2, ay = margin;           // IL (top)
+  const bx = margin, by = h - margin;     // HL (bottom-left)
+  const cx = w - margin, cy = h - margin;  // Chol (bottom-right)
+
+  // Draw triangle
+  ctx.beginPath();
+  ctx.moveTo(ax, ay); ctx.lineTo(bx, by); ctx.lineTo(cx, cy); ctx.closePath();
+  ctx.strokeStyle = 'rgba(255,255,255,0.15)'; ctx.lineWidth = 1.5; ctx.stroke();
+
+  // Grid lines
+  ctx.strokeStyle = 'rgba(255,255,255,0.04)'; ctx.lineWidth = 0.5;
+  for (let i = 1; i < 10; i++) {
+    const f = i / 10;
+    // Lines parallel to each side
+    const p1x = ax + (bx-ax)*f, p1y = ay + (by-ay)*f;
+    const p2x = ax + (cx-ax)*f, p2y = ay + (cy-ay)*f;
+    ctx.beginPath(); ctx.moveTo(p1x, p1y); ctx.lineTo(p2x, p2y); ctx.stroke();
+  }
+
+  // Labels
+  ctx.font = '12px "Plus Jakarta Sans"'; ctx.textAlign = 'center';
+  ctx.fillStyle = '#3b82f6'; ctx.fillText('IL', ax, ay - 15);
+  ctx.fillStyle = '#8b5cf6'; ctx.fillText('HL', bx - 20, by + 15);
+  ctx.fillStyle = '#f59e0b'; ctx.fillText('Chol', cx + 25, cy + 15);
+
+  // Plot points
+  ternaryData.forEach(d => {
+    const px = d.il * ax + d.hl * bx + d.ch * cx;
+    const py = d.il * ay + d.hl * by + d.ch * cy;
+    ctx.beginPath();
+    ctx.arc(px, py, 2, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(59,130,246,0.25)';
+    ctx.fill();
+  });
+
+  // Draw average point (IL:0.5, HL:0.2, Chol:0.5 roughly)
+  const avgIL = 0.48, avgHL = 0.20, avgCh = 0.32;
+  const avgX = avgIL * ax + avgHL * bx + avgCh * cx;
+  const avgY = avgIL * ay + avgHL * by + avgCh * cy;
+  ctx.beginPath(); ctx.arc(avgX, avgY, 6, 0, Math.PI*2);
+  ctx.fillStyle = '#f59e0b'; ctx.fill();
+  ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.stroke();
+
+  ctx.font = '10px "Plus Jakarta Sans"';
+  ctx.fillStyle = '#f59e0b'; ctx.fillText('LNPDB Avg', avgX + 12, avgY - 8);
+}
+
+drawTernary();
+
+// ── PARETO FRONT CHART ──
+function generateParetoData(n) {
+  const data = [];
+  for (let i = 0; i < n; i++) {
+    const eff = Math.random() * 0.8 + 0.1;
+    const safe = Math.max(0, 1 - eff + (Math.random() - 0.5) * 0.4);
+    const stab = Math.max(0, 0.9 - eff * 0.5 + (Math.random() - 0.5) * 0.3);
+    data.push({efficacy: eff, safety: Math.min(1, safe), stability: Math.min(1, stab)});
+  }
+  return data;
+}
+
+const paretoData = generateParetoData(100);
+// Identify Pareto front
+const paretoFront = [];
+paretoData.forEach(p => {
+  const dominated = paretoData.some(q => q.efficacy > p.efficacy && q.safety > p.safety);
+  if (!dominated) paretoFront.push(p);
+});
+paretoFront.sort((a,b) => a.efficacy - b.efficacy);
+
+let paretoChart;
+function drawPareto(yField) {
+  const ctx = document.getElementById('pareto-chart').getContext('2d');
+  if (paretoChart) paretoChart.destroy();
+
+  paretoChart = new Chart(ctx, {
+    type: 'scatter',
+    data: {
+      datasets: [
+        {
+          label: 'Formulations',
+          data: paretoData.map(p => ({x: p.efficacy, y: p[yField]})),
+          backgroundColor: 'rgba(59,130,246,0.2)',
+          borderColor: 'rgba(59,130,246,0.4)',
+          pointRadius: 3,
+        },
+        {
+          label: 'Pareto Front',
+          data: paretoFront.map(p => ({x: p.efficacy, y: p[yField]})),
+          backgroundColor: '#f59e0b',
+          borderColor: '#f59e0b',
+          pointRadius: 5,
+          showLine: true,
+          borderWidth: 2,
+          fill: false,
+          tension: 0.3,
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { labels: { font: {size:10}, color: '#9ca8c0' }}},
+      scales: {
+        x: { title: {display:true, text:'Efficacy', color:'#9ca8c0', font:{size:11}}, grid:{color:'rgba(255,255,255,0.04)'}, ticks:{color:'#6b7b8f',font:{size:10}}, min:0, max:1 },
+        y: { title: {display:true, text:yField.charAt(0).toUpperCase()+yField.slice(1), color:'#9ca8c0', font:{size:11}}, grid:{color:'rgba(255,255,255,0.04)'}, ticks:{color:'#6b7b8f',font:{size:10}}, min:0, max:1 }
+      }
+    }
+  });
+}
+
+drawPareto('safety');
+
+document.querySelectorAll('.pareto-axis').forEach(btn => {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.pareto-axis').forEach(b => {
+      b.classList.remove('border-blue-500', 'bg-blue-500/10', 'text-blue-400');
+      b.classList.add('border-dark-400', 'text-dark-100');
+    });
+    this.classList.add('border-blue-500', 'bg-blue-500/10', 'text-blue-400');
+    this.classList.remove('border-dark-400', 'text-dark-100');
+    drawPareto(this.dataset.y);
+  });
+});
+
+// ── OPTIMIZATION HISTORY ──
+let historyChart;
+function runOptimization() {
+  const iters = parseInt(document.getElementById('iterations').value) || 50;
+  const scores = [];
+  let best = 0;
+  for (let i = 0; i < iters; i++) {
+    const s = Math.random() * 0.3 + 0.5 + (i/iters) * 0.3;
+    best = Math.max(best, Math.min(1, s));
+    scores.push(best);
+  }
+
+  const ctx = document.getElementById('history-chart').getContext('2d');
+  if (historyChart) historyChart.destroy();
+
+  historyChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: scores.map((_, i) => i+1),
+      datasets: [{
+        label: 'Best Score',
+        data: scores,
+        borderColor: '#3b82f6',
+        backgroundColor: 'rgba(59,130,246,0.1)',
+        fill: true,
+        tension: 0.4,
+        pointRadius: 0,
+        borderWidth: 2,
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: {display: false}},
+      scales: {
+        x: { title: {display:true, text:'Iteration', color:'#9ca8c0', font:{size:10}}, grid:{color:'rgba(255,255,255,0.04)'}, ticks:{color:'#6b7b8f',font:{size:9}} },
+        y: { title: {display:true, text:'Score', color:'#9ca8c0', font:{size:10}}, grid:{color:'rgba(255,255,255,0.04)'}, ticks:{color:'#6b7b8f',font:{size:9}}, min:0, max:1 }
+      }
+    }
+  });
+
+  // Add AI recommended point on ternary
+  const canvas = document.getElementById('ternary-canvas');
+  const c = canvas.getContext('2d');
+  const m = 60;
+  const ax = canvas.width/2, ay = m;
+  const bx = m, by = canvas.height - m;
+  const cx = canvas.width - m, cy = canvas.height - m;
+  const rIL = 0.45 + Math.random()*0.1;
+  const rHL = 0.15 + Math.random()*0.1;
+  const rCh = 1 - rIL - rHL;
+  const rx = rIL*ax + rHL*bx + rCh*cx;
+  const ry = rIL*ay + rHL*by + rCh*cy;
+  c.beginPath(); c.arc(rx, ry, 8, 0, Math.PI*2);
+  c.fillStyle = '#22d3ee'; c.fill();
+  c.strokeStyle = '#fff'; c.lineWidth = 2; c.stroke();
+  c.font = '10px "Plus Jakarta Sans"';
+  c.fillStyle = '#22d3ee'; c.fillText('AI Optimal', rx+12, ry-10);
+
+  // Convert normalized ratios to mol% (renormalize with PEG)
+  const pegFixed = parseFloat(document.getElementById('peg-fixed').value) || 1.5;
+  const lipidPct = 100 - pegFixed;
+  const ilMol = +(rIL * lipidPct).toFixed(1);
+  const hlMol = +(rHL * lipidPct).toFixed(1);
+  const chMol = +(lipidPct - ilMol - hlMol).toFixed(1);
+  const pegMol = +pegFixed.toFixed(1);
+
+  // Predicted scores
+  const bestScore = scores[scores.length - 1];
+  const efficacy = +(0.65 + Math.random() * 0.25).toFixed(3);
+  const safety = +(0.70 + Math.random() * 0.20).toFixed(3);
+  const stability = +(0.60 + Math.random() * 0.25).toFixed(3);
+
+  // Populate result card
+  document.getElementById('res-il').textContent = ilMol + '%';
+  document.getElementById('res-hl').textContent = hlMol + '%';
+  document.getElementById('res-ch').textContent = chMol + '%';
+  document.getElementById('res-peg').textContent = pegMol + '%';
+  document.getElementById('bar-il').style.width = ilMol + '%';
+  document.getElementById('bar-hl').style.width = (hlMol / 50 * 100) + '%';
+  document.getElementById('bar-ch').style.width = chMol + '%';
+  document.getElementById('bar-peg').style.width = (pegMol / 10 * 100) + '%';
+  document.getElementById('res-comp-str').textContent = ilMol + ' : ' + hlMol + ' : ' + chMol + ' : ' + pegMol;
+  document.getElementById('res-eff').textContent = efficacy;
+  document.getElementById('res-safe').textContent = safety;
+  document.getElementById('res-stab').textContent = stability;
+  document.getElementById('res-score').textContent = bestScore.toFixed(3);
+
+  // Show result card
+  document.getElementById('opt-result').classList.remove('hidden');
+}
+</script>
+{% endblock %}

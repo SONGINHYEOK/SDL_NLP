@@ -1,0 +1,63 @@
+{% extends "base/base.html" %}
+{% block title %}OmniLNP - New Workflow{% endblock %}
+{% block breadcrumb %}Lab / <a href="{% url 'workflow:pipeline' %}" class="hover:text-blue-400">Workflow</a> / <strong class="text-dark-50">New Workflow</strong>{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto">
+  <div class="flex items-center gap-3 mb-6">
+    <a href="{% url 'workflow:pipeline' %}" class="text-[11px] text-dark-200 hover:text-blue-400">&larr; Back to Pipeline</a>
+  </div>
+  <h2 class="text-[22px] font-bold tracking-tight mb-1">Create New Workflow</h2>
+  <p class="text-[13px] text-dark-100 mb-6">Start a new closed-loop optimization cycle with human-in-the-loop approval.</p>
+
+  <form method="post" class="space-y-5">
+    {% csrf_token %}
+
+    <!-- Name -->
+    <div>
+      <label class="block text-[11px] text-dark-200 uppercase font-semibold tracking-wide mb-2">Workflow Name *</label>
+      {{ form.name }}
+      {% if form.name.errors %}<p class="text-rose-400 text-[11px] mt-1">{{ form.name.errors.0 }}</p>{% endif %}
+    </div>
+
+    <!-- Description -->
+    <div>
+      <label class="block text-[11px] text-dark-200 uppercase font-semibold tracking-wide mb-2">Description</label>
+      {{ form.description }}
+    </div>
+
+    <!-- AI Model -->
+    <div>
+      <label class="block text-[11px] text-dark-200 uppercase font-semibold tracking-wide mb-2">AI Model</label>
+      {{ form.ai_model }}
+    </div>
+
+    <!-- Pipeline Preview -->
+    <div class="bg-dark-600 border border-dark-400 rounded-xl p-5 mt-6">
+      <div class="text-[11px] text-dark-200 uppercase font-semibold tracking-wide mb-4">5-Step Pipeline Preview</div>
+      <div class="flex items-center justify-between">
+        {% for code, label in steps %}
+        {% if not forloop.first %}
+        <div class="flex-1 h-px mx-2 bg-dark-400"></div>
+        {% endif %}
+        <div class="flex flex-col items-center gap-2">
+          <div class="w-10 h-10 rounded-full flex items-center justify-center text-[12px] font-bold
+            {% if forloop.first %}bg-amber-500/15 text-amber-400 border-2 border-amber-500/30
+            {% else %}bg-dark-500 text-dark-200 border-2 border-dark-400{% endif %}">
+            {{ forloop.counter }}
+          </div>
+          <div class="text-[10px] font-semibold {% if forloop.first %}text-amber-400{% else %}text-dark-200{% endif %}">{{ label }}</div>
+        </div>
+        {% endfor %}
+      </div>
+      <p class="text-[10px] text-dark-200 mt-4 text-center">Step 1 will start in <span class="text-amber-400 font-semibold">Awaiting Approval</span> state</p>
+    </div>
+
+    <!-- Buttons -->
+    <div class="flex items-center gap-3 pt-3">
+      <button type="submit" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white text-[13px] font-semibold rounded-lg transition">Create &amp; Start</button>
+      <a href="{% url 'workflow:pipeline' %}" class="px-5 py-2.5 border border-dark-400 hover:border-dark-300 text-dark-100 text-[13px] rounded-lg transition">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

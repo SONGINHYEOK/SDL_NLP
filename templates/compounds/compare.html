@@ -1,0 +1,432 @@
+{% extends "base/base.html" %}
+{% block title %}OmniLNP - Lipid Compare{% endblock %}
+{% block breadcrumb %}Data / Lipid Explorer / <strong class="text-dark-50">Compare</strong>{% endblock %}
+
+{% block extra_head %}
+<script src="https://unpkg.com/smiles-drawer@2.1.7/dist/smiles-drawer.min.js"></script>
+<style>
+  .prop-card { transition: all .15s; }
+  .prop-card:hover { border-color: #253352; }
+  .lipid-col { min-width: 220px; }
+  .tag-ester { background: rgba(52,211,153,.1); color: #34d399; }
+  .tag-carbonate { background: rgba(245,158,11,.1); color: #f59e0b; }
+  .tag-disulfide { background: rgba(244,63,94,.1); color: #f43f5e; }
+  .search-result:hover { background: rgba(59,130,246,0.06); }
+  .compare-colors-0 { --cc: #3b82f6; }
+  .compare-colors-1 { --cc: #34d399; }
+  .compare-colors-2 { --cc: #f59e0b; }
+  .compare-colors-3 { --cc: #a78bfa; }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- HEADER -->
+<div class="flex items-start justify-between mb-6">
+  <div>
+    <h2 class="text-[22px] font-bold tracking-tight mb-1">Lipid Comparison</h2>
+    <p class="text-[12px] text-dark-200">Compare up to 4 ionizable lipids side-by-side</p>
+  </div>
+  <div class="flex gap-2">
+    <a href="{% url 'compounds:list' %}" class="px-4 py-2 border border-dark-400 hover:border-dark-300 rounded-lg text-[12px] text-dark-100 transition">Back to Explorer</a>
+  </div>
+</div>
+
+<!-- SEARCH / ADD LIPID BAR -->
+<div class="bg-dark-600 border border-dark-400 rounded-xl p-4 mb-4">
+  <div class="flex items-center gap-3">
+    <div class="relative flex-1">
+      <input id="lipid-search" type="text" placeholder="Search lipid by name or SMILES..." autocomplete="off"
+        class="w-full bg-dark-700 border border-dark-400 rounded-lg px-4 py-2.5 text-[13px] text-dark-50 placeholder-dark-200 focus:border-blue-500/40 focus:outline-none transition">
+      <div id="search-dropdown" class="hidden absolute top-full left-0 right-0 mt-1 bg-dark-700 border border-dark-400 rounded-lg shadow-xl z-20 max-h-60 overflow-y-auto">
+      </div>
+    </div>
+    <span class="text-[11px] text-dark-200" id="lipid-count">{{ lipids|length }} / 4 selected</span>
+  </div>
+  <!-- Selected lipid chips -->
+  <div id="selected-chips" class="flex flex-wrap gap-2 mt-3">
+    {% for lip in lipids %}
+    <div class="flex items-center gap-1.5 bg-dark-700 border border-dark-400 rounded-lg px-3 py-1.5 text-[11px] compare-colors-{{ forloop.counter0 }}" data-id="{{ lip.pk }}">
+      <span class="w-2 h-2 rounded-full" style="background: var(--cc)"></span>
+      <span class="text-dark-50">{{ lip.name|truncatechars:30 }}</span>
+      <button onclick="removeLipid({{ lip.pk }})" class="ml-1 text-dark-200 hover:text-red-400 transition">&times;</button>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+{% if lipids %}
+<!-- ROW 1: 2D Structures -->
+<div class="grid grid-cols-{{ lipids|length }} gap-4 mb-4" style="grid-template-columns: repeat({{ lipids|length }}, 1fr)">
+  {% for lip in lipids %}
+  <div class="bg-dark-600 border border-dark-400 rounded-xl compare-colors-{{ forloop.counter0 }}">
+    <div class="px-4 py-3 border-b border-dark-400 flex items-center gap-2">
+      <span class="w-2.5 h-2.5 rounded-full" style="background: var(--cc)"></span>
+      <div class="text-[13px] font-semibold truncate">{{ lip.name|truncatechars:25 }}</div>
+    </div>
+    <div class="p-3 flex items-center justify-center" style="min-height: 200px">
+      <canvas id="mol-{{ lip.pk }}" width="280" height="180" class="rounded-lg" style="background: rgba(255,255,255,.02)"></canvas>
+    </div>
+    <div class="px-4 pb-3">
+      <div class="bg-dark-700 rounded-lg px-2.5 py-1.5 font-mono text-[9px] text-dark-200 break-all max-h-12 overflow-y-auto leading-relaxed select-all">{{ lip.smiles|truncatechars:120 }}</div>
+    </div>
+    <div class="px-4 pb-3 flex flex-wrap gap-1 text-[10px]">
+      {% if lip.has_ester %}<span class="px-1.5 py-0.5 rounded tag-ester font-semibold">Ester</span>{% endif %}
+      {% if lip.has_carbonate %}<span class="px-1.5 py-0.5 rounded tag-carbonate font-semibold">Carbonate</span>{% endif %}
+      {% if lip.has_disulfide %}<span class="px-1.5 py-0.5 rounded tag-disulfide font-semibold">Disulfide</span>{% endif %}
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+<!-- ROW 2: Radar Chart + Property Table -->
+<div class="grid grid-cols-12 gap-4 mb-4">
+
+  <!-- Radar Chart -->
+  <div class="col-span-5 bg-dark-600 border border-dark-400 rounded-xl">
+    <div class="px-5 py-3 border-b border-dark-400">
+      <div class="text-[13px] font-semibold">Descriptor Overlay</div>
+      <div class="text-[10px] text-dark-200">Normalized descriptors (0–1) vs LNPDB range</div>
+    </div>
+    <div class="p-4 flex items-center justify-center">
+      <canvas id="compare-radar" width="400" height="380"></canvas>
+    </div>
+  </div>
+
+  <!-- Property Comparison Table -->
+  <div class="col-span-7 bg-dark-600 border border-dark-400 rounded-xl">
+    <div class="px-5 py-3 border-b border-dark-400">
+      <div class="text-[13px] font-semibold">Property Comparison</div>
+      <div class="text-[10px] text-dark-200">Raw descriptor values side-by-side</div>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="w-full text-[12px]">
+        <thead>
+          <tr class="border-b border-dark-400">
+            <th class="text-left px-4 py-2.5 text-[10px] text-dark-200 uppercase font-semibold">Property</th>
+            {% for lip in lipids %}
+            <th class="text-right px-4 py-2.5 text-[10px] uppercase font-semibold compare-colors-{{ forloop.counter0 }}" style="color: var(--cc)">{{ lip.name|truncatechars:15 }}</th>
+            {% endfor %}
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="border-b border-white/[0.03] hover:bg-blue-500/[0.03]">
+            <td class="px-4 py-2 text-dark-200 text-[11px]">Molecular Weight</td>
+            {% for lip in lipids %}
+            <td class="px-4 py-2 text-right font-mono font-semibold text-dark-50">{{ lip.molecular_weight|floatformat:1|default:"-" }}</td>
+            {% endfor %}
+          </tr>
+          <tr class="border-b border-white/[0.03] hover:bg-blue-500/[0.03]">
+            <td class="px-4 py-2 text-dark-200 text-[11px]">LogP</td>
+            {% for lip in lipids %}
+            <td class="px-4 py-2 text-right font-mono font-semibold text-dark-50">{{ lip.logp|floatformat:2|default:"-" }}</td>
+            {% endfor %}
+          </tr>
+          <tr class="border-b border-white/[0.03] hover:bg-blue-500/[0.03]">
+            <td class="px-4 py-2 text-dark-200 text-[11px]">TPSA</td>
+            {% for lip in lipids %}
+            <td class="px-4 py-2 text-right font-mono font-semibold text-dark-50">{{ lip.tpsa|floatformat:1|default:"-" }}</td>
+            {% endfor %}
+          </tr>
+          <tr class="border-b border-white/[0.03] hover:bg-blue-500/[0.03]">
+            <td class="px-4 py-2 text-dark-200 text-[11px]">HBD / HBA</td>
+            {% for lip in lipids %}
+            <td class="px-4 py-2 text-right font-mono font-semibold text-dark-50">{{ lip.hbd|default:"-" }} / {{ lip.hba|default:"-" }}</td>
+            {% endfor %}
+          </tr>
+          <tr class="border-b border-white/[0.03] hover:bg-blue-500/[0.03]">
+            <td class="px-4 py-2 text-dark-200 text-[11px]">Rotatable Bonds</td>
+            {% for lip in lipids %}
+            <td class="px-4 py-2 text-right font-mono font-semibold text-dark-50">{{ lip.rotatable_bonds|default:"-" }}</td>
+            {% endfor %}
+          </tr>
+          <tr class="border-b border-white/[0.03] hover:bg-blue-500/[0.03]">
+            <td class="px-4 py-2 text-dark-200 text-[11px]">Rings</td>
+            {% for lip in lipids %}
+            <td class="px-4 py-2 text-right font-mono font-semibold text-dark-50">{{ lip.rings|default:"-" }}</td>
+            {% endfor %}
+          </tr>
+          <tr class="border-b border-white/[0.03] hover:bg-blue-500/[0.03]">
+            <td class="px-4 py-2 text-dark-200 text-[11px]">Fsp3</td>
+            {% for lip in lipids %}
+            <td class="px-4 py-2 text-right font-mono font-semibold text-dark-50">{{ lip.fsp3|floatformat:3|default:"-" }}</td>
+            {% endfor %}
+          </tr>
+          <tr class="border-b border-white/[0.03] hover:bg-blue-500/[0.03]">
+            <td class="px-4 py-2 text-dark-200 text-[11px]">Heavy Atoms</td>
+            {% for lip in lipids %}
+            <td class="px-4 py-2 text-right font-mono font-semibold text-dark-50">{{ lip.heavy_atoms|default:"-" }}</td>
+            {% endfor %}
+          </tr>
+          <tr class="border-b border-white/[0.03] hover:bg-blue-500/[0.03]">
+            <td class="px-4 py-2 text-dark-200 text-[11px]">N Count</td>
+            {% for lip in lipids %}
+            <td class="px-4 py-2 text-right font-mono font-semibold text-dark-50">{{ lip.nitrogen_count|default:"-" }}</td>
+            {% endfor %}
+          </tr>
+          <tr class="border-b border-white/[0.03] hover:bg-blue-500/[0.03]">
+            <td class="px-4 py-2 text-dark-200 text-[11px]">Molar Refractivity</td>
+            {% for lip in lipids %}
+            <td class="px-4 py-2 text-right font-mono font-semibold text-dark-50">{{ lip.molar_refractivity|floatformat:1|default:"-" }}</td>
+            {% endfor %}
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ROW 3: Structural Components + Experiment Stats -->
+<div class="grid grid-cols-{{ lipids|length }} gap-4 mb-4" style="grid-template-columns: repeat({{ lipids|length }}, 1fr)">
+  {% for lip in lipids %}
+  <div class="bg-dark-600 border border-dark-400 rounded-xl compare-colors-{{ forloop.counter0 }}">
+    <div class="px-4 py-3 border-b border-dark-400">
+      <div class="text-[12px] font-semibold" style="color: var(--cc)">{{ lip.name|truncatechars:20 }}</div>
+      <div class="text-[10px] text-dark-200">Structural Components</div>
+    </div>
+    <div class="p-4 space-y-2 text-[11px]">
+      <div class="flex justify-between">
+        <span class="text-dark-200">Head Group</span>
+        <span class="font-mono text-dark-50">{{ lip.head_group.name|default:"N/A" }}</span>
+      </div>
+      <div class="flex justify-between">
+        <span class="text-dark-200">Linker</span>
+        <span class="font-mono text-dark-50">{{ lip.linker.name|default:"N/A" }}</span>
+      </div>
+      <div class="flex justify-between">
+        <span class="text-dark-200">Tail 1</span>
+        <span class="font-mono text-dark-50">{{ lip.tail1.name|default:"N/A" }}</span>
+      </div>
+      <div class="flex justify-between">
+        <span class="text-dark-200">Tail 2</span>
+        <span class="font-mono text-dark-50">{{ lip.tail2.name|default:"N/A" }}</span>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+<!-- ROW 4: Experiment Stats Bar Chart -->
+<div class="bg-dark-600 border border-dark-400 rounded-xl mb-4">
+  <div class="px-5 py-3 border-b border-dark-400">
+    <div class="text-[13px] font-semibold">Experiment Statistics</div>
+    <div class="text-[10px] text-dark-200">Total results and average values per lipid</div>
+  </div>
+  <div class="p-4 flex items-center justify-center">
+    <canvas id="exp-chart" width="600" height="250"></canvas>
+  </div>
+</div>
+
+{% else %}
+<!-- EMPTY STATE -->
+<div class="bg-dark-600 border border-dark-400 rounded-xl p-12 text-center">
+  <div class="text-[40px] mb-3 opacity-20">&#x2696;</div>
+  <div class="text-[15px] font-semibold text-dark-100 mb-2">No Lipids Selected</div>
+  <p class="text-[12px] text-dark-200 mb-4 max-w-md mx-auto">Search for lipids above to add them to the comparison. You can compare up to 4 ionizable lipids side-by-side with overlaid radar charts and property tables.</p>
+  <a href="{% url 'compounds:list' %}" class="inline-block px-5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-[12px] font-semibold transition">Browse Lipid Explorer</a>
+</div>
+{% endif %}
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  const COLORS = ["#3b82f6", "#34d399", "#f59e0b", "#a78bfa"];
+  const BG_COLORS = ["rgba(59,130,246,0.12)", "rgba(52,211,153,0.12)", "rgba(245,158,11,0.12)", "rgba(167,139,250,0.12)"];
+
+  // ── Lipid search ──
+  const searchInput = document.getElementById("lipid-search");
+  const dropdown = document.getElementById("search-dropdown");
+  let searchTimeout;
+
+  // Current IDs from URL
+  function getCurrentIds() {
+    const params = new URLSearchParams(window.location.search);
+    return params.getAll("ids");
+  }
+
+  searchInput.addEventListener("input", function() {
+    clearTimeout(searchTimeout);
+    const q = this.value.trim();
+    if (q.length < 2) { dropdown.classList.add("hidden"); return; }
+    searchTimeout = setTimeout(() => {
+      fetch('/formulations/api/search-lipids/?q=' + encodeURIComponent(q))
+        .then(r => r.json())
+        .then(data => {
+          const ids = getCurrentIds();
+          const items = (data.results || []).filter(r => !ids.includes(String(r.id)));
+          if (items.length === 0) {
+            dropdown.innerHTML = '<div class="px-4 py-3 text-[11px] text-dark-200">No results</div>';
+          } else {
+            dropdown.innerHTML = items.slice(0, 8).map(r => `
+              <div class="search-result px-4 py-2.5 cursor-pointer border-b border-dark-400/50" onclick="addLipid(${r.id})">
+                <div class="text-[12px] text-dark-50 font-medium">${r.name}</div>
+                <div class="text-[10px] text-dark-200 font-mono truncate mt-0.5">${r.smiles ? r.smiles.substring(0, 60) + '...' : ''}</div>
+              </div>
+            `).join('');
+          }
+          dropdown.classList.remove("hidden");
+        });
+    }, 250);
+  });
+
+  searchInput.addEventListener("blur", () => {
+    setTimeout(() => dropdown.classList.add("hidden"), 200);
+  });
+  searchInput.addEventListener("focus", () => {
+    if (dropdown.innerHTML.trim()) dropdown.classList.remove("hidden");
+  });
+
+  window.addLipid = function(id) {
+    const ids = getCurrentIds();
+    if (ids.length >= 4) { alert("Maximum 4 lipids"); return; }
+    if (ids.includes(String(id))) return;
+    ids.push(String(id));
+    const params = new URLSearchParams();
+    ids.forEach(i => params.append("ids", i));
+    window.location.href = "{% url 'compounds:compare' %}?" + params.toString();
+  };
+
+  window.removeLipid = function(id) {
+    const ids = getCurrentIds().filter(i => i !== String(id));
+    if (ids.length === 0) {
+      window.location.href = "{% url 'compounds:compare' %}";
+    } else {
+      const params = new URLSearchParams();
+      ids.forEach(i => params.append("ids", i));
+      window.location.href = "{% url 'compounds:compare' %}?" + params.toString();
+    }
+  };
+
+  {% if lipids %}
+  // ── SmilesDrawer: 2D Structures ──
+  const drawer = new SmilesDrawer.SmiDrawer({
+    width: 280, height: 180,
+    bondThickness: 1.0,
+    bondLength: 15,
+    shortBondLength: 0.8,
+    bondSpacing: 4,
+    fontSizeLarge: 6,
+    fontSizeSmall: 3,
+    padding: 15,
+    themes: {
+      dark: {
+        C: '#9ca8c0', O: '#f43f5e', N: '#3b82f6', S: '#f59e0b',
+        F: '#34d399', Cl: '#34d399', Br: '#a78bfa', I: '#a78bfa',
+        P: '#fb923c', H: '#4e5d78', BACKGROUND: '#0d1117'
+      }
+    }
+  });
+  {% for lip in lipids %}
+  drawer.draw("{{ lip.smiles|escapejs }}", "#mol-{{ lip.pk }}", "dark");
+  {% endfor %}
+
+  // ── Radar Chart ──
+  const radarLabels = {{ radar_labels_json|safe }};
+  const radarDatasets = {{ radar_datasets_json|safe }};
+  const avgRadar = {{ avg_radar_json|safe }};
+
+  const chartDatasets = radarDatasets.map((ds, i) => ({
+    label: ds.name,
+    data: ds.values,
+    borderColor: COLORS[i],
+    backgroundColor: BG_COLORS[i],
+    borderWidth: 2,
+    pointRadius: 3,
+    pointBackgroundColor: COLORS[i],
+  }));
+  // Add DB average as dashed reference
+  chartDatasets.push({
+    label: "LNPDB Average",
+    data: avgRadar,
+    borderColor: "#4e5d78",
+    backgroundColor: "rgba(78,93,120,0.06)",
+    borderWidth: 1.5,
+    borderDash: [4, 4],
+    pointRadius: 2,
+    pointBackgroundColor: "#4e5d78",
+  });
+
+  new Chart(document.getElementById("compare-radar"), {
+    type: "radar",
+    data: { labels: radarLabels, datasets: chartDatasets },
+    options: {
+      responsive: false,
+      plugins: {
+        legend: {
+          position: "bottom",
+          labels: { color: "#9ca8c0", font: { size: 10, family: "Plus Jakarta Sans" }, boxWidth: 12, padding: 10 }
+        }
+      },
+      scales: {
+        r: {
+          min: 0, max: 1,
+          ticks: { display: false, stepSize: 0.25 },
+          grid: { color: "rgba(255,255,255,0.04)" },
+          angleLines: { color: "rgba(255,255,255,0.06)" },
+          pointLabels: { color: "#9ca8c0", font: { size: 9, family: "JetBrains Mono" } }
+        }
+      }
+    }
+  });
+
+  // ── Experiment Bar Chart ──
+  const expStats = {{ exp_stats_json|safe }};
+  const lipidNames = radarDatasets.map(d => d.name);
+
+  new Chart(document.getElementById("exp-chart"), {
+    type: "bar",
+    data: {
+      labels: lipidNames,
+      datasets: [
+        {
+          label: "Total Results",
+          data: expStats.map(s => s.total),
+          backgroundColor: COLORS.slice(0, expStats.length).map(c => c + "66"),
+          borderColor: COLORS.slice(0, expStats.length),
+          borderWidth: 1,
+          borderRadius: 4,
+          yAxisID: "y",
+        },
+        {
+          label: "Avg Value",
+          data: expStats.map(s => s.avg),
+          backgroundColor: COLORS.slice(0, expStats.length).map(c => c + "33"),
+          borderColor: COLORS.slice(0, expStats.length),
+          borderWidth: 1,
+          borderRadius: 4,
+          borderDash: [3, 3],
+          yAxisID: "y1",
+          type: "bar",
+        }
+      ]
+    },
+    options: {
+      responsive: false,
+      plugins: {
+        legend: {
+          position: "bottom",
+          labels: { color: "#9ca8c0", font: { size: 10, family: "Plus Jakarta Sans" }, boxWidth: 12, padding: 12 }
+        }
+      },
+      scales: {
+        x: { grid: { display: false }, ticks: { color: "#9ca8c0", font: { size: 10 } } },
+        y: {
+          position: "left",
+          grid: { color: "rgba(255,255,255,0.03)" },
+          ticks: { color: "#4e5d78", font: { size: 9, family: "JetBrains Mono" } },
+          title: { display: true, text: "Count", color: "#4e5d78", font: { size: 9 } }
+        },
+        y1: {
+          position: "right",
+          grid: { display: false },
+          ticks: { color: "#4e5d78", font: { size: 9, family: "JetBrains Mono" } },
+          title: { display: true, text: "Avg Value", color: "#4e5d78", font: { size: 9 } }
+        }
+      }
+    }
+  });
+  {% endif %}
+});
+</script>
+{% endblock %}

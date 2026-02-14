@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OmniLNP - Sign In</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script>
+tailwind.config = {
+  theme: { extend: {
+    fontFamily: { sans: ['Plus Jakarta Sans','sans-serif'], mono: ['JetBrains Mono','monospace'] },
+    colors: { dark: { 50:'#e8ecf4',100:'#9ca8c0',200:'#4e5d78',300:'#253352',400:'#1a2236',500:'#151c2c',600:'#111827',700:'#0f1420',800:'#0b0f18',900:'#06080d' }}
+  }}
+}
+</script>
+<style>
+body { font-family: 'Plus Jakarta Sans', sans-serif; }
+.login-glow { box-shadow: 0 0 80px rgba(59,130,246,0.06), 0 0 160px rgba(59,130,246,0.03); }
+</style>
+</head>
+<body class="bg-dark-900 text-dark-50 min-h-screen flex items-center justify-center">
+
+<div class="w-full max-w-md mx-auto px-4">
+  <!-- Logo -->
+  <div class="text-center mb-8">
+    <h1 class="text-3xl font-extrabold bg-gradient-to-r from-blue-500 to-cyan-400 bg-clip-text text-transparent mb-2">OmniLNP</h1>
+    <p class="text-[11px] text-dark-200 tracking-widest uppercase">AI-Native Autonomous Lab Platform</p>
+  </div>
+
+  <!-- Login Card -->
+  <div class="bg-dark-600 border border-dark-400 rounded-2xl p-8 login-glow">
+    <div class="mb-6">
+      <h2 class="text-[18px] font-bold mb-1">Sign In</h2>
+      <p class="text-[12px] text-dark-200">Enter your credentials to access the platform</p>
+    </div>
+
+    {% if messages %}
+    {% for msg in messages %}
+    <div class="mb-4 px-4 py-3 rounded-lg text-[12px] font-medium
+      {% if msg.tags == 'error' %}bg-red-500/10 text-red-400 border border-red-500/20{% else %}bg-blue-500/10 text-blue-400 border border-blue-500/20{% endif %}">
+      {{ msg }}
+    </div>
+    {% endfor %}
+    {% endif %}
+
+    <form method="post" class="space-y-4">
+      {% csrf_token %}
+      <div>
+        <label for="username" class="block text-[11px] text-dark-200 font-semibold uppercase tracking-wide mb-1.5">Username</label>
+        <input type="text" name="username" id="username" required autofocus
+          class="w-full bg-dark-700 border border-dark-400 rounded-lg px-4 py-3 text-[13px] text-dark-50 placeholder-dark-200 focus:border-blue-500/40 focus:outline-none transition"
+          placeholder="Enter your username">
+      </div>
+      <div>
+        <label for="password" class="block text-[11px] text-dark-200 font-semibold uppercase tracking-wide mb-1.5">Password</label>
+        <input type="password" name="password" id="password" required
+          class="w-full bg-dark-700 border border-dark-400 rounded-lg px-4 py-3 text-[13px] text-dark-50 placeholder-dark-200 focus:border-blue-500/40 focus:outline-none transition"
+          placeholder="Enter your password">
+      </div>
+      <button type="submit"
+        class="w-full py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-[13px] font-semibold transition mt-2">
+        Sign In
+      </button>
+    </form>
+  </div>
+
+  <!-- Footer -->
+  <div class="text-center mt-6">
+    <p class="text-[10px] text-dark-200">LNP Development Platform &middot; InSiliCox &middot; 2026</p>
+  </div>
+</div>
+
+</body>
+</html>

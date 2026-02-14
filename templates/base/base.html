@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}OmniLNP{% endblock %}</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/htmx.org@1.9.12"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script>
+tailwind.config = {
+  theme: { extend: {
+    fontFamily: { sans: ['Plus Jakarta Sans','sans-serif'], mono: ['JetBrains Mono','monospace'] },
+    colors: { dark: { 50:'#e8ecf4',100:'#9ca8c0',200:'#4e5d78',300:'#253352',400:'#1a2236',500:'#151c2c',600:'#111827',700:'#0f1420',800:'#0b0f18',900:'#06080d' }}
+  }}
+}
+</script>
+<style>
+body { font-family: 'Plus Jakarta Sans', sans-serif; }
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #1a2236; border-radius: 3px; }
+.stat-card { transition: all 0.15s; }
+.stat-card:hover { border-color: #253352; transform: translateY(-1px); }
+</style>
+{% block extra_head %}{% endblock %}
+</head>
+<body class="bg-dark-900 text-dark-50 flex min-h-screen">
+
+<!-- SIDEBAR -->
+<aside class="w-[260px] bg-dark-800 border-r border-dark-400 flex flex-col fixed top-0 left-0 bottom-0 z-50 overflow-y-auto">
+  <div class="px-6 py-5 border-b border-dark-400">
+    <h1 class="text-xl font-extrabold bg-gradient-to-r from-blue-500 to-cyan-400 bg-clip-text text-transparent">OmniLNP</h1>
+    <span class="text-[10px] text-dark-200 tracking-widest uppercase mt-1 block">AI-Native Autonomous Lab</span>
+  </div>
+  <nav class="flex-1 py-4 px-3">
+    {% with app=request.resolver_match.app_name view=request.resolver_match.url_name %}
+    <div class="text-[10px] font-semibold text-dark-200 uppercase tracking-wider px-3 mb-2">Overview</div>
+    <a href="{% url 'dashboard:index' %}" class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-[13px] {% if app == 'dashboard' %}bg-blue-500/10 text-blue-400 font-semibold{% else %}text-dark-100 hover:bg-dark-500{% endif %} mb-0.5">Dashboard</a>
+
+    <div class="text-[10px] font-semibold text-dark-200 uppercase tracking-wider px-3 mb-2 mt-4">Data</div>
+    <a href="{% url 'compounds:list' %}" class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-[13px] {% if app == 'compounds' %}bg-blue-500/10 text-blue-400 font-semibold{% else %}text-dark-100 hover:bg-dark-500{% endif %} mb-0.5">Lipid Explorer</a>
+    <a href="{% url 'formulations:list' %}" class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-[13px] {% if app == 'formulations' %}bg-blue-500/10 text-blue-400 font-semibold{% else %}text-dark-100 hover:bg-dark-500{% endif %} mb-0.5">Formulations</a>
+    <a href="{% url 'experiments:list' %}" class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-[13px] {% if app == 'experiments' %}bg-blue-500/10 text-blue-400 font-semibold{% else %}text-dark-100 hover:bg-dark-500{% endif %} mb-0.5">Experiments</a>
+
+    <div class="text-[10px] font-semibold text-dark-200 uppercase tracking-wider px-3 mb-2 mt-4">AI Models</div>
+    <a href="{% url 'ai_models:predict' %}" class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-[13px] {% if view == 'predict' %}bg-blue-500/10 text-blue-400 font-semibold{% else %}text-dark-100 hover:bg-dark-500{% endif %} mb-0.5">Predict</a>
+    <a href="{% url 'ai_models:generate' %}" class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-[13px] {% if view == 'generate' %}bg-blue-500/10 text-blue-400 font-semibold{% else %}text-dark-100 hover:bg-dark-500{% endif %} mb-0.5">Generate</a>
+    <a href="{% url 'ai_models:optimize' %}" class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-[13px] {% if view == 'optimize' %}bg-blue-500/10 text-blue-400 font-semibold{% else %}text-dark-100 hover:bg-dark-500{% endif %} mb-0.5">Optimize</a>
+
+    <div class="text-[10px] font-semibold text-dark-200 uppercase tracking-wider px-3 mb-2 mt-4">Lab</div>
+    <a href="{% url 'equipment:monitor' %}" class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-[13px] {% if app == 'equipment' %}bg-blue-500/10 text-blue-400 font-semibold{% else %}text-dark-100 hover:bg-dark-500{% endif %} mb-0.5">Equipment</a>
+    <a href="{% url 'workflow:pipeline' %}" class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-[13px] {% if app == 'workflow' %}bg-blue-500/10 text-blue-400 font-semibold{% else %}text-dark-100 hover:bg-dark-500{% endif %} mb-0.5">Workflow</a>
+    {% endwith %}
+  </nav>
+</aside>
+
+<!-- MAIN -->
+<div class="ml-[260px] flex-1 min-h-screen">
+  <div class="h-[60px] border-b border-dark-400 flex items-center justify-between px-8 bg-dark-900/80 backdrop-blur-xl sticky top-0 z-40">
+    <span class="text-[13px] text-dark-200">{% block breadcrumb %}Dashboard{% endblock %}</span>
+    {% if user.is_authenticated %}
+    <div class="flex items-center gap-3">
+      <div class="flex items-center gap-2">
+        <div class="w-7 h-7 rounded-full bg-blue-500/15 border border-blue-500/20 flex items-center justify-center text-[10px] font-bold text-blue-400">{{ user.username|make_list|first|upper }}</div>
+        <div>
+          <div class="text-[11px] font-semibold text-dark-50">{{ user.username }}</div>
+          <div class="text-[9px] text-dark-200">{{ user.get_role_display|default:"Researcher" }}</div>
+        </div>
+      </div>
+      <a href="{% url 'accounts:logout' %}" class="px-3 py-1.5 border border-dark-400 hover:border-dark-300 rounded-lg text-[10px] text-dark-200 hover:text-dark-100 transition">Sign Out</a>
+    </div>
+    {% endif %}
+  </div>
+  <main class="p-7">{% block content %}{% endblock %}</main>
+</div>
+
+{% block extra_js %}{% endblock %}
+
+<!-- AI Assistant Chatbot -->
+{% if user.is_authenticated %}
+<div id="chat-widget" data-page-context="{{ request.resolver_match.app_name|default:'dashboard' }}">
+  <!-- Toggle Button -->
+  <button id="chat-toggle" onclick="toggleChat()" class="fixed bottom-6 right-6 w-14 h-14 bg-blue-600 hover:bg-blue-500 rounded-full shadow-lg shadow-blue-600/25 flex items-center justify-center transition-all z-50 group">
+    <svg id="chat-icon-open" class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+    <svg id="chat-icon-close" class="w-6 h-6 text-white hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+  </button>
+
+  <!-- Chat Panel -->
+  <div id="chat-panel" class="fixed bottom-24 right-6 w-[400px] max-h-[560px] bg-dark-700 border border-dark-400 rounded-2xl shadow-2xl shadow-black/40 flex flex-col z-50 hidden" style="transition:all .2s ease">
+    <!-- Header -->
+    <div class="flex items-center justify-between px-5 py-3.5 border-b border-dark-400">
+      <div class="flex items-center gap-2.5">
+        <div class="w-8 h-8 rounded-full bg-blue-500/15 border border-blue-500/20 flex items-center justify-center">
+          <svg class="w-4 h-4 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714a2.25 2.25 0 00.659 1.591L19 14.5M14.25 3.104c.251.023.501.05.75.082M19 14.5l-2.47 2.47a2.25 2.25 0 01-1.59.659H9.06a2.25 2.25 0 01-1.59-.659L5 14.5m14 0V5a2 2 0 00-2-2H7a2 2 0 00-2 2v9.5"/></svg>
+        </div>
+        <div>
+          <div class="text-[13px] font-semibold text-dark-50">AI Assistant</div>
+          <div class="text-[10px] text-dark-200">OmniLNP Helper</div>
+        </div>
+      </div>
+      <button onclick="clearChat()" class="text-[10px] text-dark-200 hover:text-dark-100 px-2 py-1 rounded hover:bg-dark-600 transition">Clear</button>
+    </div>
+
+    <!-- Messages -->
+    <div id="chat-messages" class="flex-1 overflow-y-auto px-4 py-3 space-y-3" style="min-height:300px;max-height:400px">
+      <div class="flex gap-2.5">
+        <div class="w-6 h-6 rounded-full bg-blue-500/15 flex items-center justify-center flex-shrink-0 mt-0.5"><svg class="w-3 h-3 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714a2.25 2.25 0 00.659 1.591L19 14.5"/></svg></div>
+        <div class="bg-dark-600 border border-dark-400 rounded-xl rounded-tl-sm px-3.5 py-2.5 text-[12px] text-dark-100 leading-relaxed max-w-[300px]">
+          안녕하세요! OmniLNP AI 어시스턴트입니다. 무엇을 도와드릴까요?
+        </div>
+      </div>
+    </div>
+
+    <!-- Input -->
+    <div class="px-4 pb-4 pt-2 border-t border-dark-400">
+      <form id="chat-form" onsubmit="sendMessage(event)" class="flex gap-2">
+        <input id="chat-input" type="text" placeholder="메시지를 입력하세요..." autocomplete="off"
+          class="flex-1 bg-dark-600 border border-dark-400 rounded-xl px-4 py-2.5 text-[12px] text-dark-50 placeholder-dark-200 focus:border-blue-500 focus:outline-none transition">
+        <button type="submit" id="chat-send" class="px-4 py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-[12px] font-semibold transition disabled:opacity-40 disabled:cursor-not-allowed">
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19V5m0 0l-7 7m7-7l7 7" transform="rotate(90 12 12)"/></svg>
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  const csrfToken = '{{ csrf_token }}';
+  const pageContext = document.getElementById('chat-widget')?.dataset.pageContext || 'dashboard';
+  let chatHistory = [];
+  let chatOpen = false;
+  let sending = false;
+
+  window.toggleChat = function() {
+    chatOpen = !chatOpen;
+    document.getElementById('chat-panel').classList.toggle('hidden', !chatOpen);
+    document.getElementById('chat-icon-open').classList.toggle('hidden', chatOpen);
+    document.getElementById('chat-icon-close').classList.toggle('hidden', !chatOpen);
+    if (chatOpen) document.getElementById('chat-input').focus();
+  };
+
+  window.clearChat = function() {
+    chatHistory = [];
+    const el = document.getElementById('chat-messages');
+    el.innerHTML = `<div class="flex gap-2.5">
+      <div class="w-6 h-6 rounded-full bg-blue-500/15 flex items-center justify-center flex-shrink-0 mt-0.5"><svg class="w-3 h-3 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714a2.25 2.25 0 00.659 1.591L19 14.5"/></svg></div>
+      <div class="bg-dark-600 border border-dark-400 rounded-xl rounded-tl-sm px-3.5 py-2.5 text-[12px] text-dark-100 leading-relaxed max-w-[300px]">안녕하세요! OmniLNP AI 어시스턴트입니다. 무엇을 도와드릴까요?</div>
+    </div>`;
+  };
+
+  function appendMessage(role, text) {
+    const el = document.getElementById('chat-messages');
+    if (role === 'user') {
+      el.insertAdjacentHTML('beforeend',
+        `<div class="flex justify-end"><div class="bg-blue-600/90 rounded-xl rounded-tr-sm px-3.5 py-2.5 text-[12px] text-white leading-relaxed max-w-[300px]">${esc(text)}</div></div>`);
+    } else {
+      el.insertAdjacentHTML('beforeend',
+        `<div class="flex gap-2.5">
+          <div class="w-6 h-6 rounded-full bg-blue-500/15 flex items-center justify-center flex-shrink-0 mt-0.5"><svg class="w-3 h-3 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714a2.25 2.25 0 00.659 1.591L19 14.5"/></svg></div>
+          <div class="bg-dark-600 border border-dark-400 rounded-xl rounded-tl-sm px-3.5 py-2.5 text-[12px] text-dark-100 leading-relaxed max-w-[300px] chat-md">${formatMd(text)}</div>
+        </div>`);
+    }
+    el.scrollTop = el.scrollHeight;
+  }
+
+  function showTyping() {
+    const el = document.getElementById('chat-messages');
+    el.insertAdjacentHTML('beforeend',
+      `<div id="typing-indicator" class="flex gap-2.5">
+        <div class="w-6 h-6 rounded-full bg-blue-500/15 flex items-center justify-center flex-shrink-0 mt-0.5"><svg class="w-3 h-3 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714a2.25 2.25 0 00.659 1.591L19 14.5"/></svg></div>
+        <div class="bg-dark-600 border border-dark-400 rounded-xl rounded-tl-sm px-3.5 py-2.5 flex items-center gap-1">
+          <span class="w-1.5 h-1.5 bg-dark-200 rounded-full animate-bounce" style="animation-delay:0ms"></span>
+          <span class="w-1.5 h-1.5 bg-dark-200 rounded-full animate-bounce" style="animation-delay:150ms"></span>
+          <span class="w-1.5 h-1.5 bg-dark-200 rounded-full animate-bounce" style="animation-delay:300ms"></span>
+        </div>
+      </div>`);
+    el.scrollTop = el.scrollHeight;
+  }
+
+  function hideTyping() {
+    document.getElementById('typing-indicator')?.remove();
+  }
+
+  function esc(s) {
+    const d = document.createElement('div');
+    d.textContent = s;
+    return d.innerHTML;
+  }
+
+  function formatMd(text) {
+    let s = esc(text);
+    s = s.replace(/```(\w*)\n([\s\S]*?)```/g, '<pre class="bg-dark-800 rounded-lg p-2 my-1 overflow-x-auto text-[11px] font-mono text-emerald-400">$2</pre>');
+    s = s.replace(/`([^`]+)`/g, '<code class="bg-dark-800 px-1.5 py-0.5 rounded text-[11px] font-mono text-cyan-400">$1</code>');
+    s = s.replace(/\*\*([^*]+)\*\*/g, '<strong class="font-semibold text-dark-50">$1</strong>');
+    s = s.replace(/\n/g, '<br>');
+    return s;
+  }
+
+  function extractScreenData() {
+    const parts = [];
+    // stat cards
+    document.querySelectorAll('.stat-card').forEach(card => {
+      const label = card.querySelector('[class*="text-dark-200"], [class*="text-dark-100"]');
+      const value = card.querySelector('[class*="text-[28px]"], [class*="text-[22px]"], [class*="font-extrabold"]');
+      if (label && value) parts.push(label.textContent.trim() + ': ' + value.textContent.trim());
+    });
+    // tables
+    document.querySelectorAll('table').forEach(table => {
+      const headers = Array.from(table.querySelectorAll('th')).map(th => th.textContent.trim());
+      if (headers.length) parts.push('테이블 컬럼: ' + headers.join(' | '));
+      const rows = table.querySelectorAll('tbody tr');
+      const rowData = [];
+      rows.forEach((tr, i) => {
+        if (i >= 10) return;
+        const cells = Array.from(tr.querySelectorAll('td')).map(td => td.textContent.trim().substring(0, 80));
+        if (cells.length) rowData.push(cells.join(' | '));
+      });
+      if (rowData.length) parts.push('데이터 행:\n' + rowData.join('\n'));
+    });
+    // detail panels (key-value)
+    document.querySelectorAll('dt, .detail-label').forEach(dt => {
+      const dd = dt.nextElementSibling;
+      if (dd) parts.push(dt.textContent.trim() + ': ' + dd.textContent.trim().substring(0, 120));
+    });
+    // selected/highlighted items
+    const mainContent = document.querySelector('main');
+    if (mainContent && parts.length === 0) {
+      const text = mainContent.innerText.substring(0, 2000).replace(/\s+/g, ' ');
+      parts.push(text);
+    }
+    return parts.join('\n').substring(0, 3000);
+  }
+
+  window.sendMessage = async function(e) {
+    e.preventDefault();
+    if (sending) return;
+    const input = document.getElementById('chat-input');
+    const msg = input.value.trim();
+    if (!msg) return;
+
+    input.value = '';
+    sending = true;
+    document.getElementById('chat-send').disabled = true;
+
+    appendMessage('user', msg);
+    showTyping();
+
+    const screenData = extractScreenData();
+
+    try {
+      const resp = await fetch('/assistant/api/chat/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrfToken },
+        body: JSON.stringify({ message: msg, page_context: pageContext, history: chatHistory, screen_data: screenData })
+      });
+      hideTyping();
+      const data = await resp.json();
+      if (data.reply) {
+        chatHistory.push({ role: 'user', content: msg });
+        chatHistory.push({ role: 'assistant', content: data.reply });
+        appendMessage('assistant', data.reply);
+      } else {
+        appendMessage('assistant', data.error || '응답을 받지 못했습니다.');
+      }
+    } catch (err) {
+      hideTyping();
+      appendMessage('assistant', '네트워크 오류가 발생했습니다. 다시 시도해주세요.');
+    }
+    sending = false;
+    document.getElementById('chat-send').disabled = false;
+    input.focus();
+  };
+})();
+</script>
+<style>
+.chat-md pre { white-space: pre-wrap; word-break: break-all; }
+</style>
+{% endif %}
+
+</body>
+</html>

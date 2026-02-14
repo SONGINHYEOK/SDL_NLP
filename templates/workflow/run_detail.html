@@ -1,0 +1,307 @@
+{% extends "base/base.html" %}
+{% block title %}OmniLNP - {{ run.name }}{% endblock %}
+{% block breadcrumb %}Lab / <a href="{% url 'workflow:pipeline' %}" class="hover:text-blue-400">Workflow</a> / <strong class="text-dark-50">{{ run.name }}</strong>{% endblock %}
+
+{% block extra_head %}
+<style>
+@keyframes stepPulse { 0%,100%{box-shadow:0 0 0 0 rgba(59,130,246,0.4)} 50%{box-shadow:0 0 0 8px rgba(59,130,246,0)} }
+@keyframes awaitPulse { 0%,100%{box-shadow:0 0 0 0 rgba(245,158,11,0.4)} 50%{box-shadow:0 0 0 8px rgba(245,158,11,0)} }
+.step-running { animation: stepPulse 2s infinite; }
+.step-awaiting { animation: awaitPulse 2s infinite; }
+.json-viewer { white-space: pre-wrap; word-break: break-all; max-height: 200px; overflow-y: auto; }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- HEADER -->
+<div class="flex justify-between items-end mb-6">
+  <div>
+    <div class="flex items-center gap-3 mb-1">
+      <a href="{% url 'workflow:pipeline' %}" class="text-[11px] text-dark-200 hover:text-blue-400">&larr; All Workflows</a>
+    </div>
+    <h2 class="text-[22px] font-bold tracking-tight">{{ run.name }}</h2>
+    <p class="text-[13px] text-dark-100 mt-1">Iteration {{ run.iteration }} &middot; {{ run.progress_pct }}% complete</p>
+  </div>
+  <div class="flex items-center gap-3">
+    <!-- Run control buttons -->
+    {% if run.can_pause %}
+    <form method="post" action="{% url 'workflow:pause_run' run.pk %}">{% csrf_token %}
+      <button type="submit" class="px-3.5 py-1.5 border border-yellow-500/40 hover:bg-yellow-500/10 text-yellow-400 text-[11px] font-semibold rounded-lg transition">Pause</button>
+    </form>
+    {% endif %}
+    {% if run.can_resume %}
+    <form method="post" action="{% url 'workflow:resume_run' run.pk %}">{% csrf_token %}
+      <button type="submit" class="px-3.5 py-1.5 border border-emerald-500/40 hover:bg-emerald-500/10 text-emerald-400 text-[11px] font-semibold rounded-lg transition">Resume</button>
+    </form>
+    {% endif %}
+    {% if run.can_cancel %}
+    <form method="post" action="{% url 'workflow:cancel_run' run.pk %}" onsubmit="return confirm('Cancel this workflow? Incomplete steps will be skipped.')">{% csrf_token %}
+      <button type="submit" class="px-3.5 py-1.5 border border-rose-500/40 hover:bg-rose-500/10 text-rose-400 text-[11px] font-semibold rounded-lg transition">Cancel</button>
+    </form>
+    {% endif %}
+    <span class="px-3 py-1.5 rounded-lg text-[12px] font-semibold
+      {% if run.status == 'completed' %}bg-emerald-500/10 text-emerald-400
+      {% elif run.status == 'running' %}bg-blue-500/10 text-blue-400
+      {% elif run.status == 'failed' %}bg-rose-500/10 text-rose-400
+      {% elif run.status == 'analyzing' %}bg-violet-500/10 text-violet-400
+      {% elif run.status == 'paused' %}bg-yellow-500/10 text-yellow-400
+      {% elif run.status == 'cancelled' %}bg-gray-500/10 text-gray-400
+      {% else %}bg-dark-500 text-dark-100{% endif %}">{{ run.get_status_display }}</span>
+  </div>
+</div>
+
+<!-- RUN INFO CARDS -->
+<div class="grid grid-cols-4 gap-3.5 mb-6">
+  <div class="stat-card bg-dark-600 border border-dark-400 rounded-xl p-5">
+    <div class="text-[10px] text-dark-200 uppercase font-semibold tracking-wide mb-1">Iteration</div>
+    <div class="text-[22px] font-extrabold font-mono text-blue-400">{{ run.iteration }}</div>
+  </div>
+  <div class="stat-card bg-dark-600 border border-dark-400 rounded-xl p-5">
+    <div class="text-[10px] text-dark-200 uppercase font-semibold tracking-wide mb-1">Progress</div>
+    <div class="text-[22px] font-extrabold font-mono text-emerald-400">{{ run.progress_pct }}%</div>
+  </div>
+  <div class="stat-card bg-dark-600 border border-dark-400 rounded-xl p-5">
+    <div class="text-[10px] text-dark-200 uppercase font-semibold tracking-wide mb-1">AI Model</div>
+    <div class="text-[13px] font-semibold text-dark-50 mt-1">{{ run.ai_model.name|default:"Not assigned" }}</div>
+  </div>
+  <div class="stat-card bg-dark-600 border border-dark-400 rounded-xl p-5">
+    <div class="text-[10px] text-dark-200 uppercase font-semibold tracking-wide mb-1">Created</div>
+    <div class="text-[13px] font-semibold text-dark-50 mt-1">{{ run.created_at|timesince }} ago</div>
+  </div>
+</div>
+
+<!-- PROGRESS BAR -->
+<div class="bg-dark-600 border border-dark-400 rounded-xl p-5 mb-6">
+  <div class="flex items-center gap-3 mb-3">
+    <div class="flex-1 h-2 bg-white/5 rounded-full overflow-hidden">
+      <div class="h-full rounded-full transition-all duration-500
+        {% if run.status == 'completed' %}bg-emerald-400
+        {% elif run.status == 'failed' %}bg-rose-500
+        {% elif run.status == 'paused' %}bg-yellow-500
+        {% elif run.status == 'cancelled' %}bg-gray-500
+        {% else %}bg-blue-500{% endif %}" style="width:{{ run.progress_pct }}%"></div>
+    </div>
+    <span class="text-[12px] font-mono text-dark-100">{{ run.progress_pct }}%</span>
+  </div>
+</div>
+
+<!-- STEP TIMELINE -->
+<div class="space-y-4">
+  {% for step in run.steps.all %}
+  <div class="bg-dark-600 border rounded-xl overflow-hidden
+    {% if step.status == 'awaiting_approval' %}border-amber-500/40{% else %}border-dark-400{% endif %}">
+    <div class="flex">
+      <!-- Step indicator -->
+      <div class="w-16 flex-shrink-0 flex flex-col items-center justify-center border-r border-dark-400
+        {% if step.status == 'completed' %}bg-emerald-500/5
+        {% elif step.status == 'running' %}bg-blue-500/5
+        {% elif step.status == 'failed' %}bg-rose-500/5
+        {% elif step.status == 'awaiting_approval' %}bg-amber-500/5
+        {% else %}bg-dark-700{% endif %}">
+        <div class="w-10 h-10 rounded-full flex items-center justify-center text-[13px] font-bold
+          {% if step.status == 'completed' %}bg-emerald-500/15 text-emerald-400 border-2 border-emerald-500/30
+          {% elif step.status == 'running' %}bg-blue-500/15 text-blue-400 border-2 border-blue-500/30 step-running
+          {% elif step.status == 'failed' %}bg-rose-500/15 text-rose-400 border-2 border-rose-500/30
+          {% elif step.status == 'awaiting_approval' %}bg-amber-500/15 text-amber-400 border-2 border-amber-500/30 step-awaiting
+          {% else %}bg-dark-500 text-dark-200 border-2 border-dark-400{% endif %}">
+          {% if step.status == 'completed' %}&#10003;
+          {% elif step.status == 'running' %}&#9654;
+          {% elif step.status == 'failed' %}&#10007;
+          {% elif step.status == 'awaiting_approval' %}&#9208;
+          {% else %}{{ step.step_order }}{% endif %}
+        </div>
+      </div>
+
+      <!-- Step content -->
+      <div class="flex-1 p-5">
+        <div class="flex items-center justify-between mb-3">
+          <div>
+            <div class="text-[13px] font-semibold">Step {{ step.step_order }}: {{ step.get_step_type_display }}</div>
+            <div class="text-[11px] text-dark-200 mt-0.5">
+              {% if step.equipment %}Equipment: {{ step.equipment.name }} &middot; {% endif %}
+              {% if step.started_at and step.completed_at %}
+              Duration: {{ step.started_at|timesince:step.completed_at }}
+              {% elif step.started_at %}
+              Started {{ step.started_at|timesince }} ago
+              {% else %}
+              Not started
+              {% endif %}
+            </div>
+          </div>
+          <div class="flex items-center gap-2">
+            <!-- Action buttons -->
+            {% if step.status == 'awaiting_approval' %}
+            <form method="post" action="{% url 'workflow:approve_step' run.pk step.pk %}" class="inline">{% csrf_token %}
+              <button type="submit" class="px-3 py-1 bg-emerald-600 hover:bg-emerald-500 text-white text-[10px] font-semibold rounded-lg transition">Approve &amp; Continue</button>
+            </form>
+            {% endif %}
+            {% if step.status == 'running' %}
+            <form method="post" action="{% url 'workflow:simulate_step' run.pk step.pk %}" class="inline">{% csrf_token %}
+              <button type="submit" class="px-3 py-1 bg-blue-600 hover:bg-blue-500 text-white text-[10px] font-semibold rounded-lg transition">Simulate Completion</button>
+            </form>
+            {% endif %}
+            {% if step.status == 'awaiting_approval' or step.status == 'completed' or step.status == 'failed' %}
+            <form method="post" action="{% url 'workflow:reject_step' run.pk step.pk %}" class="inline" onsubmit="return confirm('Reject and retry this step?')">{% csrf_token %}
+              <button type="submit" class="px-3 py-1 border border-rose-500/40 hover:bg-rose-500/10 text-rose-400 text-[10px] font-semibold rounded-lg transition">Reject &amp; Retry</button>
+            </form>
+            {% endif %}
+            <!-- Status badge -->
+            <span class="px-2 py-0.5 rounded text-[10px] font-semibold
+              {% if step.status == 'completed' %}bg-emerald-500/10 text-emerald-400
+              {% elif step.status == 'running' %}bg-blue-500/10 text-blue-400
+              {% elif step.status == 'failed' %}bg-rose-500/10 text-rose-400
+              {% elif step.status == 'skipped' %}bg-dark-500 text-dark-200
+              {% elif step.status == 'awaiting_approval' %}bg-amber-500/10 text-amber-400
+              {% else %}bg-dark-500 text-dark-100{% endif %}">{{ step.get_status_display }}</span>
+          </div>
+        </div>
+
+        <!-- Input/Output Data -->
+        <div class="grid grid-cols-2 gap-4">
+          {% if step.input_data %}
+          <div>
+            <div class="text-[10px] text-dark-200 uppercase font-semibold tracking-wide mb-2">Input Data</div>
+            <div class="bg-dark-700 rounded-lg p-3 json-viewer font-mono text-[10px] text-dark-100">{{ step.input_data }}</div>
+          </div>
+          {% endif %}
+          {% if step.output_data %}
+          <div>
+            <div class="text-[10px] text-dark-200 uppercase font-semibold tracking-wide mb-2">Output Data</div>
+            <div class="bg-dark-700 rounded-lg p-3 json-viewer font-mono text-[10px] text-dark-100">{{ step.output_data }}</div>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+{% if run.description %}
+<div class="bg-dark-600 border border-dark-400 rounded-xl p-5 mt-6">
+  <div class="text-[10px] text-dark-200 uppercase font-semibold tracking-wide mb-2">Description</div>
+  <p class="text-[12px] text-dark-100">{{ run.description }}</p>
+</div>
+{% endif %}
+
+{% if run.status == 'completed' %}
+<!-- AI REPORT SECTION -->
+<div class="bg-dark-600 border border-dark-400 rounded-xl mt-6 overflow-hidden" id="report-section">
+  <div class="flex items-center justify-between px-5 py-4 border-b border-dark-400">
+    <div class="flex items-center gap-2">
+      <span class="text-[14px]">&#128203;</span>
+      <span class="text-[14px] font-semibold">AI 결과 보고서</span>
+    </div>
+    <div class="flex items-center gap-2">
+      {% if run.report_text %}
+      <button onclick="generateReport(true)"
+        class="px-2.5 py-1 border border-dark-300 hover:border-blue-500/40 hover:bg-blue-500/10 text-dark-100 hover:text-blue-400 text-[10px] font-semibold rounded-lg transition"
+        id="btn-regenerate">재생성</button>
+      {% else %}
+      <button onclick="generateReport(false)"
+        class="px-3.5 py-1.5 bg-blue-600 hover:bg-blue-500 text-white text-[11px] font-semibold rounded-lg transition"
+        id="btn-generate">보고서 생성</button>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Loading spinner -->
+  <div id="report-loading" class="hidden px-5 py-10 text-center">
+    <div class="inline-block w-6 h-6 border-2 border-blue-400 border-t-transparent rounded-full animate-spin mb-3"></div>
+    <p class="text-[12px] text-dark-200">보고서를 생성하고 있습니다...</p>
+  </div>
+
+  <!-- Error message -->
+  <div id="report-error" class="hidden px-5 py-4">
+    <div class="bg-rose-500/10 border border-rose-500/30 rounded-lg px-4 py-3 text-[12px] text-rose-400"></div>
+  </div>
+
+  <!-- Report content -->
+  <div id="report-content" class="px-5 py-5 {% if not run.report_text %}hidden{% endif %}">
+    <div id="report-body" class="prose prose-invert prose-sm max-w-none
+      text-[13px] leading-relaxed text-dark-100
+      [&_h3]:text-[14px] [&_h3]:font-bold [&_h3]:text-dark-50 [&_h3]:mt-6 [&_h3]:mb-3
+      [&_h2]:text-[15px] [&_h2]:font-bold [&_h2]:text-dark-50 [&_h2]:mt-6 [&_h2]:mb-3
+      [&_h1]:text-[16px] [&_h1]:font-bold [&_h1]:text-dark-50 [&_h1]:mt-6 [&_h1]:mb-3
+      [&_strong]:text-dark-50
+      [&_ul]:space-y-1 [&_ol]:space-y-1
+      [&_li]:text-dark-100
+      [&_p]:mb-2">
+    </div>
+  </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script>
+// Format JSON in viewers
+document.querySelectorAll('.json-viewer').forEach(el => {
+  try {
+    const raw = el.textContent.trim().replace(/'/g, '"');
+    const obj = JSON.parse(raw);
+    el.textContent = JSON.stringify(obj, null, 2);
+  } catch(e) {}
+});
+
+{% if run.status == 'completed' %}
+// Render cached report on page load
+{% if run.report_text %}
+(function() {
+  const cached = "{{ run.report_text|escapejs }}";
+  document.getElementById('report-body').innerHTML = marked.parse(cached);
+})();
+{% endif %}
+
+function generateReport(regenerate) {
+  const loading = document.getElementById('report-loading');
+  const content = document.getElementById('report-content');
+  const errorEl = document.getElementById('report-error');
+  const btnGen = document.getElementById('btn-generate');
+  const btnRegen = document.getElementById('btn-regenerate');
+
+  loading.classList.remove('hidden');
+  content.classList.add('hidden');
+  errorEl.classList.add('hidden');
+  if (btnGen) btnGen.disabled = true;
+  if (btnRegen) btnRegen.disabled = true;
+
+  fetch("{% url 'assistant:generate_report' run.pk %}", {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRFToken': '{{ csrf_token }}'
+    },
+    body: JSON.stringify({ regenerate: !!regenerate })
+  })
+  .then(r => r.json().then(data => ({ ok: r.ok, data })))
+  .then(({ ok, data }) => {
+    loading.classList.add('hidden');
+    if (!ok) {
+      errorEl.classList.remove('hidden');
+      errorEl.querySelector('div').textContent = data.error || '보고서 생성 중 오류가 발생했습니다.';
+      if (btnGen) btnGen.disabled = false;
+      if (btnRegen) btnRegen.disabled = false;
+      return;
+    }
+    document.getElementById('report-body').innerHTML = marked.parse(data.report);
+    content.classList.remove('hidden');
+
+    // Switch to regenerate button
+    const header = document.querySelector('#report-section .flex.items-center.gap-2:last-child');
+    if (header) {
+      header.innerHTML = '<button onclick="generateReport(true)" class="px-2.5 py-1 border border-dark-300 hover:border-blue-500/40 hover:bg-blue-500/10 text-dark-100 hover:text-blue-400 text-[10px] font-semibold rounded-lg transition" id="btn-regenerate">재생성</button>';
+    }
+  })
+  .catch(() => {
+    loading.classList.add('hidden');
+    errorEl.classList.remove('hidden');
+    errorEl.querySelector('div').textContent = '네트워크 오류가 발생했습니다.';
+    if (btnGen) btnGen.disabled = false;
+    if (btnRegen) btnRegen.disabled = false;
+  });
+}
+{% endif %}
+</script>
+{% endblock %}
