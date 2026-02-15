@@ -31,7 +31,8 @@ omnilnp/
 ├── formulations/    # LNPFormulation (19,797 records)
 ├── experiments/     # Experiment (43), ExperimentResult (19,797)
 ├── ai_models/       # AIModel, Prediction, GeneratedCandidate
-├── equipment/       # Equipment (5), EquipmentStatus + DRF API
+├── equipment/       # Equipment (5), EquipmentStatus, MaintenanceRecord + DRF API
+├── inventory/       # Reagent (12), ReagentStock (24), ReagentConsumption
 ├── workflow/        # WorkflowRun (2), WorkflowStep (10)
 ├── templates/
 │   ├── base/base.html          # 공통 레이아웃 (sidebar nav + topbar)
@@ -49,7 +50,11 @@ omnilnp/
 │   │   ├── predict.html        # [SKELETON] 7줄
 │   │   ├── generate.html       # [SKELETON] 7줄
 │   │   └── optimize.html       # [SKELETON] 7줄
-│   ├── equipment/monitor.html  # [SKELETON] 7줄
+│   ├── equipment/
+│   │   ├── monitor.html        # [DONE] 장비 카드, 커맨드, 타임라인
+│   │   └── maintenance.html    # [DONE] 캘리브레이션/정비 일정
+│   ├── inventory/
+│   │   └── dashboard.html      # [DONE] 재고 대시보드, 소모 타임라인
 │   └── workflow/
 │       ├── pipeline.html       # [SKELETON] 7줄
 │       └── run_detail.html     # [SKELETON] 7줄
@@ -348,6 +353,10 @@ omnilnp/
 | ExperimentResult | 19,797 | lnp_id, FK to experiment+formulation, method(10종), value |
 | AIModel | 3 | LNP-Efficacy-RF, LNP-Structure-VAE, LNP-Formulation-BO |
 | Equipment | 5 | liquid_handler, microfluidic, dls, plate_reader, centrifuge |
+| MaintenanceRecord | 7+ | calibration, preventive, corrective, cleaning, software_update |
+| Reagent | 12 | solvent, buffer, lipid_stock, mrna_cargo, consumable |
+| ReagentStock | 24+ | 시약별 2 lot, FIFO 소모 |
+| ReagentConsumption | 0+ | 파이프라인 step별 소모 기록 |
 | WorkflowRun | 2 | MC3-Optimization(running), Novel-Lipid-Discovery(completed) |
 | WorkflowStep | 10 | 5 steps per run (design/synthesize/formulate/analyze/learn) |
 
@@ -390,9 +399,11 @@ omnilnp/
 /ai/predict/api/               -> ai_models:predict_api   [DONE]
 /ai/generate/                  -> ai_models:generate      [SKELETON -> P1]
 /ai/optimize/                  -> ai_models:optimize      [SKELETON -> P1]
-/equipment/                    -> equipment:monitor       [SKELETON -> P0]
-/workflow/                     -> workflow:pipeline       [SKELETON -> P0]
-/workflow/<pk>/                -> workflow:detail         [SKELETON -> P0]
+/equipment/                    -> equipment:monitor       [DONE]
+/equipment/maintenance/        -> equipment:maintenance   [DONE]
+/inventory/                    -> inventory:dashboard     [DONE]
+/workflow/                     -> workflow:pipeline       [DONE]
+/workflow/<pk>/                -> workflow:detail         [DONE]
 /api/equipment/devices/        -> DRF Equipment API       [DONE]
 /admin/                        -> Django Admin            [DONE]
 ```

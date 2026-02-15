@@ -1,7 +1,7 @@
 # OmniLNP 플랫폼 기능설명서
 
-> **문서 버전**: 1.0
-> **최종 수정일**: 2026-02-13
+> **문서 버전**: 1.1
+> **최종 수정일**: 2026-02-15
 > **대상**: SI 팀, 개발자, 과제 관리자
 
 ---
@@ -100,6 +100,7 @@ AI Design → Synthesize → Formulate → Analyze → Learn
 | 위젯 | 설명 |
 |------|------|
 | Equipment Status | 각 장비 현재 상태 (Running/Idle/Error 등) |
+| Inventory Alerts | 부족 시약 알림 (critical=rose dot, warning=amber dot), View Inventory 링크 |
 | Workflow Runs | 진행 중인 파이프라인 상태 |
 | Quick Actions | 4개 바로가기 (Explore Lipids, Design Formulation, Generate Structures, Optimize LNP) |
 | Recent Data | 최근 실험 데이터 20건 테이블 |
@@ -471,6 +472,110 @@ SMILES 문자열 또는 DB 지질을 선택하여 17개 분자 물성을 AI로 �
 | `/api/equipment/devices/<pk>/report_status/` | POST | 장비→플랫폼 상태 보고 |
 | `/api/equipment/status/` | GET | 전체 상태 로그 |
 
+### 12.7 Equipment Maintenance (`/equipment/maintenance/`)
+
+장비 캘리브레이션, 정비, 청소 등의 유지보수 이력 관리 페이지.
+
+#### 12.7.1 MaintenanceRecord 모델
+
+| 필드 | 타입 | 설명 |
+|------|------|------|
+| equipment | FK → Equipment | 대상 장비 |
+| maintenance_type | choices | calibration, preventive, corrective, cleaning, software_update |
+| status | choices | scheduled, in_progress, completed, overdue |
+| scheduled_date | DateField | 예정일 |
+| completed_date | DateField | 완료일 (null 허용) |
+| next_due_date | DateField | 다음 예정일 (null 허용) |
+| description | TextField | 상세 설명 |
+| calibration_data | JSONField | 캘리브레이션 파라미터/결과 |
+| cost | DecimalField | 비용 (null 허용) |
+| performed_by | FK → User | 수행자 (null 허용) |
+
+#### 12.7.2 화면 구성
+
+| 섹션 | 설명 |
+|------|------|
+| 기한 초과 알림 (상단) | rose 테두리, pulse 애니메이션, 기한 초과 정비 항목 |
+| 예정 정비 (좌측) | 향후 10건, 장비명, 유형 뱃지 (calibration=blue, preventive=amber, cleaning=cyan 등), 예정일 |
+| 완료 이력 (우측) | 최근 10건, 완료일, 비용, 캘리브레이션 데이터 (JSON) |
+
+---
+
+## 12.8 Inventory Dashboard (`/inventory/`)
+
+### 12.8.1 기능 요약
+
+시약 12종, 소모품의 재고 현황 모니터링, FIFO 소모 추적, 부족 알림 대시보드.
+
+### 12.8.2 모델
+
+**Reagent (시약/소모품 마스터)**
+
+| 필드 | 타입 | 설명 |
+|------|------|------|
+| name | CharField (unique) | 시약명 |
+| category | choices | solvent, buffer, lipid_stock, mrna_cargo, consumable, reagent |
+| cas_number | CharField | CAS 번호 |
+| unit | choices | mL, L, mg, g, ug, units |
+| storage_conditions | CharField | 보관 조건 (e.g., "-80C", "4C", "RT") |
+| minimum_stock | FloatField | 부족 알림 임계값 |
+| reorder_point | FloatField | 발주 시점 수량 |
+| pipeline_steps | JSONField | 사용 step 목록 (e.g., `["synthesize", "formulate"]`) |
+| metadata | JSONField | 공급업체, 순도, 카탈로그번호 등 |
+
+Computed: `current_stock` (활성 lot 합산), `stock_status` (good/warning/critical)
+
+**ReagentStock (개별 로트)**
+
+| 필드 | 타입 | 설명 |
+|------|------|------|
+| reagent | FK → Reagent | 시약 참조 |
+| lot_number | CharField | 로트 번호 |
+| quantity | FloatField | 현재 잔량 |
+| initial_quantity | FloatField | 초기 수량 |
+| location | CharField | 보관 위치 |
+| expiry_date | DateField | 유효기한 |
+| is_active | BooleanField | 활성 여부 |
+
+**ReagentConsumption (소모 기록)**
+
+| 필드 | 타입 | 설명 |
+|------|------|------|
+| reagent | FK → Reagent | 시약 참조 |
+| stock_lot | FK → ReagentStock | 소모된 로트 |
+| workflow_step | FK → WorkflowStep | 소모 발생 파이프라인 step |
+| quantity_used | FloatField | 소모량 |
+| batch_id | CharField | 배치 식별자 |
+| timestamp | DateTimeField | 소모 시점 |
+
+### 12.8.3 화면 구성
+
+| 섹션 | 설명 |
+|------|------|
+| 통계 카드 (상단, 4개) | 총 시약 수, 부족 알림 수, 최근 소모 건수, 카테고리 수 |
+| 부족 알림 패널 (좌측) | critical(rose)/warning(amber) 시약 목록, 잔량 바 |
+| 재고 테이블 (우측) | 전체 시약, 카테고리 뱃지, 재고 바, 상태 dot |
+| 소모 타임라인 (하단) | 최근 20건 소모 기록 (시약, 수량, 워크플로우, step, 시간) |
+
+### 12.8.4 FIFO 소모 로직
+
+워크플로우 파이프라인 실행 시 `_consume_reagent()` 헬퍼가 호출됨:
+1. 유효기한이 가장 빠른 활성 lot에서 우선 차감
+2. 한 lot의 잔량이 부족하면 다음 lot에서 추가 차감
+3. `ReagentConsumption` 레코드 생성
+4. 각 step의 output_data에 `reagents_consumed` 키 추가
+
+| Step | 소모 시약 | 소모량 |
+|------|----------|--------|
+| Synthesize | Ethanol (200 proof) | 5.0 mL |
+| | Chloroform / DCM | 2.0 mL |
+| Formulate | Citrate Buffer pH 4.0 | 3.0 mL |
+| | PBS Buffer pH 7.4 | 10.0 mL |
+| | FLuc mRNA (1 mg/mL) | 50 ug |
+| | Microfluidic Cartridge | 1 unit |
+| Analyze | DLS Cuvette | 1 unit |
+| | 96-Well Plate (Black) | 1 unit |
+
 ---
 
 ## 13. Workflow Pipeline (`/workflow/`)
@@ -830,6 +935,10 @@ AIModel (3) ── Prediction           │
             └── GeneratedCandidate  │
                                     │
 Equipment (5) ── EquipmentStatus    │
+             └── MaintenanceRecord  │
+                                    │
+Reagent (12) ── ReagentStock (24)   │
+             └── ReagentConsumption─┤
                                     │
 WorkflowRun ── WorkflowStep (5 per run)
 ```
@@ -844,6 +953,10 @@ WorkflowRun ── WorkflowStep (5 per run)
 | Experiment | 43+ | 파이프라인 실행 시 추가 생성 |
 | GeneratedCandidate | 0+ | Design step에서 생성 |
 | EquipmentStatus | 5+ | 각 step 실행 시 로그 추가 |
+| MaintenanceRecord | 7+ | 장비 캘리브레이션/정비 이력 |
+| Reagent | 12 | 시약/소모품 마스터 |
+| ReagentStock | 24+ | 개별 로트 (시약별 2개) |
+| ReagentConsumption | 0+ | 파이프라인 실행 시 소모 기록 |
 
 ---
 
@@ -882,6 +995,7 @@ DB 초기화가 필요한 경우:
 python manage.py migrate
 python manage.py runscript seed_db          # LNPDB 19,797건 로딩 (~3분)
 python manage.py runscript create_demo_data # 장비 5개, AI 모델 3개 생성
+python manage.py runscript seed_inventory   # 시약 12종, 재고 24 lot, 유지보수 7건
 python manage.py createsuperuser
 ```
 
@@ -904,9 +1018,11 @@ python manage.py createsuperuser
 | 11 | `/ai/generate/` | AI 구조 생성 | AI MODELS > Generate |
 | 12 | `/ai/optimize/` | AI 다목적 최적화 | AI MODELS > Optimize |
 | 13 | `/equipment/` | 장비 모니터링 | LAB > Equipment |
-| 14 | `/workflow/` | 워크플로우 파이프라인 | LAB > Workflow |
-| 15 | `/workflow/<pk>/` | 워크플로우 상세 | Workflow에서 Details 클릭 |
-| 16 | `/admin/` | Django Admin | — |
+| 14 | `/equipment/maintenance/` | 장비 유지보수 | LAB > Maintenance |
+| 15 | `/inventory/` | 시약 재고 관리 | LAB > Inventory |
+| 16 | `/workflow/` | 워크플로우 파이프라인 | LAB > Workflow |
+| 17 | `/workflow/<pk>/` | 워크플로우 상세 | Workflow에서 Details 클릭 |
+| 18 | `/admin/` | Django Admin | — |
 
 ---
 
@@ -919,6 +1035,7 @@ python manage.py createsuperuser
 | 생성형 AI 기반 이온화지질 구조 설계 프로토타입 | AI Generate 페이지 | 완료 |
 | LNP 제형 후보 설계 AI 모델 프로토타입 | AI Predict + Formulation Designer | 완료 |
 | 생성형 AI 기반 실험 조건 제안 알고리즘 초기 모델 | AI Optimize 페이지 | 완료 |
-| AI-자동화 장비 간 통신 인터페이스 설계 | Equipment REST API + Monitor | 완료 |
-| 자동화 장비-로봇-AI 자율실험실 시스템 구현 | Workflow Pipeline (5단계 실행 엔진) | 완료 |
-| 웹 기반 플랫폼 프로토타입 개발 | 전체 플랫폼 (16 pages + API) | 완료 |
+| AI-자동화 장비 간 통신 인터페이스 설계 | Equipment REST API + Monitor + Maintenance | 완료 |
+| 자동화 장비-로봇-AI 자율실험실 시스템 구현 | Workflow Pipeline (5단계 실행 엔진 + 시약 소모 추적) | 완료 |
+| 시약/재고 관리 시스템 | Inventory Dashboard (12종 시약, FIFO 소모, 부족 알림) | 완료 |
+| 웹 기반 플랫폼 프로토타입 개발 | 전체 플랫폼 (18 pages + API) | 완료 |

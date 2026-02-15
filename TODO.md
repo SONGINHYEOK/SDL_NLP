@@ -27,19 +27,22 @@ DB: SQLite (19,797 LNPDB records seeded)
 | Equipment Monitor | `/equipment/` | 장비 상태 카드, 명령 전송, 타임라인 |
 | Workflow Pipeline | `/workflow/` | 워크플로우 목록, 5단계 시각화, 생성 |
 | Workflow Detail | `/workflow/<pk>/` | 타임라인, input/output JSON, AI 보고서 |
+| Equipment Maintenance | `/equipment/maintenance/` | 장비 캘리브레이션/정비 일정, 기한 초과 알림 |
+| Inventory Dashboard | `/inventory/` | 시약 12종 재고 추적, FIFO 소모, 부족 알림 |
 
 ### DONE - Workflow Pipeline 실행 엔진 (`workflow/pipeline.py`)
 
 | Step | 동작 | DB 레코드 생성 |
 |------|------|---------------|
 | Design | IonizableLipid 필터링 → 후보 샘플링 → Pareto rank | GeneratedCandidate x N, Prediction x 1 |
-| Synthesize | 지질 물성 기반 합성 조건 시뮬레이션 | EquipmentStatus x 2 |
-| Formulate | 4성분 조성 생성 → LNPFormulation 레코드 생성 | LNPFormulation x 1, EquipmentStatus x 2 |
-| Analyze | Experiment + ExperimentResult 생성, DB 벤치마크 비교 | Experiment x 1, ExperimentResult x 3, EquipmentStatus x 2 |
+| Synthesize | 지질 물성 기반 합성 조건 시뮬레이션 + 시약 소모 | EquipmentStatus x 2, ReagentConsumption x 2 |
+| Formulate | 4성분 조성 생성 → LNPFormulation 레코드 생성 + 시약 소모 | LNPFormulation x 1, EquipmentStatus x 2, ReagentConsumption x 4 |
+| Analyze | Experiment + ExperimentResult 생성, DB 벤치마크 비교 + 시약 소모 | Experiment x 1, ExperimentResult x 3, EquipmentStatus x 2, ReagentConsumption x 2 |
 | Learn | AIModel 메트릭 개선, feature importance, suggestions | AIModel 업데이트 |
 
 - Step 간 input→output 체이닝 구현
 - 실패 시 step을 FAILED 상태로 마킹
+- 각 step output에 `reagents_consumed` 키 포함 (FIFO 소모)
 
 ### DONE - AI 보고서 (Groq API)
 
@@ -79,6 +82,8 @@ HelperLipid: 7 | Cholesterol: 16 | PEGLipid: 15
 LNPFormulation: 19,797+
 Experiment: 43+ | ExperimentResult: 19,797+
 AIModel: 3 | Equipment: 5 | WorkflowRun: 2+
+MaintenanceRecord: 7+ (calibration, preventive, corrective, cleaning, software_update)
+Reagent: 12 | ReagentStock: 24+ | ReagentConsumption: 0+ (파이프라인 실행 시 생성)
 SQLite DB: ~16MB (included in repo)
 ```
 

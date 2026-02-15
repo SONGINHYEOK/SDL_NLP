@@ -31,7 +31,8 @@ omnilnp/
 ├── formulations/    # LNPFormulation (19,797 records)
 ├── experiments/     # Experiment (43), ExperimentResult (19,797)
 ├── ai_models/       # AIModel, Prediction, GeneratedCandidate
-├── equipment/       # Equipment (5), EquipmentStatus + DRF API
+├── equipment/       # Equipment (5), EquipmentStatus, MaintenanceRecord + DRF API
+├── inventory/       # Reagent (12), ReagentStock (24), ReagentConsumption
 ├── workflow/        # WorkflowRun (2), WorkflowStep (10)
 ├── templates/
 │   ├── base/base.html          # 공통 레이아웃 (sidebar nav + topbar)
@@ -49,7 +50,11 @@ omnilnp/
 │   │   ├── predict.html        # [SKELETON] 7줄
 │   │   ├── generate.html       # [SKELETON] 7줄
 │   │   └── optimize.html       # [SKELETON] 7줄
-│   ├── equipment/monitor.html  # [SKELETON] 7줄
+│   ├── equipment/
+│   │   ├── monitor.html        # [DONE] 장비 카드, 커맨드, 타임라인
+│   │   └── maintenance.html    # [DONE] 캘리브레이션/정비 일정
+│   ├── inventory/
+│   │   └── dashboard.html      # [DONE] 재고 대시보드, 소모 타임라인
 │   └── workflow/
 │       ├── pipeline.html       # [SKELETON] 7줄
 │       └── run_detail.html     # [SKELETON] 7줄
@@ -348,6 +353,10 @@ omnilnp/
 | ExperimentResult | 19,797 | lnp_id, FK to experiment+formulation, method(10종), value |
 | AIModel | 3 | LNP-Efficacy-RF, LNP-Structure-VAE, LNP-Formulation-BO |
 | Equipment | 5 | liquid_handler, microfluidic, dls, plate_reader, centrifuge |
+| MaintenanceRecord | 7+ | calibration, preventive, corrective, cleaning, software_update |
+| Reagent | 12 | solvent, buffer, lipid_stock, mrna_cargo, consumable |
+| ReagentStock | 24+ | 시약별 2 lot, FIFO 소모 |
+| ReagentConsumption | 0+ | 파이프라인 step별 소모 기록 |
 | WorkflowRun | 2 | MC3-Optimization(running), Novel-Lipid-Discovery(completed) |
 | WorkflowStep | 10 | 5 steps per run (design/synthesize/formulate/analyze/learn) |
 
@@ -394,6 +403,8 @@ omnilnp/
 /ai/generate/api/              -> ai_models:generate_api  [DONE]
 /ai/optimize/                  -> ai_models:optimize      [DONE]
 /equipment/                    -> equipment:monitor       [DONE]
+/equipment/maintenance/        -> equipment:maintenance   [DONE]
+/inventory/                    -> inventory:dashboard     [DONE]
 /workflow/                     -> workflow:pipeline       [DONE]
 /workflow/<pk>/                -> workflow:detail         [DONE]
 /api/equipment/devices/        -> DRF Equipment API       [DONE]
@@ -484,9 +495,10 @@ Custom actions: `@action(detail=True, methods=['post'])`
 | 생성형 AI 기반 이온화지질 구조 설계 프로토타입 | AI Generate 페이지 | DONE |
 | LNP 제형 후보 설계 AI 모델 프로토타입 | AI Predict + Formulation Designer | DONE |
 | 생성형 AI 기반 실험 조건 제안 알고리즘 초기 모델 | AI Optimize 페이지 | DONE |
-| AI-자동화 장비 간 통신 인터페이스 설계 | Equipment REST API + Monitor | DONE |
-| 자동화 장비-로봇-AI 자율실험실 시스템 구현 | Workflow Pipeline + Run Detail | DONE |
-| 웹 기반 플랫폼 프로토타입 개발 | 전체 플랫폼 (17 pages + 4 APIs) | DONE (100%) |
+| AI-자동화 장비 간 통신 인터페이스 설계 | Equipment REST API + Monitor + Maintenance | DONE |
+| 자동화 장비-로봇-AI 자율실험실 시스템 구현 | Workflow Pipeline + Run Detail + 시약 소모 추적 | DONE |
+| 시약/재고 관리 시스템 | Inventory Dashboard (12종 시약, FIFO 소모, 부족 알림) | DONE |
+| 웹 기반 플랫폼 프로토타입 개발 | 전체 플랫폼 (19 pages + 4 APIs) | DONE (100%) |
 
 ---
 
