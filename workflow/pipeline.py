@@ -50,6 +50,58 @@ def _log_equipment(equipment, status, message, metadata=None):
     )
 
 
+def _consume_reagent(step, reagent_name, quantity, batch_id=""):
+    """
+    Deduct *quantity* of *reagent_name* using FIFO (earliest expiry first).
+    Returns dict with consumption details, or None if inventory app unavailable.
+    """
+    try:
+        from inventory.models import Reagent, ReagentConsumption
+    except ImportError:
+        return None
+
+    reagent = Reagent.objects.filter(name=reagent_name).first()
+    if reagent is None:
+        return None
+
+    remaining = quantity
+    consumed_from = []
+
+    stocks = (
+        reagent.stocks
+        .filter(is_active=True, quantity__gt=0)
+        .order_by("expiry_date", "received_at")
+    )
+    for stock in stocks:
+        if remaining <= 0:
+            break
+        deduct = min(stock.quantity, remaining)
+        stock.quantity = round(stock.quantity - deduct, 4)
+        stock.save(update_fields=["quantity"])
+        remaining = round(remaining - deduct, 4)
+
+        ReagentConsumption.objects.create(
+            reagent=reagent,
+            stock_lot=stock,
+            workflow_step=step,
+            quantity_used=deduct,
+            batch_id=batch_id,
+        )
+        consumed_from.append({
+            "lot": stock.lot_number,
+            "deducted": deduct,
+            "remaining": stock.quantity,
+        })
+
+    return {
+        "reagent": reagent_name,
+        "requested": quantity,
+        "unit": reagent.get_unit_display(),
+        "fulfilled": round(quantity - remaining, 4),
+        "lots": consumed_from,
+    }
+
+
 # ─────────────────────── Step 1: Design ───────────────────────
 
 
@@ -217,6 +269,13 @@ def execute_synthesize(run, step):
     _log_equipment(eq, "idle", f"Synthesis complete: yield {yield_pct}%",
                    {"batch_id": batch_id, "yield_pct": yield_pct, "purity_pct": purity_pct})
 
+    # Reagent consumption
+    reagents_consumed = []
+    for rname, qty in [("Ethanol (200 proof)", 5.0), ("Chloroform / DCM", 2.0)]:
+        result = _consume_reagent(step, rname, qty, batch_id=batch_id)
+        if result:
+            reagents_consumed.append(result)
+
     return {
         "lipid_id": lipid.pk if lipid else None,
         "lipid_name": lipid.name if lipid else "Unknown",
@@ -234,6 +293,7 @@ def execute_synthesize(run, step):
             "nmr_purity": round(purity_pct - random.uniform(0, 2), 1),
             "hplc_purity": purity_pct,
         },
+        "reagents_consumed": reagents_consumed,
     }
 
 
@@ -299,6 +359,19 @@ def execute_formulate(run, step):
     _log_equipment(eq, "idle", f"Formulation complete: {fid}",
                    {"formulation_id": fid, "np_ratio": np_ratio})
 
+    # Reagent consumption
+    batch_id = inp.get("batch_id", fid)
+    reagents_consumed = []
+    for rname, qty in [
+        ("Citrate Buffer pH 4.0", 3.0),
+        ("PBS Buffer pH 7.4", 10.0),
+        ("FLuc mRNA (1 mg/mL)", 50.0),
+        ("Microfluidic Cartridge", 1.0),
+    ]:
+        result = _consume_reagent(step, rname, qty, batch_id=batch_id)
+        if result:
+            reagents_consumed.append(result)
+
     components = {
         "ionizable_lipid": {"id": lipid.pk, "name": lipid.name, "ratio": il_r},
     }
@@ -321,6 +394,7 @@ def execute_formulate(run, step):
             "frr": round(random.uniform(2, 5), 1),
         },
         "np_ratio": np_ratio,
+        "reagents_consumed": reagents_consumed,
     }
 
 
@@ -392,6 +466,14 @@ def execute_analyze(run, step):
     _log_equipment(eq, "idle", f"Analysis complete: diameter={diameter}nm",
                    {"experiment_id": exp_id, "diameter": diameter, "pdi": pdi})
 
+    # Reagent consumption
+    batch_id = inp.get("batch_id", exp_id)
+    reagents_consumed = []
+    for rname, qty in [("DLS Cuvette", 1.0), ("96-Well Plate (Black)", 1.0)]:
+        result = _consume_reagent(step, rname, qty, batch_id=batch_id)
+        if result:
+            reagents_consumed.append(result)
+
     # Update GeneratedCandidate status → tested
     ai_model = _get_ai_model(run)
     if ai_model and formulation:
@@ -420,6 +502,7 @@ def execute_analyze(run, step):
         },
         "db_benchmarks": benchmarks,
         "qc_pass": qc_pass,
+        "reagents_consumed": reagents_consumed,
     }
 
 

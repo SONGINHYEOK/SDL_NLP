@@ -27,6 +27,7 @@ INSTALLED_APPS = [
     "equipment",
     "workflow",
     "assistant",
+    "inventory",
 ]
 
 MIDDLEWARE = [

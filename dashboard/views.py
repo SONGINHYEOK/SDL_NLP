@@ -135,6 +135,24 @@ def index(request):
         })
     ctx["active_runs"] = active_runs
 
+    # Inventory alerts
+    try:
+        from inventory.models import Reagent
+        inventory_alerts = []
+        for r in Reagent.objects.prefetch_related("stocks").all():
+            status = r.stock_status
+            if status in ("critical", "warning"):
+                inventory_alerts.append({
+                    "name": r.name,
+                    "status": status,
+                    "current": r.current_stock,
+                    "minimum": r.minimum_stock,
+                    "unit": r.get_unit_display(),
+                })
+        ctx["inventory_alerts"] = inventory_alerts
+    except ImportError:
+        ctx["inventory_alerts"] = []
+
     # AI models summary
     ai_models = []
     for m in AIModel.objects.all()[:4]:

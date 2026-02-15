@@ -1,6 +1,6 @@
 # OmniLNP 시연 튜토리얼 (Step-by-Step)
 
-> **총 소요시간:** 15–20분 (5개 시나리오)
+> **총 소요시간:** 20–25분 (6개 시나리오)
 > **사전 준비:** 서버 실행 (`python manage.py runserver`), 브라우저에서 `http://127.0.0.1:8000/` 열기
 
 ---
@@ -28,6 +28,8 @@ AI MODELS
 
 LAB
   ├ Equipment          ← 장비 모니터링
+  ├ Maintenance        ← 장비 유지보수/캘리브레이션
+  ├ Inventory          ← 시약/소모품 재고 관리
   └ Workflow           ← 파이프라인
 ```
 
@@ -84,12 +86,13 @@ AI Design → Synthesize → Formulate → Analyze → Learn
 
 1. **Equipment Status** — 각 장비의 현재 상태 (Running/Idle/Maintenance 등). 오른쪽 **"View All"** 링크가 보이면 나중에 시나리오 5에서 자세히 봅니다.
 2. **Workflow Runs** — 진행 중인 파이프라인 실행 상태
-3. **Quick Actions** — 4개 바로가기 카드:
+3. **Inventory Alerts** — 재고 부족 시약 알림 (rose/amber dot). **"View Inventory"** 링크로 재고 대시보드로 이동 가능. 부족 시약이 없으면 이 위젯은 숨겨집니다.
+4. **Quick Actions** — 4개 바로가기 카드:
    - "Explore Lipids" → Lipid Explorer로 이동
    - "Design Formulation" → Formulation Designer로 이동
    - "Generate Structures" → AI Generate로 이동
    - "Optimize LNP" → AI Optimize로 이동
-4. **Recent Data (LNPDB)** — 최근 실험 데이터 20건 미리보기 테이블
+5. **Recent Data (LNPDB)** — 최근 실험 데이터 20건 미리보기 테이블
 
 > 다음 단계로: 사이드바에서 **"Lipid Explorer"** 를 클릭하세요 (DATA 섹션 아래 첫 번째 메뉴).
 
@@ -488,6 +491,7 @@ AI Design → Synthesize → Formulate → Analyze → Learn
    - `synthesis_conditions`: 온도, 반응시간, 용매, 촉매
    - `yield_pct` / `purity_pct`: 수율/순도
    - `qc`: MS, NMR, HPLC 확인 결과
+   - `reagents_consumed`: Ethanol 5mL, Chloroform/DCM 2mL 소모 기록
 
 **Step 3: Formulate**
 1. **`Approve`** → **`Simulate`** 클릭
@@ -495,6 +499,7 @@ AI Design → Synthesize → Formulate → Analyze → Learn
    - `components`: IL:HL:Chol:PEG 4성분 조성 (mol%)
    - `composition_str`: 예) `50.2:9.8:38.4:1.6`
    - `np_ratio`: N/P 비율
+   - `reagents_consumed`: Citrate Buffer 3mL, PBS 10mL, FLuc mRNA 50ug, Cartridge 1개 소모
    - DB에 실제 `LNPFormulation` 레코드가 생성됨
 
 **Step 4: Analyze**
@@ -503,6 +508,7 @@ AI Design → Synthesize → Formulate → Analyze → Learn
    - `measurements`: 입자 크기(nm), PDI, 제타 전위(mV), 캡슐화 효율(%)
    - `functional_assay`: luminescence 정규화 값
    - `db_benchmarks`: LNPDB 평균값 대비 비교
+   - `reagents_consumed`: DLS Cuvette 1개, 96-Well Plate 1개 소모
    - `qc_pass`: 품질 판정 (true/false)
 
 **Step 5: Learn**
@@ -538,6 +544,122 @@ AI Design → Synthesize → Formulate → Analyze → Learn
 
 ---
 
+## 시나리오 6: 시약 재고 관리 + 장비 유지보수 (3분)
+
+### Step 30. Inventory Dashboard
+
+사이드바 **LAB** > **"Inventory"** 클릭
+
+페이지 제목: **"Reagent Inventory"** — *"Track reagents, consumables, and stock levels for the LNP synthesis pipeline"*
+
+**상단 통계 카드 4개:**
+
+| 카드 | 의미 |
+|------|------|
+| **Total Reagents** | 등록된 시약/소모품 총 수 (12종) |
+| **Low Stock Alerts** | 재고 부족 알림 수 (0이면 초록, 1 이상이면 빨강) |
+| **Consumptions** | 총 소모 기록 건수 |
+| **Categories** | 시약 카테고리 수 (solvent, buffer, lipid_stock, mrna_cargo, consumable) |
+
+---
+
+### Step 31. Inventory — 부족 알림 패널
+
+좌측 **"Low Stock Alerts"** 패널 확인:
+
+- **DLS Cuvette** — critical (빨간 바)
+- **FLuc mRNA (1 mg/mL)** — critical (빨간 바)
+- **Microfluidic Cartridge** — critical (빨간 바)
+
+각 항목에서 확인:
+- 잔량 바 (rose 색상 = critical)
+- 현재 잔량 / 최소 재고 수치 표시
+
+> 시나리오 5에서 워크플로우를 실행했다면, 소모된 만큼 잔량이 줄어든 것을 확인할 수 있습니다.
+
+---
+
+### Step 32. Inventory — 재고 테이블
+
+우측 **"All Reagents"** 테이블 확인:
+
+각 행에서 확인할 항목:
+- **Reagent** 이름
+- **Category** 뱃지 — Solvent(파랑), Buffer(청록), Lipid Stock(보라), mRNA Cargo(초록), Consumable(주황)
+- **Stock Level** 바 — 초록(good), 주황(warning), 빨강(critical)
+- **Storage** — 보관 조건 (예: "-80C", "4C", "RT")
+- **Status** dot — 재고 상태 한눈에 확인
+
+---
+
+### Step 33. Inventory — 소모 타임라인
+
+페이지 하단 **"Recent Consumptions"** 테이블:
+
+| 컬럼 | 내용 |
+|------|------|
+| **Reagent** | 소모된 시약명 |
+| **Quantity** | 소모량 (빨간 글씨) |
+| **Lot** | 차감된 Lot 번호 |
+| **Workflow** | 소모가 발생한 워크플로우 이름 |
+| **Step** | 어떤 파이프라인 단계에서 소모됐는지 (뱃지) |
+| **Time** | 소모 시점 (상대 시간) |
+
+> 시나리오 5에서 실행한 워크플로우의 시약 소모 기록이 여기에 표시됩니다.
+> Synthesize → Ethanol 5mL, DCM 2mL / Formulate → Buffer, mRNA, Cartridge / Analyze → Cuvette, Plate
+
+---
+
+### Step 34. Equipment Maintenance
+
+사이드바 **LAB** > **"Maintenance"** 클릭
+
+페이지 제목: **"Equipment Maintenance"** — *"Calibration schedules, preventive maintenance, and service history"*
+
+---
+
+### Step 35. Maintenance — 기한 초과 알림
+
+**상단 빨간 테두리 패널** — "Overdue Maintenance":
+
+- **Hamilton STAR** (Liquid Handler) — Calibration 기한 초과
+  - 빨간 점이 깜박이는 애니메이션
+  - 예정일이 과거 날짜로 표시됨
+  - Calibration 유형 뱃지
+
+> 실제 연구실에서는 이 알림을 보고 즉시 정비를 수행해야 합니다.
+
+---
+
+### Step 36. Maintenance — 예정 정비 & 완료 이력
+
+**좌측 "Scheduled Maintenance":**
+- NanoAssemblr Ignite — Cleaning 예정
+- Agilent 1260 HPLC — Column 교체 (Corrective) 예정
+- Zetasizer Ultra — 반기 캘리브레이션 예정
+
+**우측 "Completed History":**
+- 각 완료 기록에서 확인:
+  - 장비명 + 유지보수 유형 뱃지
+  - 완료 날짜 / 차기 예정일
+  - 비용 (해당 시)
+  - **캘리브레이션 데이터** — DLS의 경우 `std_60nm: 61.2, std_100nm: 99.8, std_200nm: 201.5, result: PASS`
+  - Plate Reader의 경우 `firmware_version: 3.2.1, previous_version: 3.1.4`
+
+---
+
+### Step 37. Dashboard에서 재고 알림 확인
+
+사이드바 **OVERVIEW** > **"Dashboard"** 클릭
+
+Dashboard 중단에 **"Inventory Alerts"** 위젯이 표시됨:
+- 부족 시약 목록이 rose/amber dot과 함께 나열
+- **"View Inventory"** 링크로 재고 대시보드로 바로 이동 가능
+
+> 워크플로우 실행 → 시약 자동 차감 → Dashboard 알림 → 재고 관리의 전체 흐름이 연결됩니다.
+
+---
+
 ## 시연 마무리 요약 (1분)
 
 Dashboard에서 전체 흐름을 한 문장씩 정리합니다:
@@ -548,8 +670,10 @@ Dashboard에서 전체 흐름을 한 문장씩 정리합니다:
 | **Formulation Designer** (시나리오 3) | 4성분 슬라이더로 제형 설계 + AI 실시간 물성 예측 |
 | **AI Generate** (시나리오 4) | 타겟 조건에 맞는 신규 Lipid 구조를 AI가 자동 생성 |
 | **Optimize** (시나리오 4) | 삼각 다이어그램 + Pareto front로 다목적 최적화 + 최적 조성 도출 |
-| **Workflow** (시나리오 5) | 5단계 Closed-loop 파이프라인으로 자율 실험 수행 |
+| **Workflow** (시나리오 5) | 5단계 Closed-loop 파이프라인으로 자율 실험 수행 + 시약 자동 소모 |
 | **AI Report** (시나리오 5) | LNP 논문 수준의 전문 보고서 자동 생성 (FDA 벤치마크 포함) |
+| **Inventory** (시나리오 6) | 시약 12종 재고 추적, FIFO 소모, 부족 알림, 소모 타임라인 |
+| **Maintenance** (시나리오 6) | 장비 캘리브레이션/정비 일정, 기한 초과 알림, 완료 이력 |
 
 ---
 
@@ -570,5 +694,7 @@ Dashboard에서 전체 흐름을 한 문장씩 정리합니다:
 | 11 | Generate | `/ai/generate/` | AI MODELS > Generate 클릭 |
 | 12 | Optimize | `/ai/optimize/` | AI MODELS > Optimize 클릭 |
 | 13 | Equipment | `/equipment/` | LAB > Equipment 클릭 |
-| 14 | Workflow | `/workflow/` | LAB > Workflow 클릭 |
-| 15 | (Workflow 상세) | `/workflow/<id>/` | Workflow 페이지에서 Details 클릭 |
+| 14 | Maintenance | `/equipment/maintenance/` | LAB > Maintenance 클릭 |
+| 15 | Inventory | `/inventory/` | LAB > Inventory 클릭 |
+| 16 | Workflow | `/workflow/` | LAB > Workflow 클릭 |
+| 17 | (Workflow 상세) | `/workflow/<id>/` | Workflow 페이지에서 Details 클릭 |

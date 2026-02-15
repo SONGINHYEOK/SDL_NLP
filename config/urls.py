@@ -10,6 +10,7 @@ urlpatterns = [
     path("experiments/", include("experiments.urls")),
     path("ai/", include("ai_models.urls")),
     path("equipment/", include("equipment.urls")),
+    path("inventory/", include("inventory.urls")),
     path("workflow/", include("workflow.urls")),
     # DRF API
     path("api/equipment/", include("equipment.api_urls")),

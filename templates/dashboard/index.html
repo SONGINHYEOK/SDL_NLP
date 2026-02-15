@@ -141,6 +141,28 @@
   </div>
 </div>
 
+<!-- INVENTORY ALERTS WIDGET -->
+{% if inventory_alerts %}
+<div class="bg-dark-600 border border-dark-400 rounded-xl mb-4">
+  <div class="px-5 py-3 border-b border-dark-400 flex justify-between items-center">
+    <div>
+      <div class="text-[13px] font-semibold">Inventory Alerts</div>
+      <div class="text-[10px] text-dark-200">{{ inventory_alerts|length }} reagent{{ inventory_alerts|length|pluralize }} below minimum stock</div>
+    </div>
+    <a href="{% url 'inventory:dashboard' %}" class="text-[10px] text-blue-400 hover:underline">View Inventory</a>
+  </div>
+  <div class="p-4 flex flex-wrap gap-3">
+    {% for a in inventory_alerts %}
+    <div class="flex items-center gap-2 px-3 py-2 bg-dark-700/50 rounded-lg">
+      <span class="w-2 h-2 rounded-full {% if a.status == 'critical' %}bg-rose-400{% else %}bg-amber-400{% endif %}"></span>
+      <span class="text-[11px] font-semibold text-dark-50">{{ a.name }}</span>
+      <span class="text-[10px] font-mono text-dark-200">{{ a.current }}/{{ a.minimum }} {{ a.unit }}</span>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+
 <!-- ROW: AI MODELS + CLOSED-LOOP PIPELINE -->
 <div class="grid grid-cols-12 gap-4 mb-4">
 

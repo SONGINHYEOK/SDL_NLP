@@ -1,4 +1,5 @@
 from django.db import models
+from django.conf import settings
 
 
 class Equipment(models.Model):
@@ -61,3 +62,40 @@ class EquipmentStatus(models.Model):
 
     def __str__(self):
         return f"{self.equipment.name}: {self.status} @ {self.timestamp}"
+
+
+class MaintenanceRecord(models.Model):
+    """Equipment maintenance / calibration record."""
+
+    class MaintenanceType(models.TextChoices):
+        CALIBRATION = "calibration", "Calibration"
+        PREVENTIVE = "preventive", "Preventive"
+        CORRECTIVE = "corrective", "Corrective"
+        CLEANING = "cleaning", "Cleaning"
+        SOFTWARE_UPDATE = "software_update", "Software Update"
+
+    class Status(models.TextChoices):
+        SCHEDULED = "scheduled", "Scheduled"
+        IN_PROGRESS = "in_progress", "In Progress"
+        COMPLETED = "completed", "Completed"
+        OVERDUE = "overdue", "Overdue"
+
+    equipment = models.ForeignKey(Equipment, on_delete=models.CASCADE, related_name="maintenance_records")
+    maintenance_type = models.CharField(max_length=20, choices=MaintenanceType.choices)
+    status = models.CharField(max_length=20, choices=Status.choices, default=Status.SCHEDULED)
+    description = models.TextField(blank=True, default="")
+    scheduled_date = models.DateField()
+    completed_date = models.DateField(null=True, blank=True)
+    next_due_date = models.DateField(null=True, blank=True)
+    calibration_data = models.JSONField(default=dict, blank=True, help_text="Calibration parameters/results")
+    cost = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    performed_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name="maintenance_performed"
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-scheduled_date"]
+
+    def __str__(self):
+        return f"{self.equipment.name} - {self.get_maintenance_type_display()} ({self.status})"
