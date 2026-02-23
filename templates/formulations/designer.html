@@ -25,12 +25,12 @@
 {% block content %}
 <div class="flex justify-between items-end mb-6">
   <div>
-    <h2 class="text-[22px] font-bold tracking-tight">Formulation Designer</h2>
-    <p class="text-[13px] text-dark-100 mt-1">Design LNP composition and predict efficacy</p>
+    <h2 class="text-[28px] font-bold tracking-tight">제형 설계 도구</h2>
+    <p class="text-[16px] text-dark-100 mt-1">LNP 조성을 설계하고 효능을 예측합니다</p>
   </div>
   <div class="flex gap-2">
-    <button onclick="resetDesigner()" class="px-4 py-2 border border-dark-400 hover:border-dark-300 rounded-lg text-[12px] text-dark-100">Reset</button>
-    <button onclick="runPrediction()" id="btn-predict" class="px-5 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-[12px] font-semibold disabled:opacity-40" disabled>Run AI Prediction</button>
+    <button onclick="resetDesigner()" class="px-4 py-2 border border-dark-400 hover:border-dark-300 rounded-lg text-[15px] text-dark-100">초기화</button>
+    <button onclick="runPrediction()" id="btn-predict" class="px-5 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-[15px] font-semibold disabled:opacity-40" disabled>AI 예측 실행</button>
   </div>
 </div>
 
@@ -43,28 +43,28 @@
     <div class="bg-dark-600 border border-dark-400 rounded-xl">
       <div class="px-5 py-3 border-b border-dark-400 flex justify-between items-center">
         <div>
-          <div class="text-[13px] font-semibold">1. Ionizable Lipid</div>
-          <div class="text-[10px] text-dark-200">Select or search from 13,339 lipids</div>
+          <div class="text-[16px] font-semibold">1. 이온화 지질</div>
+          <div class="text-[13px] text-dark-200">13,339개 지질에서 검색 또는 선택</div>
         </div>
-        <div id="il-selected-badge" class="hidden px-3 py-1 rounded-lg bg-blue-500/10 text-blue-400 text-[11px] font-semibold"></div>
+        <div id="il-selected-badge" class="hidden px-3 py-1 rounded-lg bg-blue-500/10 text-blue-400 text-[14px] font-semibold"></div>
       </div>
       <div class="p-4">
         <!-- Search -->
         <div class="relative mb-3">
-          <input id="il-search" type="text" placeholder="Search by name or SMILES (e.g. MC3, ALC-0315)..."
-            class="w-full bg-dark-700 border border-dark-400 rounded-lg px-4 py-2.5 text-[13px] text-dark-50 placeholder-dark-200 focus:border-blue-500 focus:outline-none"
+          <input id="il-search" type="text" placeholder="이름 또는 SMILES로 검색 (예: MC3, ALC-0315)..."
+            class="w-full bg-dark-700 border border-dark-400 rounded-lg px-4 py-2.5 text-[16px] text-dark-50 placeholder-dark-200 focus:border-blue-500 focus:outline-none"
             oninput="searchLipids(this.value)">
           <div id="il-search-results" class="absolute top-full left-0 right-0 mt-1 bg-dark-700 border border-dark-400 rounded-lg max-h-60 overflow-y-auto z-30 hidden"></div>
         </div>
         <!-- Quick picks -->
-        <div class="text-[10px] text-dark-200 font-semibold uppercase tracking-wide mb-2">Most Studied</div>
+        <div class="text-[13px] text-dark-200 font-semibold uppercase tracking-wide mb-2">연구 빈도 상위</div>
         <div class="grid grid-cols-4 gap-2" id="quick-picks">
           {% for il in top_lipids|slice:":8" %}
           <div class="lipid-option border border-dark-400 rounded-lg px-3 py-2 cursor-pointer"
                data-pk="{{ il.pk }}" data-name="{{ il.name }}" data-mw="{{ il.molecular_weight }}" data-logp="{{ il.logp }}"
                onclick="selectLipid(this)">
-            <div class="text-[11px] font-semibold text-dark-50 truncate">{{ il.name|truncatechars:22 }}</div>
-            <div class="flex items-center gap-2 mt-1 text-[9px] text-dark-200">
+            <div class="text-[14px] font-semibold text-dark-50 truncate">{{ il.name|truncatechars:22 }}</div>
+            <div class="flex items-center gap-2 mt-1 text-[12px] text-dark-200">
               <span>MW {{ il.molecular_weight|floatformat:0 }}</span>
               <span>LogP {{ il.logp|floatformat:1 }}</span>
               <span class="ml-auto font-mono">{{ il.usage }}x</span>
@@ -78,17 +78,17 @@
     <!-- COMPOSITION SLIDERS -->
     <div class="bg-dark-600 border border-dark-400 rounded-xl">
       <div class="px-5 py-3 border-b border-dark-400">
-        <div class="text-[13px] font-semibold">2. Molar Composition</div>
-        <div class="text-[10px] text-dark-200">Adjust molar ratios (IL : HL : Chol : PEG)</div>
+        <div class="text-[16px] font-semibold">2. 몰 조성</div>
+        <div class="text-[13px] text-dark-200">몰비 조정 (IL : HL : Chol : PEG)</div>
       </div>
 
       <!-- Composition bar -->
       <div class="px-5 pt-4 pb-2">
         <div class="h-8 rounded-lg overflow-hidden flex" id="comp-bar">
-          <div class="comp-bar bg-blue-500 flex items-center justify-center text-[10px] font-bold text-white" style="width:50%" id="bar-il">IL 50</div>
-          <div class="comp-bar bg-violet-500 flex items-center justify-center text-[10px] font-bold text-white" style="width:10%" id="bar-hl">HL 10</div>
-          <div class="comp-bar bg-amber-500 flex items-center justify-center text-[10px] font-bold text-white" style="width:38.5%" id="bar-ch">Chol 38.5</div>
-          <div class="comp-bar bg-cyan-500 flex items-center justify-center text-[10px] font-bold text-white" style="width:1.5%" id="bar-pg">1.5</div>
+          <div class="comp-bar bg-blue-500 flex items-center justify-center text-[13px] font-bold text-white" style="width:50%" id="bar-il">IL 50</div>
+          <div class="comp-bar bg-violet-500 flex items-center justify-center text-[13px] font-bold text-white" style="width:10%" id="bar-hl">HL 10</div>
+          <div class="comp-bar bg-amber-500 flex items-center justify-center text-[13px] font-bold text-white" style="width:38.5%" id="bar-ch">Chol 38.5</div>
+          <div class="comp-bar bg-cyan-500 flex items-center justify-center text-[13px] font-bold text-white" style="width:1.5%" id="bar-pg">1.5</div>
         </div>
       </div>
 
@@ -96,8 +96,8 @@
         <!-- IL Ratio -->
         <div>
           <div class="flex justify-between items-center mb-1.5">
-            <span class="text-[11px] font-semibold text-blue-400">Ionizable Lipid</span>
-            <span class="text-[13px] font-bold font-mono text-blue-400" id="val-il">50.0</span>
+            <span class="text-[14px] font-semibold text-blue-400">이온화 지질</span>
+            <span class="text-[16px] font-bold font-mono text-blue-400" id="val-il">50.0</span>
           </div>
           <input type="range" min="10" max="80" step="0.5" value="50" id="slider-il"
             class="w-full slider-track s-il bg-blue-500/20" oninput="updateComposition()">
@@ -105,12 +105,12 @@
         <!-- HL Ratio -->
         <div>
           <div class="flex justify-between items-center mb-1.5">
-            <span class="text-[11px] font-semibold text-violet-400">Helper Lipid</span>
-            <span class="text-[13px] font-bold font-mono text-violet-400" id="val-hl">10.0</span>
+            <span class="text-[14px] font-semibold text-violet-400">보조 지질</span>
+            <span class="text-[16px] font-bold font-mono text-violet-400" id="val-hl">10.0</span>
           </div>
           <input type="range" min="0" max="50" step="0.5" value="10" id="slider-hl"
             class="w-full slider-track s-hl bg-violet-500/20" oninput="updateComposition()">
-          <select id="sel-hl" class="mt-2 w-full bg-dark-700 border border-dark-400 rounded-lg px-3 py-1.5 text-[11px] text-dark-50 focus:border-violet-500 focus:outline-none">
+          <select id="sel-hl" class="mt-2 w-full bg-dark-700 border border-dark-400 rounded-lg px-3 py-1.5 text-[14px] text-dark-50 focus:border-violet-500 focus:outline-none">
             {% for h in helpers %}
             <option value="{{ h.name }}" {% if h.name == 'DOPE' %}selected{% endif %}>{{ h.name }} ({{ h.usage }})</option>
             {% endfor %}
@@ -119,12 +119,12 @@
         <!-- Chol Ratio -->
         <div>
           <div class="flex justify-between items-center mb-1.5">
-            <span class="text-[11px] font-semibold text-amber-400">Cholesterol</span>
-            <span class="text-[13px] font-bold font-mono text-amber-400" id="val-ch">38.5</span>
+            <span class="text-[14px] font-semibold text-amber-400">콜레스테롤</span>
+            <span class="text-[16px] font-bold font-mono text-amber-400" id="val-ch">38.5</span>
           </div>
           <input type="range" min="0" max="60" step="0.5" value="38.5" id="slider-ch"
             class="w-full slider-track s-ch bg-amber-500/20" oninput="updateComposition()">
-          <select id="sel-ch" class="mt-2 w-full bg-dark-700 border border-dark-400 rounded-lg px-3 py-1.5 text-[11px] text-dark-50 focus:border-amber-500 focus:outline-none">
+          <select id="sel-ch" class="mt-2 w-full bg-dark-700 border border-dark-400 rounded-lg px-3 py-1.5 text-[14px] text-dark-50 focus:border-amber-500 focus:outline-none">
             {% for c in cholesterols %}
             <option value="{{ c.name }}" {% if c.name == 'Cholesterol' %}selected{% endif %}>{{ c.name }} ({{ c.usage }})</option>
             {% endfor %}
@@ -133,12 +133,12 @@
         <!-- PEG Ratio -->
         <div>
           <div class="flex justify-between items-center mb-1.5">
-            <span class="text-[11px] font-semibold text-cyan-400">PEG-Lipid</span>
-            <span class="text-[13px] font-bold font-mono text-cyan-400" id="val-pg">1.5</span>
+            <span class="text-[14px] font-semibold text-cyan-400">PEG-지질</span>
+            <span class="text-[16px] font-bold font-mono text-cyan-400" id="val-pg">1.5</span>
           </div>
           <input type="range" min="0" max="10" step="0.1" value="1.5" id="slider-pg"
             class="w-full slider-track s-pg bg-cyan-500/20" oninput="updateComposition()">
-          <select id="sel-pg" class="mt-2 w-full bg-dark-700 border border-dark-400 rounded-lg px-3 py-1.5 text-[11px] text-dark-50 focus:border-cyan-500 focus:outline-none">
+          <select id="sel-pg" class="mt-2 w-full bg-dark-700 border border-dark-400 rounded-lg px-3 py-1.5 text-[14px] text-dark-50 focus:border-cyan-500 focus:outline-none">
             {% for p in pegs %}
             <option value="{{ p.name }}" {% if p.name == 'DMG-PEG2000' %}selected{% endif %}>{{ p.name }} ({{ p.usage }})</option>
             {% endfor %}
@@ -150,28 +150,28 @@
       <div class="px-5 pb-4 flex gap-6">
         <div class="w-48">
           <div class="flex justify-between items-center mb-1.5">
-            <span class="text-[11px] font-semibold text-dark-100">N/P Ratio</span>
-            <span class="text-[13px] font-bold font-mono text-dark-50" id="val-np">6.0</span>
+            <span class="text-[14px] font-semibold text-dark-100">N/P 비율</span>
+            <span class="text-[16px] font-bold font-mono text-dark-50" id="val-np">6.0</span>
           </div>
           <input type="range" min="1" max="20" step="0.5" value="6" id="slider-np"
             class="w-full slider-track bg-dark-300" style="-webkit-appearance:none;height:4px"
             oninput="document.getElementById('val-np').textContent=this.value">
         </div>
         <div class="w-48">
-          <span class="text-[11px] font-semibold text-dark-100 block mb-1.5">Mixing Method</span>
+          <span class="text-[14px] font-semibold text-dark-100 block mb-1.5">혼합 방식</span>
           <div class="flex gap-2">
-            <label class="flex items-center gap-1.5 text-[11px] text-dark-100 cursor-pointer">
-              <input type="radio" name="mixing" value="microfluidics" checked class="accent-blue-500"> Microfluidics
+            <label class="flex items-center gap-1.5 text-[14px] text-dark-100 cursor-pointer">
+              <input type="radio" name="mixing" value="microfluidics" checked class="accent-blue-500"> 미세유체역학
             </label>
-            <label class="flex items-center gap-1.5 text-[11px] text-dark-100 cursor-pointer">
-              <input type="radio" name="mixing" value="handmixed" class="accent-blue-500"> Hand Mixed
+            <label class="flex items-center gap-1.5 text-[14px] text-dark-100 cursor-pointer">
+              <input type="radio" name="mixing" value="handmixed" class="accent-blue-500"> 수동 혼합
             </label>
           </div>
         </div>
         <div class="flex-1"></div>
         <div class="text-right">
-          <div class="text-[10px] text-dark-200 mb-1">Total Ratio</div>
-          <div class="text-[18px] font-bold font-mono" id="total-ratio">100.0</div>
+          <div class="text-[13px] text-dark-200 mb-1">총 비율</div>
+          <div class="text-[22px] font-bold font-mono" id="total-ratio">100.0</div>
         </div>
       </div>
     </div>
@@ -180,13 +180,13 @@
     <div class="bg-dark-600 border border-dark-400 rounded-xl">
       <div class="px-5 py-3 border-b border-dark-400 flex justify-between items-center">
         <div>
-          <div class="text-[13px] font-semibold">Similar Formulations in LNPDB</div>
-          <div class="text-[10px] text-dark-200">Matching your selected composition</div>
+          <div class="text-[16px] font-semibold">LNPDB 유사 제형</div>
+          <div class="text-[13px] text-dark-200">선택한 조성과 일치하는 결과</div>
         </div>
-        <button onclick="findSimilar()" class="px-3 py-1.5 border border-dark-400 hover:border-blue-500 rounded-lg text-[11px] text-dark-100 hover:text-blue-400">Find Similar</button>
+        <button onclick="findSimilar()" class="px-3 py-1.5 border border-dark-400 hover:border-blue-500 rounded-lg text-[14px] text-dark-100 hover:text-blue-400">유사 제형 검색</button>
       </div>
       <div id="similar-results" class="p-4">
-        <div class="text-[11px] text-dark-200 text-center py-6">Select a lipid and click "Find Similar" to search the database</div>
+        <div class="text-[14px] text-dark-200 text-center py-6">지질을 선택하고 "유사 제형 검색"을 클릭하세요</div>
       </div>
     </div>
   </div>
@@ -197,7 +197,7 @@
     <!-- COMPOSITION DONUT -->
     <div class="bg-dark-600 border border-dark-400 rounded-xl">
       <div class="px-5 py-3 border-b border-dark-400">
-        <div class="text-[13px] font-semibold">Composition</div>
+        <div class="text-[16px] font-semibold">조성</div>
       </div>
       <div class="p-4 flex items-center justify-center">
         <canvas id="comp-donut" width="240" height="240"></canvas>
@@ -207,16 +207,16 @@
     <!-- AI PREDICTION RESULT -->
     <div class="bg-dark-600 border border-dark-400 rounded-xl" id="prediction-panel">
       <div class="px-5 py-3 border-b border-dark-400">
-        <div class="text-[13px] font-semibold">AI Prediction</div>
-        <div class="text-[10px] text-dark-200">LNP-Efficacy-RF v1.0</div>
+        <div class="text-[16px] font-semibold">AI 예측</div>
+        <div class="text-[13px] text-dark-200">LNP-Efficacy-RF v1.0</div>
       </div>
       <div id="prediction-content" class="p-5">
         <div class="text-center py-8">
           <div class="w-16 h-16 rounded-full border-2 border-dashed border-dark-400 flex items-center justify-center mx-auto mb-3">
             <span class="text-dark-200 text-2xl">?</span>
           </div>
-          <div class="text-[12px] text-dark-200">Select lipid and composition</div>
-          <div class="text-[11px] text-dark-200 mt-1">then click "Run AI Prediction"</div>
+          <div class="text-[15px] text-dark-200">지질과 조성을 선택하세요</div>
+          <div class="text-[14px] text-dark-200 mt-1">"AI 예측 실행"을 클릭하세요</div>
         </div>
       </div>
     </div>
@@ -224,20 +224,20 @@
     <!-- FORMULATION SUMMARY -->
     <div class="bg-dark-600 border border-dark-400 rounded-xl">
       <div class="px-5 py-3 border-b border-dark-400">
-        <div class="text-[13px] font-semibold">Design Summary</div>
+        <div class="text-[16px] font-semibold">설계 요약</div>
       </div>
-      <div class="p-4 space-y-2 text-[11px]" id="summary-panel">
-        <div class="flex justify-between"><span class="text-dark-200">Ionizable Lipid</span><span class="font-mono text-dark-50" id="sum-il">Not selected</span></div>
-        <div class="flex justify-between"><span class="text-dark-200">Helper Lipid</span><span class="font-mono text-dark-50" id="sum-hl">DOPE</span></div>
-        <div class="flex justify-between"><span class="text-dark-200">Cholesterol</span><span class="font-mono text-dark-50" id="sum-ch">Cholesterol</span></div>
-        <div class="flex justify-between"><span class="text-dark-200">PEG-Lipid</span><span class="font-mono text-dark-50" id="sum-pg">DMG-PEG2000</span></div>
+      <div class="p-4 space-y-2 text-[14px]" id="summary-panel">
+        <div class="flex justify-between"><span class="text-dark-200">이온화 지질</span><span class="font-mono text-dark-50" id="sum-il">선택 안됨</span></div>
+        <div class="flex justify-between"><span class="text-dark-200">보조 지질</span><span class="font-mono text-dark-50" id="sum-hl">DOPE</span></div>
+        <div class="flex justify-between"><span class="text-dark-200">콜레스테롤</span><span class="font-mono text-dark-50" id="sum-ch">Cholesterol</span></div>
+        <div class="flex justify-between"><span class="text-dark-200">PEG-지질</span><span class="font-mono text-dark-50" id="sum-pg">DMG-PEG2000</span></div>
         <div class="border-t border-dark-400 my-2"></div>
-        <div class="flex justify-between"><span class="text-dark-200">Composition</span><span class="font-mono font-semibold text-dark-50" id="sum-ratio">50:10:38.5:1.5</span></div>
-        <div class="flex justify-between"><span class="text-dark-200">N/P Ratio</span><span class="font-mono text-dark-50" id="sum-np">6.0</span></div>
-        <div class="flex justify-between"><span class="text-dark-200">Mixing</span><span class="font-mono text-dark-50" id="sum-mix">Microfluidics</span></div>
+        <div class="flex justify-between"><span class="text-dark-200">조성</span><span class="font-mono font-semibold text-dark-50" id="sum-ratio">50:10:38.5:1.5</span></div>
+        <div class="flex justify-between"><span class="text-dark-200">N/P 비율</span><span class="font-mono text-dark-50" id="sum-np">6.0</span></div>
+        <div class="flex justify-between"><span class="text-dark-200">혼합</span><span class="font-mono text-dark-50" id="sum-mix">Microfluidics</span></div>
       </div>
       <div class="px-4 pb-4">
-        <button onclick="saveFormulation()" class="w-full py-2.5 border border-dark-400 hover:border-emerald-500 rounded-lg text-[12px] text-dark-100 hover:text-emerald-400 font-semibold transition">Save to Queue</button>
+        <button onclick="saveFormulation()" class="w-full py-2.5 border border-dark-400 hover:border-emerald-500 rounded-lg text-[15px] text-dark-100 hover:text-emerald-400 font-semibold transition">대기열에 저장</button>
       </div>
     </div>
   </div>
@@ -273,13 +273,13 @@ function searchLipids(q) {
       .then(r => r.json())
       .then(data => {
         if (data.results.length === 0) {
-          box.innerHTML = '<div class="px-4 py-3 text-[11px] text-dark-200">No results</div>';
+          box.innerHTML = '<div class="px-4 py-3 text-[14px] text-dark-200">No results</div>';
         } else {
           box.innerHTML = data.results.map(il => `
             <div class="search-result px-4 py-2.5 cursor-pointer border-b border-dark-400/50"
                  onclick="selectLipidFromSearch(${il.pk}, '${il.name.replace(/'/g,"\\'")}', ${il.mw}, ${il.logp})">
-              <div class="text-[12px] font-semibold text-dark-50">${il.name}</div>
-              <div class="flex gap-3 text-[10px] text-dark-200 mt-0.5">
+              <div class="text-[15px] font-semibold text-dark-50">${il.name}</div>
+              <div class="flex gap-3 text-[13px] text-dark-200 mt-0.5">
                 <span>MW ${il.mw ? il.mw.toFixed(1) : '-'}</span>
                 <span>LogP ${il.logp ? il.logp.toFixed(2) : '-'}</span>
                 <span class="font-mono text-dark-300">${il.smiles}</span>
@@ -337,7 +337,7 @@ function updateComposition() {
 
   const totalEl = document.getElementById('total-ratio');
   totalEl.textContent = total.toFixed(1);
-  totalEl.className = `text-[18px] font-bold font-mono ${Math.abs(total - 100) < 0.5 ? 'text-emerald-400' : 'text-rose-400'}`;
+  totalEl.className = `text-[22px] font-bold font-mono ${Math.abs(total - 100) < 0.5 ? 'text-emerald-400' : 'text-rose-400'}`;
 
   // Composition bar
   document.getElementById('bar-il').style.width = (state.il / total * 100) + '%';
@@ -394,7 +394,7 @@ function initDonut() {
 function runPrediction() {
   if (!state.lipid) return;
   const panel = document.getElementById('prediction-content');
-  panel.innerHTML = '<div class="text-center py-8"><div class="animate-spin w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full mx-auto"></div><div class="text-[11px] text-dark-200 mt-3">Running prediction...</div></div>';
+  panel.innerHTML = '<div class="text-center py-8"><div class="animate-spin w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full mx-auto"></div><div class="text-[14px] text-dark-200 mt-3">Running prediction...</div></div>';
 
   // Simulate prediction (in production: call /ai/predict/api/)
   setTimeout(() => {
@@ -414,15 +414,15 @@ function runPrediction() {
           ${makeMetric('Confidence', confidence, '#f59e0b')}
         </div>
         <div class="border-t border-dark-400 pt-3 mt-3">
-          <div class="text-[10px] text-dark-200 font-semibold uppercase tracking-wide mb-2">Predicted Properties</div>
-          <div class="space-y-1.5 text-[11px]">
+          <div class="text-[13px] text-dark-200 font-semibold uppercase tracking-wide mb-2">예측 물성</div>
+          <div class="space-y-1.5 text-[14px]">
             <div class="flex justify-between"><span class="text-dark-200">Diameter</span><span class="font-mono text-dark-50">${(60 + Math.random()*100).toFixed(1)} nm</span></div>
             <div class="flex justify-between"><span class="text-dark-200">PDI</span><span class="font-mono text-dark-50">${(0.05 + Math.random()*0.2).toFixed(3)}</span></div>
             <div class="flex justify-between"><span class="text-dark-200">Zeta Potential</span><span class="font-mono text-dark-50">${(-30 + Math.random()*25).toFixed(1)} mV</span></div>
             <div class="flex justify-between"><span class="text-dark-200">Encapsulation</span><span class="font-mono text-dark-50">${(75 + Math.random()*20).toFixed(1)}%</span></div>
           </div>
         </div>
-        <div class="mt-3 pt-3 border-t border-dark-400 text-[9px] text-dark-200 text-center">
+        <div class="mt-3 pt-3 border-t border-dark-400 text-[12px] text-dark-200 text-center">
           Model: LNP-Efficacy-RF v1.0 | Trained on ${state.lipid.name.length > 0 ? '19,797' : '0'} samples
         </div>
       </div>
@@ -447,8 +447,8 @@ function makeScoreRing(val, label, color) {
 
 function makeMetric(label, val, color) {
   return `<div class="text-center bg-dark-700 rounded-lg py-2.5 px-2">
-    <div class="text-[16px] font-extrabold font-mono" style="color:${color}">${val}</div>
-    <div class="text-[9px] text-dark-200 mt-0.5">${label}</div>
+    <div class="text-[20px] font-extrabold font-mono" style="color:${color}">${val}</div>
+    <div class="text-[12px] text-dark-200 mt-0.5">${label}</div>
   </div>`;
 }
 
@@ -456,7 +456,7 @@ function makeMetric(label, val, color) {
 function findSimilar() {
   const box = document.getElementById('similar-results');
   if (!state.lipid) {
-    box.innerHTML = '<div class="text-[11px] text-amber-400 text-center py-4">Please select an ionizable lipid first</div>';
+    box.innerHTML = '<div class="text-[14px] text-amber-400 text-center py-4">먼저 이온화 지질을 선택하세요</div>';
     return;
   }
   box.innerHTML = '<div class="text-center py-4"><div class="animate-spin w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full mx-auto"></div></div>';
@@ -466,17 +466,17 @@ function findSimilar() {
     .then(r => r.json())
     .then(data => {
       if (data.results.length === 0) {
-        box.innerHTML = '<div class="text-[11px] text-dark-200 text-center py-4">No similar formulations found</div>';
+        box.innerHTML = '<div class="text-[14px] text-dark-200 text-center py-4">유사 제형을 찾을 수 없습니다</div>';
         return;
       }
       box.innerHTML = `
-        <table class="w-full text-[11px]">
+        <table class="w-full text-[14px]">
           <thead><tr class="border-b border-dark-400">
-            <th class="text-left px-3 py-2 text-[9px] text-dark-200 uppercase">Formulation</th>
-            <th class="text-left px-3 py-2 text-[9px] text-dark-200 uppercase">Helper</th>
-            <th class="text-left px-3 py-2 text-[9px] text-dark-200 uppercase">Ratio</th>
-            <th class="text-left px-3 py-2 text-[9px] text-dark-200 uppercase">Mixing</th>
-            <th class="text-right px-3 py-2 text-[9px] text-dark-200 uppercase">Avg Value</th>
+            <th class="text-left px-3 py-2 text-[12px] text-dark-200 uppercase">Formulation</th>
+            <th class="text-left px-3 py-2 text-[12px] text-dark-200 uppercase">Helper</th>
+            <th class="text-left px-3 py-2 text-[12px] text-dark-200 uppercase">Ratio</th>
+            <th class="text-left px-3 py-2 text-[12px] text-dark-200 uppercase">Mixing</th>
+            <th class="text-right px-3 py-2 text-[12px] text-dark-200 uppercase">Avg Value</th>
           </tr></thead>
           <tbody>
             ${data.results.map(r => `
@@ -505,15 +505,15 @@ function resetDesigner() {
   document.getElementById('il-search').value = '';
   document.getElementById('il-selected-badge').classList.add('hidden');
   document.getElementById('btn-predict').disabled = true;
-  document.getElementById('sum-il').textContent = 'Not selected';
+  document.getElementById('sum-il').textContent = '선택 안됨';
   document.querySelectorAll('.lipid-option').forEach(e => e.classList.remove('selected'));
-  document.getElementById('prediction-content').innerHTML = '<div class="text-center py-8"><div class="w-16 h-16 rounded-full border-2 border-dashed border-dark-400 flex items-center justify-center mx-auto mb-3"><span class="text-dark-200 text-2xl">?</span></div><div class="text-[12px] text-dark-200">Select lipid and composition</div></div>';
-  document.getElementById('similar-results').innerHTML = '<div class="text-[11px] text-dark-200 text-center py-6">Select a lipid and click "Find Similar"</div>';
+  document.getElementById('prediction-content').innerHTML = '<div class="text-center py-8"><div class="w-16 h-16 rounded-full border-2 border-dashed border-dark-400 flex items-center justify-center mx-auto mb-3"><span class="text-dark-200 text-2xl">?</span></div><div class="text-[15px] text-dark-200">지질과 조성을 선택하세요</div></div>';
+  document.getElementById('similar-results').innerHTML = '<div class="text-[14px] text-dark-200 text-center py-6">지질을 선택하고 "유사 제형 검색"을 클릭하세요</div>';
   updateComposition();
 }
 
 function saveFormulation() {
-  if (!state.lipid) { alert('Please select an ionizable lipid first'); return; }
+  if (!state.lipid) { alert('먼저 이온화 지질을 선택하세요'); return; }
   alert(`Formulation saved to queue:\n${state.lipid.name}\n${state.il}:${state.hl}:${state.ch}:${state.pg}\nN/P = ${document.getElementById('slider-np').value}`);
 }
 

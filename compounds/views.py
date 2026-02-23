@@ -203,7 +203,8 @@ def lipid_detail(request, pk):
 
 @login_required
 def lipid_compare(request):
-    ids = request.GET.getlist("ids")
+    raw_ids = request.GET.getlist("ids")
+    ids = [i for i in raw_ids if i.isdigit()]
     lipids = list(
         IonizableLipid.objects.filter(pk__in=ids)
         .select_related("head_group", "linker", "tail1", "tail2")

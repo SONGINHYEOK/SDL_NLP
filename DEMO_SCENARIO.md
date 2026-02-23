@@ -13,135 +13,135 @@
 OmniLNP
 AI-Native Autonomous Lab
 
-OVERVIEW
-  └ Dashboard          ← 메인 화면
+개요
+  └ 대시보드              ← 메인 화면
 
-DATA
-  ├ Lipid Explorer     ← Lipid 목록/검색
-  ├ Formulations       ← 제형 목록 + Designer
-  └ Experiments        ← 실험 결과
+데이터
+  ├ 지질 탐색기           ← 지질 목록/검색
+  ├ 제형 목록             ← 제형 목록 + 설계 도구
+  └ 실험 결과             ← 실험 결과
 
-AI MODELS
-  ├ Predict            ← AI 물성 예측
-  ├ Generate           ← AI 구조 생성
-  └ Optimize           ← 다목적 최적화
+AI 모델
+  ├ 물성 예측             ← AI 물성 예측
+  ├ 구조 생성             ← AI 구조 생성
+  └ 최적화               ← 다목적 최적화
 
-LAB
-  ├ Equipment          ← 장비 모니터링
-  ├ Maintenance        ← 장비 유지보수/캘리브레이션
-  ├ Inventory          ← 시약/소모품 재고 관리
-  └ Workflow           ← 파이프라인
+자율실험실
+  ├ 장비 모니터링          ← 장비 모니터링
+  ├ 장비 유지보수          ← 장비 유지보수/캘리브레이션
+  ├ 시약 재고             ← 시약/소모품 재고 관리
+  └ 워크플로우            ← 파이프라인
 ```
 
 ---
 
-## 시나리오 1: 로그인 → Dashboard 둘러보기 (3분)
+## 시나리오 1: 로그인 → 대시보드 둘러보기 (3분)
 
 ### Step 1. 로그인
 
 1. 브라우저에서 `http://127.0.0.1:8000/` 접속
-2. 로그인 화면이 나타남 — 상단에 **"OmniLNP"** 로고와 **"Sign In"** 카드가 보임
-3. **Username** 입력란에 사용자명 입력
-4. **Password** 입력란에 비밀번호 입력
-5. **`Sign In`** 버튼 클릭
-6. → Dashboard 화면으로 자동 이동됨
+2. 로그인 화면이 나타남 — 상단에 **"OmniLNP"** 로고와 **"로그인"** 카드가 보임
+3. **사용자명** 입력란에 사용자명 입력
+4. **비밀번호** 입력란에 비밀번호 입력
+5. **`로그인`** 버튼 클릭
+6. → 대시보드 화면으로 자동 이동됨
 
 > 로그인 후 오른쪽 상단에 사용자명과 역할(예: "Researcher")이 표시되는 것을 확인하세요.
 
 ---
 
-### Step 2. Dashboard 상단 — 통계 카드 확인
+### Step 2. 대시보드 상단 — 통계 카드 확인
 
-로그인 직후 보이는 화면이 Dashboard입니다. 상단에 **5개 통계 카드**가 가로로 나열되어 있습니다.
+로그인 직후 보이는 화면이 대시보드입니다. 상단에 **5개 통계 카드**가 가로로 나열되어 있습니다.
 
 왼쪽부터 순서대로 확인하세요:
 
 | 카드 제목 | 무엇을 보여주나 |
 |----------|---------------|
-| **Total Records** | 19,797건 — 43개 논문에서 수집한 LNP 실험 결과 총 건수 |
-| **Ionizable Lipids** | 13,339종 — 데이터베이스에 등록된 이온화 지질 종류 수 |
-| **AI Models** | 등록된 AI 모델 수와 활성화된 모델 수 |
-| **Equipment** | 연결된 장비 수와 현재 온라인 장비 수 |
-| **Workflows** | 총 워크플로우 수와 현재 실행 중인 수 |
+| **총 실험 기록** | 19,797건 — 43개 논문에서 수집한 LNP 실험 결과 총 건수 |
+| **이온화 지질** | 13,339종 — 데이터베이스에 등록된 이온화 지질 종류 수 |
+| **AI 모델** | 등록된 AI 모델 수와 활성화된 모델 수 |
+| **장비** | 연결된 장비 수와 현재 온라인 장비 수 |
+| **워크플로우** | 총 워크플로우 수와 현재 실행 중인 수 |
 
 ---
 
-### Step 3. Dashboard 중단 — 파이프라인 개요
+### Step 3. 대시보드 중단 — 파이프라인 개요
 
-통계 카드 아래로 스크롤하면 **"Closed-loop Optimization Pipeline"** 섹션이 보입니다.
+통계 카드 아래로 스크롤하면 **"자율 최적화 파이프라인"** 섹션이 보입니다.
 
 5단계 파이프라인이 화살표로 연결되어 있습니다:
 ```
-AI Design → Synthesize → Formulate → Analyze → Learn
-(Structure gen) (Liquid handler) (Microfluidic) (DLS + Plate) (Retrain AI)
+AI 설계 → 합성 → 제형화 → 분석 → 학습
+(구조 생성) (리퀴드 핸들러) (미세유체) (DLS + 플레이트) (AI 재학습)
 ```
 
 > 이것이 OmniLNP의 핵심 — AI가 설계하고, 장비가 합성하고, 결과를 분석해서 AI가 다시 학습하는 자동화 루프입니다.
 
 ---
 
-### Step 4. Dashboard 하단 — 위젯 확인
+### Step 4. 대시보드 하단 — 위젯 확인
 
 계속 아래로 스크롤하면 여러 위젯이 보입니다:
 
-1. **Equipment Status** — 각 장비의 현재 상태 (Running/Idle/Maintenance 등). 오른쪽 **"View All"** 링크가 보이면 나중에 시나리오 5에서 자세히 봅니다.
-2. **Workflow Runs** — 진행 중인 파이프라인 실행 상태
-3. **Inventory Alerts** — 재고 부족 시약 알림 (rose/amber dot). **"View Inventory"** 링크로 재고 대시보드로 이동 가능. 부족 시약이 없으면 이 위젯은 숨겨집니다.
-4. **Quick Actions** — 4개 바로가기 카드:
-   - "Explore Lipids" → Lipid Explorer로 이동
-   - "Design Formulation" → Formulation Designer로 이동
-   - "Generate Structures" → AI Generate로 이동
-   - "Optimize LNP" → AI Optimize로 이동
-5. **Recent Data (LNPDB)** — 최근 실험 데이터 20건 미리보기 테이블
+1. **장비 상태** — 각 장비의 현재 상태 (Running/Idle/Maintenance 등). 오른쪽 **"전체 보기"** 링크가 보이면 나중에 시나리오 5에서 자세히 봅니다.
+2. **워크플로우 실행** — 진행 중인 파이프라인 실행 상태
+3. **재고 알림** — 재고 부족 시약 알림 (rose/amber dot). **"재고 관리"** 링크로 재고 대시보드로 이동 가능. 부족 시약이 없으면 이 위젯은 숨겨집니다.
+4. **빠른 실행** — 4개 바로가기 카드:
+   - "지질 탐색" → 지질 탐색기로 이동
+   - "제형 설계" → 제형 설계 도구로 이동
+   - "구조 생성" → AI 구조 생성으로 이동
+   - "LNP 최적화" → 다목적 최적화로 이동
+5. **최근 데이터 (LNPDB)** — 최근 실험 데이터 20건 미리보기 테이블
 
-> 다음 단계로: 사이드바에서 **"Lipid Explorer"** 를 클릭하세요 (DATA 섹션 아래 첫 번째 메뉴).
-
----
-
-## 시나리오 2: LNPDB 탐색 + Lipid 상세 분석 (4분)
-
-### Step 5. Lipid Explorer — 전체 목록 확인
-
-사이드바 **DATA** > **"Lipid Explorer"** 클릭 후 나타나는 화면입니다.
-
-1. 페이지 상단에 **"Lipid Explorer"** 제목과 **"13,339 ionizable lipids"** 라고 총 개수가 표시됨
-2. 아래에 테이블이 보임 — 컬럼: **Name | Head | MW | LogP | TPSA | HBD/HBA | Linker | SMILES**
-3. 하단에 **"Page 1 of 267"** 같은 페이지네이션과 **Prev / Next** 버튼이 있음
-
-> 50개씩 페이지가 나뉘어 있습니다. Next를 눌러 다음 페이지로 이동해 볼 수 있습니다.
+> 다음 단계로: 사이드바에서 **"지질 탐색기"** 를 클릭하세요 (데이터 섹션 아래 첫 번째 메뉴).
 
 ---
 
-### Step 6. Lipid Explorer — 검색해 보기
+## 시나리오 2: LNPDB 탐색 + 지질 상세 분석 (4분)
+
+### Step 5. 지질 탐색기 — 전체 목록 확인
+
+사이드바 **데이터** > **"지질 탐색기"** 클릭 후 나타나는 화면입니다.
+
+1. 페이지 상단에 **"지질 탐색기"** 제목과 총 개수가 표시됨
+2. 아래에 테이블이 보임 — 컬럼: **이름 | 헤드 | MW | LogP | TPSA | HBD/HBA | 링커 | SMILES**
+3. 하단에 페이지네이션과 **이전 / 다음** 버튼이 있음
+
+> 50개씩 페이지가 나뉘어 있습니다. 다음을 눌러 다음 페이지로 이동해 볼 수 있습니다.
+
+---
+
+### Step 6. 지질 탐색기 — 검색해 보기
 
 테이블 위에 검색/필터 영역이 있습니다.
 
-1. **"Name or SMILES..."** 검색창에 `MC3` 입력
-2. **`Filter`** 버튼 클릭
-3. → MC3가 포함된 Lipid만 필터링되어 표시됨
+1. **"이름 또는 SMILES..."** 검색창에 `MC3` 입력
+2. **`필터`** 버튼 클릭
+3. → MC3가 포함된 지질만 필터링되어 표시됨
 
 추가 필터도 사용해 보세요:
-- **Structure** 드롭다운: "All" → **"Ester"** 로 변경하면 에스테르 결합 Lipid만 표시
-- **MW Min**: `500`, **MW Max**: `900` 입력 → 분자량 범위 필터
-- **Sort** 드롭다운: **"MW Low-High"** 선택 → 분자량 오름차순 정렬
+- **구조** 드롭다운: "All" → **"Ester"** 로 변경하면 에스테르 결합 지질만 표시
+- **분자량 최소**: `500`, **분자량 최대**: `900` 입력 → 분자량 범위 필터
+- **정렬** 드롭다운: **"MW Low-High"** 선택 → 분자량 오름차순 정렬
 
-필터를 초기화하려면 **"Reset"** 링크를 클릭하세요.
-
----
-
-### Step 7. Lipid 상세 페이지 진입
-
-1. 테이블에서 아무 Lipid의 **이름(Name 컬럼)을 클릭** — 파란색 링크로 되어 있음
-2. → 해당 Lipid의 상세 페이지(`/compounds/<id>/`)로 이동
+필터를 초기화하려면 **"초기화"** 링크를 클릭하세요.
 
 ---
 
-### Step 8. Lipid 상세 — 구조 & 물성 확인
+### Step 7. 지질 상세 페이지 진입
+
+1. 테이블에서 아무 지질의 **이름 컬럼을 클릭** — 파란색 링크로 되어 있음
+2. → 해당 지질의 상세 페이지(`/compounds/<id>/`)로 이동
+
+---
+
+### Step 8. 지질 상세 — 구조 & 물성 확인
 
 상세 페이지는 3개 영역으로 구성되어 있습니다.
 
-**왼쪽 — 2D Structure 카드:**
-- **"2D Structure"** 제목 아래 분자 구조 그림이 자동 렌더링됨
+**왼쪽 — 2D 구조 카드:**
+- **"2D 구조"** 제목 아래 분자 구조 그림이 자동 렌더링됨
 - 그 아래 SMILES 문자열 표시
 
 **가운데/아래 — 물성 카드들:**
@@ -149,135 +149,135 @@ AI Design → Synthesize → Formulate → Analyze → Learn
 큰 카드 5개:
 | 카드 | 의미 |
 |------|------|
-| **Molecular Weight** | 분자량 (Da) |
+| **분자량** | 분자량 (Da) |
 | **LogP** | 지용성 |
 | **TPSA** | 극성 표면적 |
-| **HBD / HBA** | 수소결합 공여체/수용체 수 |
+| **HBD / HBA** | 수소결합 공여/수용체 수 |
 
-작은 카드 6개: Rot. Bonds, Rings, Fsp3, Heavy Atoms, N Count, Molar Ref
+작은 카드 6개: 회전 결합, 고리, Fsp3, 중원자, 질소 수, 몰 굴절률
 
-**Structural Components** 카드에서 Head Group, Linker, Tail 1, Tail 2 정보 확인
+**구조 성분** 카드에서 헤드 그룹, 링커, 꼬리 1, 꼬리 2 정보 확인
 
 ---
 
-### Step 9. Lipid 상세 — 레이더 차트 & 실험 결과
+### Step 9. 지질 상세 — 레이더 차트 & 실험 결과
 
-**오른쪽 — Descriptor Profile:**
-- **"Descriptor Profile"** 카드에 11각형 레이더 차트가 표시됨
-- 파란선 = 이 Lipid, 회색 영역 = LNPDB 전체 평균
+**오른쪽 — 물성 프로파일:**
+- **"물성 프로파일"** 카드에 11각형 레이더 차트가 표시됨
+- 파란선 = 이 지질, 회색 영역 = LNPDB 전체 평균
 - 어떤 물성이 평균보다 높고 낮은지 한눈에 비교 가능
 
 **아래로 스크롤:**
-- **"Experiment Results"** 테이블 — 이 Lipid가 사용된 LNP 제형의 실험 결과
-  - 컬럼: LNP ID | Formulation | Cargo | Model | Method | Value
-- **"By Assay Method"** 차트 — 측정 방법별 분포
-- **"Value Distribution"** 차트 — 결과값 히스토그램
+- **"실험 결과"** 테이블 — 이 지질이 사용된 LNP 제형의 실험 결과
+  - 컬럼: LNP ID | 제형 | 카고 | 모델 | 분석법 | 값
+- **"분석법별"** 차트 — 측정 방법별 분포
+- **"값 분포"** 차트 — 결과값 히스토그램
 
-> 상세 페이지 상단의 **"Back to Explorer"** 버튼을 클릭하면 목록으로 돌아갑니다.
+> 상세 페이지 상단의 **"탐색기로 돌아가기"** 버튼을 클릭하면 목록으로 돌아갑니다.
 
 ---
 
-### Step 10. Lipid 비교 (Compare)
+### Step 10. 지질 비교 (Compare)
 
-1. Lipid Explorer 목록으로 돌아옴 (Step 9에서 "Back to Explorer" 클릭)
+1. 지질 탐색기 목록으로 돌아옴 (Step 9에서 "탐색기로 돌아가기" 클릭)
 2. 브라우저 주소창에 직접 `http://127.0.0.1:8000/compounds/compare/` 입력하여 이동
-3. **"Lipid Comparison"** 페이지가 나타남 — **"Compare up to 4 ionizable lipids side-by-side"**
-4. 상단 검색창 **"Search lipid by name or SMILES..."** 에서 Lipid 이름 입력
-5. 검색 결과에서 Lipid를 클릭하면 비교 목록에 추가됨 (최대 4개)
-6. 추가된 Lipid마다:
+3. **"지질 비교"** 페이지가 나타남 — **"최대 4개 이온화 지질 나란히 비교"**
+4. 상단 검색창 **"이름 또는 SMILES로 검색..."** 에서 지질 이름 입력
+5. 검색 결과에서 지질을 클릭하면 비교 목록에 추가됨 (최대 4개)
+6. 추가된 지질마다:
    - 2D 구조가 나란히 표시됨
-   - **"Descriptor Overlay"** 레이더 차트에 모든 Lipid가 겹쳐 표시됨
-   - **"Property Comparison"** 테이블에서 수치 비교
-7. Lipid를 제거하려면 이름 옆 **x** 버튼 클릭
+   - **"물성 오버레이"** 레이더 차트에 모든 지질이 겹쳐 표시됨
+   - **"물성 비교"** 테이블에서 수치 비교
+7. 지질을 제거하려면 이름 옆 **x** 버튼 클릭
 
-> 다음 단계로: 사이드바에서 **"Formulations"** 를 클릭하세요 (DATA 섹션 두 번째 메뉴).
+> 다음 단계로: 사이드바에서 **"제형 목록"** 을 클릭하세요 (데이터 섹션 두 번째 메뉴).
 
 ---
 
 ## 시나리오 3: LNP 제형 설계 + AI 예측 (4분)
 
-### Step 11. Formulations 목록 확인 (빠르게)
+### Step 11. 제형 목록 확인 (빠르게)
 
-사이드바 **DATA** > **"Formulations"** 클릭
+사이드바 **데이터** > **"제형 목록"** 클릭
 
 1. **19,797건**의 LNP 제형 목록이 표시됨
-2. 각 제형은 Ionizable Lipid + Helper Lipid + Cholesterol + PEG-Lipid 4성분 조합
+2. 각 제형은 이온화 지질 + 보조 지질 + 콜레스테롤 + PEG-지질 4성분 조합
 3. 검색/필터 사용 가능
 
-> 이 목록은 참고만 하고, 핵심 기능인 Designer로 이동합니다.
+> 이 목록은 참고만 하고, 핵심 기능인 설계 도구로 이동합니다.
 
 ---
 
-### Step 12. Formulation Designer 진입
+### Step 12. 제형 설계 도구 진입
 
-1. Formulations 목록 페이지 상단 또는 Dashboard의 Quick Actions에서 **"Design Formulation"** 클릭
+1. 제형 목록 페이지 상단 또는 대시보드의 빠른 실행에서 **"제형 설계"** 클릭
 2. 또는 브라우저 주소창에 `http://127.0.0.1:8000/formulations/designer/` 입력
-3. **"Formulation Designer"** 페이지가 열림 — **"Design LNP composition and predict efficacy"**
+3. **"제형 설계 도구"** 페이지가 열림 — **"LNP 조성을 설계하고 효능을 예측합니다"**
 
 ---
 
-### Step 13. Designer — Ionizable Lipid 선택
+### Step 13. 설계 도구 — 이온화 지질 선택
 
-좌측 패널 **"1. Ionizable Lipid"** 섹션:
+좌측 패널 **"1. 이온화 지질"** 섹션:
 
-1. 검색창 **"Search by name or SMILES (e.g. MC3, ALC-0315)..."** 에 `ALC` 입력
+1. 검색창 **"이름 또는 SMILES로 검색 (예: MC3, ALC-0315)..."** 에 `ALC` 입력
 2. → 검색 결과 목록이 아래에 나타남
-3. 원하는 Lipid를 **클릭**하여 선택
+3. 원하는 지질을 **클릭**하여 선택
 
-또는 검색창 아래 **"Most Studied"** 영역에서 자주 연구된 Lipid 8개 중 하나를 바로 클릭해도 됩니다.
+또는 검색창 아래 **"연구 빈도 상위"** 영역에서 자주 연구된 지질 8개 중 하나를 바로 클릭해도 됩니다.
 
-> 선택한 Lipid가 파란색으로 하이라이트되면 성공입니다.
+> 선택한 지질이 파란색으로 하이라이트되면 성공입니다.
 
 ---
 
-### Step 14. Designer — 4성분 조성 슬라이더 조절
+### Step 14. 설계 도구 — 4성분 조성 슬라이더 조절
 
-**"2. Molar Composition"** 섹션에 4개 슬라이더가 있습니다.
+**"2. 몰 조성"** 섹션에 4개 슬라이더가 있습니다.
 
 각 슬라이더를 드래그하여 아래 값으로 맞춰보세요:
 
 | 슬라이더 | 색상 | 추천 값 |
 |---------|------|--------|
-| **Ionizable Lipid** | 파랑 | **50** |
-| **Helper Lipid** | 보라 | **10** |
-| **Cholesterol** | 노랑 | **38.5** |
-| **PEG-Lipid** | 청록 | **1.5** |
+| **이온화 지질** | 파랑 | **50** |
+| **보조 지질** | 보라 | **10** |
+| **콜레스테롤** | 노랑 | **38.5** |
+| **PEG-지질** | 청록 | **1.5** |
 
 확인할 것:
 - 슬라이더 위의 **색상 바**가 실시간으로 비율에 따라 변함
-- 맨 아래 **Total Ratio** 가 **100.0**이 되면 초록색으로 표시됨
+- 맨 아래 **총 비율** 이 **100.0**이 되면 초록색으로 표시됨
 - 100이 아니면 빨간색 — 합이 100%가 되도록 조절하세요
 
 각 성분 옆 **드롭다운**으로 구체적인 성분을 선택할 수 있습니다:
-- Helper Lipid 드롭다운 → **DOPE** 또는 **DSPC** 선택
-- Cholesterol 드롭다운 → **Cholesterol** 선택
-- PEG-Lipid 드롭다운 → **DMG-PEG2000** 선택
+- 보조 지질 드롭다운 → **DOPE** 또는 **DSPC** 선택
+- 콜레스테롤 드롭다운 → **Cholesterol** 선택
+- PEG-지질 드롭다운 → **DMG-PEG2000** 선택
 
 ---
 
-### Step 15. Designer — 추가 파라미터 설정
+### Step 15. 설계 도구 — 추가 파라미터 설정
 
 슬라이더 아래에 추가 설정이 있습니다:
 
-1. **N/P Ratio** 슬라이더 → **6** 으로 설정
-2. **Mixing Method** 라디오 버튼 → **"Microfluidics"** 선택
+1. **N/P 비율** 슬라이더 → **6** 으로 설정
+2. **혼합 방식** 라디오 버튼 → **"미세유체역학"** 선택
 
 ---
 
-### Step 16. Designer — 도넛 차트 확인
+### Step 16. 설계 도구 — 도넛 차트 확인
 
-우측 패널 상단에 **"Composition"** 도넛 차트가 있습니다.
+우측 패널 상단에 **"조성"** 도넛 차트가 있습니다.
 
 - 슬라이더를 움직일 때마다 도넛 차트가 **실시간으로** 변함
 - 4가지 색상이 각 성분 비율을 나타냄
-- 중앙에 선택된 Lipid 정보가 표시됨
+- 중앙에 선택된 지질 정보가 표시됨
 
 ---
 
-### Step 17. Designer — AI 예측 실행
+### Step 17. 설계 도구 — AI 예측 실행
 
-1. 우측 패널에 **"AI Prediction"** 카드가 보임 — 처음에는 "Select lipid and composition"이라는 안내 문구
-2. 페이지 상단 오른쪽의 **`Run AI Prediction`** 버튼 클릭
+1. 우측 패널에 **"AI 예측"** 카드가 보임 — 처음에는 "지질과 조성을 선택하세요"라는 안내 문구
+2. 페이지 상단 오른쪽의 **`AI 예측 실행`** 버튼 클릭
 3. → 예측 결과가 표시됨:
 
 | 예측 항목 | 의미 |
@@ -293,31 +293,31 @@ AI Design → Synthesize → Formulate → Analyze → Learn
 
 ---
 
-### Step 18. Designer — 유사 제형 검색
+### Step 18. 설계 도구 — 유사 제형 검색
 
-좌측 하단 **"Similar Formulations in LNPDB"** 섹션:
+좌측 하단 **"LNPDB 유사 제형"** 섹션:
 
-1. **`Find Similar`** 버튼 클릭
+1. **`유사 제형 검색`** 버튼 클릭
 2. → 현재 설정과 유사한 조성의 기존 제형이 DB에서 검색되어 표시됨
 3. 각 유사 제형의 실험 결과 값과 비교 가능
 
-> 다음 단계로: 사이드바에서 **AI MODELS** 섹션 > **"Generate"** 를 클릭하세요.
+> 다음 단계로: 사이드바에서 **AI 모델** 섹션 > **"구조 생성"** 을 클릭하세요.
 
 ---
 
 ## 시나리오 4: AI 신규 구조 생성 + 최적화 (4분)
 
-### Step 19. AI Structure Generation 진입
+### Step 19. AI 구조 생성 진입
 
-사이드바 **AI MODELS** > **"Generate"** 클릭
+사이드바 **AI 모델** > **"구조 생성"** 클릭
 
-페이지 제목: **"AI Structure Generation"** — *"Generate novel ionizable lipid candidates with target properties"*
+페이지 제목: **"AI 구조 생성"** — *"목표 물성에 맞는 새로운 이온화 지질 후보 생성"*
 
 ---
 
-### Step 20. Generate — 타겟 물성 범위 설정
+### Step 20. 구조 생성 — 타겟 물성 범위 설정
 
-좌측 패널 **"Target Properties"** 섹션에 6개 입력란이 있습니다.
+좌측 패널 **"목표 물성"** 섹션에 6개 입력란이 있습니다.
 
 아래 값을 입력하세요:
 
@@ -330,18 +330,18 @@ AI Design → Synthesize → Formulate → Analyze → Learn
 | **TPSA Min** | `30` |
 | **TPSA Max** | `80` |
 
-**"Structural Constraints"** 섹션:
-- **"Require ester bond"** 체크박스를 선택해 볼 수 있음 (선택사항)
+**"구조 제약 조건"** 섹션:
+- **"에스터 결합 필수"** 체크박스를 선택해 볼 수 있음 (선택사항)
 
-**"Generation Settings"** 섹션:
-- **Number of Candidates**: **`10`** 버튼 클릭 (기본 선택됨)
+**"생성 설정"** 섹션:
+- **후보 수**: **`10`** 버튼 클릭 (기본 선택됨)
 
 ---
 
-### Step 21. Generate — 후보 생성 실행
+### Step 21. 구조 생성 — 후보 생성 실행
 
-1. **`Generate Candidates`** 버튼 클릭
-2. → 우측 패널 **"Generated Candidates"** 에 10개 후보가 생성됨
+1. **`후보 생성`** 버튼 클릭
+2. → 우측 패널 **"생성된 후보"** 에 10개 후보가 생성됨
 
 각 후보 카드에서 확인할 내용:
 - **Pareto rank 뱃지**: `#1`, `#2`, `#3`... — 다목적 최적화 순위
@@ -353,62 +353,62 @@ AI Design → Synthesize → Formulate → Analyze → Learn
 
 ---
 
-### Step 22. Predict 페이지에서 생성된 후보 검증
+### Step 22. 물성 예측 페이지에서 생성된 후보 검증
 
 1. Step 21에서 마음에 드는 후보의 SMILES를 복사 (클릭하여 선택 후 Ctrl+C / Cmd+C)
-2. 사이드바 **AI MODELS** > **"Predict"** 클릭
-3. **"AI Property Prediction"** 페이지가 열림
+2. 사이드바 **AI 모델** > **"물성 예측"** 클릭
+3. **"AI 물성 예측"** 페이지가 열림
 
 좌측 패널:
-4. **"SMILES String"** 텍스트 영역에 복사한 SMILES를 **붙여넣기** (Ctrl+V / Cmd+V)
-5. → 아래 **"Structure Preview"** 에 2D 분자 구조가 자동으로 그려짐
-6. **`Run Prediction`** 버튼 클릭
+4. **"SMILES 문자열"** 텍스트 영역에 복사한 SMILES를 **붙여넣기** (Ctrl+V / Cmd+V)
+5. → 아래 **"구조 미리보기"** 에 2D 분자 구조가 자동으로 그려짐
+6. **`예측 실행`** 버튼 클릭
 
-우측 패널 **"Prediction Results"**:
+우측 패널 **"예측 결과"**:
 7. 예측 결과 확인:
-   - **Confidence Score** 게이지
-   - 물성 카드: MW, LogP, TPSA, HBD, HBA, RotBonds, Rings, Heavy Atoms, Fsp3, MR, N Count
+   - **신뢰도** 게이지
+   - 물성 카드: MW, LogP, TPSA, HBD, HBA, 회전 결합, 고리, 중원자, Fsp3, 몰 굴절률, 질소 수
 
-> "Or Select Known Lipid" 섹션에서 DB의 기존 Lipid를 검색하여 예측할 수도 있습니다.
+> "또는 등록된 지질 선택" 섹션에서 DB의 기존 지질을 검색하여 예측할 수도 있습니다.
 
 ---
 
-### Step 23. Multi-Objective Optimization
+### Step 23. 다목적 최적화
 
-1. 사이드바 **AI MODELS** > **"Optimize"** 클릭
-2. **"Multi-Objective Optimization"** 페이지가 열림
+1. 사이드바 **AI 모델** > **"최적화"** 클릭
+2. **"다목적 최적화"** 페이지가 열림
 
 **왼쪽 — 삼각 다이어그램 (Ternary Plot):**
-3. **"Composition Space (IL-HL-Chol)"** 카드에 삼각형 차트가 표시됨
+3. **"조성 공간 (IL-HL-Chol)"** 카드에 삼각형 차트가 표시됨
    - 꼭짓점 3개: **IL** (위), **HL** (왼쪽 아래), **Chol** (오른쪽 아래)
    - 각 점 = LNPDB의 실험 제형 하나
    - 점의 색상 = 실험 결과값 (높을수록 진한 색)
    - **"LNPDB Avg"** 마커 = 데이터베이스 평균 조성 위치
 4. 점 위에 마우스를 올리면 해당 제형의 상세 정보가 툴팁으로 나타남
 
-**왼쪽 아래 — Pareto Front 차트:**
-5. **"Pareto Front"** 카드에서 효능 vs 안전성 트레이드오프 시각화
-6. **"Efficacy vs Safety"** / **"Efficacy vs Stability"** 버튼으로 전환 가능
+**왼쪽 아래 — 파레토 전선 차트:**
+5. **"파레토 전선"** 카드에서 효능 vs 안전성 트레이드오프 시각화
+6. **"효능 vs 안전성"** / **"효능 vs 안정성"** 버튼으로 전환 가능
 
 **오른쪽 — 최적화 설정:**
-7. **Objective** 드롭다운: **"Balanced (Multi-Objective)"** 선택
-8. **Algorithm** 드롭다운: **"Bayesian Optimization"** 선택
-9. **Iterations** 입력란에 반복 횟수 입력
-10. **Constraints** 섹션에서 IL/HL/Chol의 Min/Max 범위 설정
-11. **`Run Optimization`** 버튼 클릭
-12. → **"Optimization Progress"** 차트에 반복별 최적 점수 추이가 표시됨
+7. **목적 함수** 드롭다운: **"균형 (다목적)"** 선택
+8. **알고리즘** 드롭다운: **"Bayesian Optimization"** 선택
+9. **반복 횟수** 입력란에 반복 횟수 입력
+10. **제약 조건** 섹션에서 IL/HL/Chol의 Min/Max 범위 설정
+11. **`최적화 실행`** 버튼 클릭
+12. → **"최적화 진행"** 차트에 반복별 최적 점수 추이가 표시됨
 
-> 다음 단계로: 사이드바에서 **LAB** 섹션 > **"Equipment"** 를 클릭하세요.
+> 다음 단계로: 사이드바에서 **자율실험실** 섹션 > **"장비 모니터링"** 을 클릭하세요.
 
 ---
 
 ## 시나리오 5: 자율실험실 — 장비 + 워크플로우 (3분)
 
-### Step 24. Equipment Monitor
+### Step 24. 장비 모니터링
 
-사이드바 **LAB** > **"Equipment"** 클릭
+사이드바 **자율실험실** > **"장비 모니터링"** 클릭
 
-페이지 제목: **"Equipment Monitor"** — 연결된 장비 수가 표시됨
+페이지 제목: **"장비 모니터링"** — 연결된 장비 수가 표시됨
 
 **장비 카드 그리드 확인:**
 
@@ -417,34 +417,34 @@ AI Design → Synthesize → Formulate → Analyze → Learn
 | 위치 | 내용 |
 |------|------|
 | 카드 왼쪽 상단 | 상태 표시등 (초록=Running, 노랑=Maintenance, 빨강=Error, 회색=Offline) |
-| 카드 제목 | 장비명 (예: Synthesis Reactor) + 타입 |
+| 카드 제목 | 장비명 (예: Synthesis Reactor) + 장비 유형 |
 | 오른쪽 뱃지 | 통신 프로토콜 — **REST API** / **MQTT** / **OPC UA** |
-| **Status** 줄 | 현재 상태 뱃지 (running, idle, maintenance, error, offline) |
+| **상태** 줄 | 현재 상태 뱃지 (running, idle, maintenance, error, offline) |
 | 상태 메시지 | 최근 로그 메시지 내용 |
-| 카드 하단 | **"Connected"** 또는 **"Disconnected"** + 마지막 업데이트 시간 |
+| 카드 하단 | **"연결됨"** 또는 **"연결 끊김"** + 마지막 업데이트 시간 |
 
 **장비 제어:**
-- 각 카드를 확장하면 **"Send Command"** 입력란이 나타남
+- 각 카드를 확장하면 **"명령 전송"** 입력란이 나타남
 - 명령어 예시: `start`, `calibrate`, `measure` 등 입력 가능
-- **`Send`** 버튼으로 장비에 명령 전송
+- **`전송`** 버튼으로 장비에 명령 전송
 
-**Status Timeline:**
-- 페이지 하단에 **"Status Timeline"** 섹션 — 모든 장비의 상태 변경 이력이 시간순으로 표시됨
+**상태 타임라인:**
+- 페이지 하단에 **"상태 타임라인"** 섹션 — 모든 장비의 상태 변경 이력이 시간순으로 표시됨
 
 ---
 
-### Step 25. Workflow Pipeline
+### Step 25. 워크플로우 파이프라인
 
-1. 사이드바 **LAB** > **"Workflow"** 클릭
-2. **"Workflow Pipeline"** 페이지가 열림 — *"Closed-loop optimization: Design → Synthesize → Formulate → Analyze → Learn"*
+1. 사이드바 **자율실험실** > **"워크플로우"** 클릭
+2. **"워크플로우 파이프라인"** 페이지가 열림 — *"자율 최적화: 설계 → 합성 → 제형화 → 분석 → 학습"*
 
 **상단 통계 카드 3개:**
 
 | 카드 | 의미 |
 |------|------|
-| **Total Runs** | 총 실행 횟수 (Optimization cycles) |
-| **Active** | 현재 실행 중인 수 (Currently running) |
-| **Completed** | 완료된 수 (Finished cycles) |
+| **총 실행** | 총 실행 횟수 (최적화 사이클) |
+| **실행 중** | 현재 실행 중인 수 (현재 실행 중) |
+| **완료** | 완료된 수 (완료된 사이클) |
 
 **워크플로우 런 카드:**
 
@@ -461,41 +461,41 @@ AI Design → Synthesize → Formulate → Analyze → Learn
 
 ### Step 26. 새 워크플로우 생성
 
-1. Workflow Pipeline 페이지에서 **`New Workflow`** 버튼 클릭
+1. 워크플로우 파이프라인 페이지에서 **`+ 새 워크플로우`** 버튼 클릭
 2. 아래 정보 입력:
    - **Name**: `LNP Optimization Demo`
    - **Description**: `시연용 최적화 사이클`
    - **AI Model**: 드롭다운에서 `LNP-Efficacy-RF` 선택
 3. **`Create`** 버튼 클릭
-4. → Workflow 상세 페이지로 자동 이동
+4. → 워크플로우 상세 페이지로 자동 이동
 5. Step 1 (Design)이 **"Awaiting Approval"** 상태로 표시됨
 
 ---
 
 ### Step 27. 5단계 파이프라인 실행 (핵심 시연)
 
-각 단계마다 **Approve → Simulate** 2번 클릭으로 진행합니다.
+각 단계마다 **승인 및 계속 → 시뮬레이션** 2번 클릭으로 진행합니다.
 
 **Step 1: AI Design**
-1. Step 1 카드에서 **`Approve`** 버튼 클릭 → 상태가 "Running"으로 변경
-2. **`Simulate`** 버튼 클릭 → 상태가 "Completed"로 변경
-3. Output Data를 펼쳐 확인:
+1. Step 1 카드에서 **`승인 및 계속`** 버튼 클릭 → 상태가 "Running"으로 변경
+2. **`시뮬레이션`** 버튼 클릭 → 상태가 "Completed"로 변경
+3. 출력 데이터를 펼쳐 확인:
    - `top_candidate`: 선정된 이온화 지질 (이름, SMILES, 물성)
    - `candidates`: 8~15개 후보 리스트 (Pareto rank 포함)
    - `search_space`: 탐색 공간 통계 (MW 500-900 필터링)
 
 **Step 2: Synthesize**
 1. Step 2가 자동으로 "Awaiting Approval" 상태
-2. **`Approve`** → **`Simulate`** 클릭
-3. Output 확인:
+2. **`승인 및 계속`** → **`시뮬레이션`** 클릭
+3. 출력 데이터 확인:
    - `synthesis_conditions`: 온도, 반응시간, 용매, 촉매
    - `yield_pct` / `purity_pct`: 수율/순도
    - `qc`: MS, NMR, HPLC 확인 결과
    - `reagents_consumed`: Ethanol 5mL, Chloroform/DCM 2mL 소모 기록
 
 **Step 3: Formulate**
-1. **`Approve`** → **`Simulate`** 클릭
-2. Output 확인:
+1. **`승인 및 계속`** → **`시뮬레이션`** 클릭
+2. 출력 데이터 확인:
    - `components`: IL:HL:Chol:PEG 4성분 조성 (mol%)
    - `composition_str`: 예) `50.2:9.8:38.4:1.6`
    - `np_ratio`: N/P 비율
@@ -503,8 +503,8 @@ AI Design → Synthesize → Formulate → Analyze → Learn
    - DB에 실제 `LNPFormulation` 레코드가 생성됨
 
 **Step 4: Analyze**
-1. **`Approve`** → **`Simulate`** 클릭
-2. Output 확인:
+1. **`승인 및 계속`** → **`시뮬레이션`** 클릭
+2. 출력 데이터 확인:
    - `measurements`: 입자 크기(nm), PDI, 제타 전위(mV), 캡슐화 효율(%)
    - `functional_assay`: luminescence 정규화 값
    - `db_benchmarks`: LNPDB 평균값 대비 비교
@@ -512,20 +512,20 @@ AI Design → Synthesize → Formulate → Analyze → Learn
    - `qc_pass`: 품질 판정 (true/false)
 
 **Step 5: Learn**
-1. **`Approve`** → **`Simulate`** 클릭
-2. Output 확인:
+1. **`승인 및 계속`** → **`시뮬레이션`** 클릭
+2. 출력 데이터 확인:
    - `performance`: AI 모델 R², RMSE (학습 전/후 비교)
    - `feature_importance`: 핵심 descriptor 기여도
    - `suggestions`: 다음 반복을 위한 구체적 권고사항
 3. 모든 단계 완료 → 워크플로우 상태가 **"Completed"**로 변경
 
-> 각 단계의 output이 다음 단계의 input으로 자동 전달되는 것을 **Input Data** 섹션에서 확인할 수 있습니다.
+> 각 단계의 출력 데이터가 다음 단계의 입력 데이터로 자동 전달되는 것을 **입력 데이터** 섹션에서 확인할 수 있습니다.
 
 ---
 
 ### Step 28. AI 보고서 생성
 
-1. 워크플로우 상세 페이지 상단의 **`Generate AI Report`** 버튼 클릭
+1. 워크플로우 상세 페이지 상단의 **`보고서 생성`** 버튼 클릭
 2. → 몇 초 후 AI가 전문 보고서를 생성
 3. 보고서 내용 확인:
    - 이온화 지질 설계 및 선정 근거
@@ -538,34 +538,34 @@ AI Design → Synthesize → Formulate → Analyze → Learn
 
 ---
 
-### Step 29. Dashboard로 복귀
+### Step 29. 대시보드로 복귀
 
-사이드바 **OVERVIEW** > **"Dashboard"** 클릭하여 메인 화면으로 돌아옵니다.
+사이드바 **개요** > **"대시보드"** 클릭하여 메인 화면으로 돌아옵니다.
 
 ---
 
 ## 시나리오 6: 시약 재고 관리 + 장비 유지보수 (3분)
 
-### Step 30. Inventory Dashboard
+### Step 30. 시약 재고 대시보드
 
-사이드바 **LAB** > **"Inventory"** 클릭
+사이드바 **자율실험실** > **"시약 재고"** 클릭
 
-페이지 제목: **"Reagent Inventory"** — *"Track reagents, consumables, and stock levels for the LNP synthesis pipeline"*
+페이지 제목: **"시약 재고"** — *"LNP 합성 파이프라인의 시약, 소모품, 재고 수준 관리"*
 
 **상단 통계 카드 4개:**
 
 | 카드 | 의미 |
 |------|------|
-| **Total Reagents** | 등록된 시약/소모품 총 수 (12종) |
-| **Low Stock Alerts** | 재고 부족 알림 수 (0이면 초록, 1 이상이면 빨강) |
-| **Consumptions** | 총 소모 기록 건수 |
-| **Categories** | 시약 카테고리 수 (solvent, buffer, lipid_stock, mrna_cargo, consumable) |
+| **총 시약** | 등록된 시약/소모품 총 수 (12종) |
+| **부족 알림** | 재고 부족 알림 수 (0이면 초록, 1 이상이면 빨강) |
+| **소모 기록** | 총 소모 기록 건수 |
+| **카테고리** | 시약 카테고리 수 (solvent, buffer, lipid_stock, mrna_cargo, consumable) |
 
 ---
 
-### Step 31. Inventory — 부족 알림 패널
+### Step 31. 시약 재고 — 부족 알림 패널
 
-좌측 **"Low Stock Alerts"** 패널 확인:
+좌측 **"부족 알림"** 패널 확인:
 
 - **DLS Cuvette** — critical (빨간 바)
 - **FLuc mRNA (1 mg/mL)** — critical (빨간 바)
@@ -579,48 +579,48 @@ AI Design → Synthesize → Formulate → Analyze → Learn
 
 ---
 
-### Step 32. Inventory — 재고 테이블
+### Step 32. 시약 재고 — 재고 테이블
 
-우측 **"All Reagents"** 테이블 확인:
+우측 **"전체 시약"** 테이블 확인:
 
 각 행에서 확인할 항목:
-- **Reagent** 이름
-- **Category** 뱃지 — Solvent(파랑), Buffer(청록), Lipid Stock(보라), mRNA Cargo(초록), Consumable(주황)
-- **Stock Level** 바 — 초록(good), 주황(warning), 빨강(critical)
-- **Storage** — 보관 조건 (예: "-80C", "4C", "RT")
-- **Status** dot — 재고 상태 한눈에 확인
+- **시약** 이름
+- **카테고리** 뱃지 — Solvent(파랑), Buffer(청록), Lipid Stock(보라), mRNA Cargo(초록), Consumable(주황)
+- **재고 수준** 바 — 초록(good), 주황(warning), 빨강(critical)
+- **보관 조건** — 보관 조건 (예: "-80C", "4C", "RT")
+- **상태** dot — 재고 상태 한눈에 확인
 
 ---
 
-### Step 33. Inventory — 소모 타임라인
+### Step 33. 시약 재고 — 소모 타임라인
 
-페이지 하단 **"Recent Consumptions"** 테이블:
+페이지 하단 **"최근 소모 기록"** 테이블:
 
 | 컬럼 | 내용 |
 |------|------|
-| **Reagent** | 소모된 시약명 |
-| **Quantity** | 소모량 (빨간 글씨) |
-| **Lot** | 차감된 Lot 번호 |
-| **Workflow** | 소모가 발생한 워크플로우 이름 |
-| **Step** | 어떤 파이프라인 단계에서 소모됐는지 (뱃지) |
-| **Time** | 소모 시점 (상대 시간) |
+| **시약** | 소모된 시약명 |
+| **수량** | 소모량 (빨간 글씨) |
+| **로트** | 차감된 Lot 번호 |
+| **워크플로우** | 소모가 발생한 워크플로우 이름 |
+| **단계** | 어떤 파이프라인 단계에서 소모됐는지 (뱃지) |
+| **시간** | 소모 시점 (상대 시간) |
 
 > 시나리오 5에서 실행한 워크플로우의 시약 소모 기록이 여기에 표시됩니다.
 > Synthesize → Ethanol 5mL, DCM 2mL / Formulate → Buffer, mRNA, Cartridge / Analyze → Cuvette, Plate
 
 ---
 
-### Step 34. Equipment Maintenance
+### Step 34. 장비 유지보수
 
-사이드바 **LAB** > **"Maintenance"** 클릭
+사이드바 **자율실험실** > **"장비 유지보수"** 클릭
 
-페이지 제목: **"Equipment Maintenance"** — *"Calibration schedules, preventive maintenance, and service history"*
+페이지 제목: **"장비 유지보수"** — *"교정 일정, 예방 정비, 서비스 이력 관리"*
 
 ---
 
-### Step 35. Maintenance — 기한 초과 알림
+### Step 35. 유지보수 — 기한 초과 알림
 
-**상단 빨간 테두리 패널** — "Overdue Maintenance":
+**상단 빨간 테두리 패널** — "기한 초과 정비":
 
 - **Hamilton STAR** (Liquid Handler) — Calibration 기한 초과
   - 빨간 점이 깜박이는 애니메이션
@@ -631,14 +631,14 @@ AI Design → Synthesize → Formulate → Analyze → Learn
 
 ---
 
-### Step 36. Maintenance — 예정 정비 & 완료 이력
+### Step 36. 유지보수 — 예정 정비 & 완료 이력
 
-**좌측 "Scheduled Maintenance":**
+**좌측 "예정 정비":**
 - NanoAssemblr Ignite — Cleaning 예정
 - Agilent 1260 HPLC — Column 교체 (Corrective) 예정
 - Zetasizer Ultra — 반기 캘리브레이션 예정
 
-**우측 "Completed History":**
+**우측 "완료 이력":**
 - 각 완료 기록에서 확인:
   - 장비명 + 유지보수 유형 뱃지
   - 완료 날짜 / 차기 예정일
@@ -648,32 +648,32 @@ AI Design → Synthesize → Formulate → Analyze → Learn
 
 ---
 
-### Step 37. Dashboard에서 재고 알림 확인
+### Step 37. 대시보드에서 재고 알림 확인
 
-사이드바 **OVERVIEW** > **"Dashboard"** 클릭
+사이드바 **개요** > **"대시보드"** 클릭
 
-Dashboard 중단에 **"Inventory Alerts"** 위젯이 표시됨:
+대시보드 중단에 **"재고 알림"** 위젯이 표시됨:
 - 부족 시약 목록이 rose/amber dot과 함께 나열
-- **"View Inventory"** 링크로 재고 대시보드로 바로 이동 가능
+- **"재고 관리"** 링크로 재고 대시보드로 바로 이동 가능
 
-> 워크플로우 실행 → 시약 자동 차감 → Dashboard 알림 → 재고 관리의 전체 흐름이 연결됩니다.
+> 워크플로우 실행 → 시약 자동 차감 → 대시보드 알림 → 재고 관리의 전체 흐름이 연결됩니다.
 
 ---
 
 ## 시연 마무리 요약 (1분)
 
-Dashboard에서 전체 흐름을 한 문장씩 정리합니다:
+대시보드에서 전체 흐름을 한 문장씩 정리합니다:
 
 | 방금 본 기능 | 핵심 |
 |------------|------|
-| **LNPDB** (시나리오 2) | 43개 논문, 19,797건 실험, 13,339종 Lipid 통합 데이터베이스 |
-| **Formulation Designer** (시나리오 3) | 4성분 슬라이더로 제형 설계 + AI 실시간 물성 예측 |
-| **AI Generate** (시나리오 4) | 타겟 조건에 맞는 신규 Lipid 구조를 AI가 자동 생성 |
-| **Optimize** (시나리오 4) | 삼각 다이어그램 + Pareto front로 다목적 최적화 + 최적 조성 도출 |
-| **Workflow** (시나리오 5) | 5단계 Closed-loop 파이프라인으로 자율 실험 수행 + 시약 자동 소모 |
-| **AI Report** (시나리오 5) | LNP 논문 수준의 전문 보고서 자동 생성 (FDA 벤치마크 포함) |
-| **Inventory** (시나리오 6) | 시약 12종 재고 추적, FIFO 소모, 부족 알림, 소모 타임라인 |
-| **Maintenance** (시나리오 6) | 장비 캘리브레이션/정비 일정, 기한 초과 알림, 완료 이력 |
+| **LNPDB** (시나리오 2) | 43개 논문, 19,797건 실험, 13,339종 지질 통합 데이터베이스 |
+| **제형 설계 도구** (시나리오 3) | 4성분 슬라이더로 제형 설계 + AI 실시간 물성 예측 |
+| **AI 구조 생성** (시나리오 4) | 타겟 조건에 맞는 신규 지질 구조를 AI가 자동 생성 |
+| **다목적 최적화** (시나리오 4) | 삼각 다이어그램 + 파레토 전선으로 다목적 최적화 + 최적 조성 도출 |
+| **워크플로우** (시나리오 5) | 5단계 Closed-loop 파이프라인으로 자율 실험 수행 + 시약 자동 소모 |
+| **AI 보고서** (시나리오 5) | LNP 논문 수준의 전문 보고서 자동 생성 (FDA 벤치마크 포함) |
+| **시약 재고** (시나리오 6) | 시약 12종 재고 추적, FIFO 소모, 부족 알림, 소모 타임라인 |
+| **장비 유지보수** (시나리오 6) | 장비 캘리브레이션/정비 일정, 기한 초과 알림, 완료 이력 |
 
 ---
 
@@ -682,19 +682,19 @@ Dashboard에서 전체 흐름을 한 문장씩 정리합니다:
 | # | 사이드바 메뉴 | 경로 | 이동 방법 |
 |---|-------------|------|----------|
 | 1 | — | `/accounts/login/` | 브라우저에서 직접 접속 |
-| 2 | Dashboard | `/` | OVERVIEW > Dashboard 클릭 |
-| 3 | Lipid Explorer | `/compounds/` | DATA > Lipid Explorer 클릭 |
-| 4 | (Lipid 상세) | `/compounds/<id>/` | Lipid Explorer에서 이름 클릭 |
-| 5 | (Lipid 비교) | `/compounds/compare/` | 주소창에 직접 입력 |
+| 2 | 대시보드 | `/` | 개요 > 대시보드 클릭 |
+| 3 | 지질 탐색기 | `/compounds/` | 데이터 > 지질 탐색기 클릭 |
+| 4 | (지질 상세) | `/compounds/<id>/` | 지질 탐색기에서 이름 클릭 |
+| 5 | (지질 비교) | `/compounds/compare/` | 주소창에 직접 입력 |
 | 6 | (Helper Lipids) | `/compounds/helpers/` | 주소창에 직접 입력 |
-| 7 | Formulations | `/formulations/` | DATA > Formulations 클릭 |
-| 8 | (Designer) | `/formulations/designer/` | Formulations 페이지 또는 Dashboard Quick Actions |
-| 9 | Experiments | `/experiments/` | DATA > Experiments 클릭 |
-| 10 | Predict | `/ai/predict/` | AI MODELS > Predict 클릭 |
-| 11 | Generate | `/ai/generate/` | AI MODELS > Generate 클릭 |
-| 12 | Optimize | `/ai/optimize/` | AI MODELS > Optimize 클릭 |
-| 13 | Equipment | `/equipment/` | LAB > Equipment 클릭 |
-| 14 | Maintenance | `/equipment/maintenance/` | LAB > Maintenance 클릭 |
-| 15 | Inventory | `/inventory/` | LAB > Inventory 클릭 |
-| 16 | Workflow | `/workflow/` | LAB > Workflow 클릭 |
-| 17 | (Workflow 상세) | `/workflow/<id>/` | Workflow 페이지에서 Details 클릭 |
+| 7 | 제형 목록 | `/formulations/` | 데이터 > 제형 목록 클릭 |
+| 8 | (제형 설계 도구) | `/formulations/designer/` | 제형 목록 페이지 또는 대시보드 빠른 실행 |
+| 9 | 실험 결과 | `/experiments/` | 데이터 > 실험 결과 클릭 |
+| 10 | 물성 예측 | `/ai/predict/` | AI 모델 > 물성 예측 클릭 |
+| 11 | 구조 생성 | `/ai/generate/` | AI 모델 > 구조 생성 클릭 |
+| 12 | 최적화 | `/ai/optimize/` | AI 모델 > 최적화 클릭 |
+| 13 | 장비 모니터링 | `/equipment/` | 자율실험실 > 장비 모니터링 클릭 |
+| 14 | 장비 유지보수 | `/equipment/maintenance/` | 자율실험실 > 장비 유지보수 클릭 |
+| 15 | 시약 재고 | `/inventory/` | 자율실험실 > 시약 재고 클릭 |
+| 16 | 워크플로우 | `/workflow/` | 자율실험실 > 워크플로우 클릭 |
+| 17 | (워크플로우 상세) | `/workflow/<id>/` | 워크플로우 페이지에서 상세 클릭 |

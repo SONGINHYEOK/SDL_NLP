@@ -23,11 +23,11 @@
 <!-- HEADER -->
 <div class="flex items-start justify-between mb-6">
   <div>
-    <h2 class="text-[22px] font-bold tracking-tight mb-1">Lipid Comparison</h2>
-    <p class="text-[12px] text-dark-200">Compare up to 4 ionizable lipids side-by-side</p>
+    <h2 class="text-[28px] font-bold tracking-tight mb-1">지질 비교</h2>
+    <p class="text-[15px] text-dark-200">최대 4개 이온화 지질 나란히 비교</p>
   </div>
   <div class="flex gap-2">
-    <a href="{% url 'compounds:list' %}" class="px-4 py-2 border border-dark-400 hover:border-dark-300 rounded-lg text-[12px] text-dark-100 transition">Back to Explorer</a>
+    <a href="{% url 'compounds:list' %}" class="px-4 py-2 border border-dark-400 hover:border-dark-300 rounded-lg text-[15px] text-dark-100 transition">탐색기로 돌아가기</a>
   </div>
 </div>
 
@@ -35,17 +35,17 @@
 <div class="bg-dark-600 border border-dark-400 rounded-xl p-4 mb-4">
   <div class="flex items-center gap-3">
     <div class="relative flex-1">
-      <input id="lipid-search" type="text" placeholder="Search lipid by name or SMILES..." autocomplete="off"
-        class="w-full bg-dark-700 border border-dark-400 rounded-lg px-4 py-2.5 text-[13px] text-dark-50 placeholder-dark-200 focus:border-blue-500/40 focus:outline-none transition">
+      <input id="lipid-search" type="text" placeholder="이름 또는 SMILES로 검색..." autocomplete="off"
+        class="w-full bg-dark-700 border border-dark-400 rounded-lg px-4 py-2.5 text-[16px] text-dark-50 placeholder-dark-200 focus:border-blue-500/40 focus:outline-none transition">
       <div id="search-dropdown" class="hidden absolute top-full left-0 right-0 mt-1 bg-dark-700 border border-dark-400 rounded-lg shadow-xl z-20 max-h-60 overflow-y-auto">
       </div>
     </div>
-    <span class="text-[11px] text-dark-200" id="lipid-count">{{ lipids|length }} / 4 selected</span>
+    <span class="text-[14px] text-dark-200" id="lipid-count">{{ lipids|length }} / 4 selected</span>
   </div>
   <!-- Selected lipid chips -->
   <div id="selected-chips" class="flex flex-wrap gap-2 mt-3">
     {% for lip in lipids %}
-    <div class="flex items-center gap-1.5 bg-dark-700 border border-dark-400 rounded-lg px-3 py-1.5 text-[11px] compare-colors-{{ forloop.counter0 }}" data-id="{{ lip.pk }}">
+    <div class="flex items-center gap-1.5 bg-dark-700 border border-dark-400 rounded-lg px-3 py-1.5 text-[14px] compare-colors-{{ forloop.counter0 }}" data-id="{{ lip.pk }}">
       <span class="w-2 h-2 rounded-full" style="background: var(--cc)"></span>
       <span class="text-dark-50">{{ lip.name|truncatechars:30 }}</span>
       <button onclick="removeLipid({{ lip.pk }})" class="ml-1 text-dark-200 hover:text-red-400 transition">&times;</button>
@@ -61,15 +61,15 @@
   <div class="bg-dark-600 border border-dark-400 rounded-xl compare-colors-{{ forloop.counter0 }}">
     <div class="px-4 py-3 border-b border-dark-400 flex items-center gap-2">
       <span class="w-2.5 h-2.5 rounded-full" style="background: var(--cc)"></span>
-      <div class="text-[13px] font-semibold truncate">{{ lip.name|truncatechars:25 }}</div>
+      <div class="text-[16px] font-semibold truncate">{{ lip.name|truncatechars:25 }}</div>
     </div>
     <div class="p-3 flex items-center justify-center" style="min-height: 200px">
       <canvas id="mol-{{ lip.pk }}" width="280" height="180" class="rounded-lg" style="background: rgba(255,255,255,.02)"></canvas>
     </div>
     <div class="px-4 pb-3">
-      <div class="bg-dark-700 rounded-lg px-2.5 py-1.5 font-mono text-[9px] text-dark-200 break-all max-h-12 overflow-y-auto leading-relaxed select-all">{{ lip.smiles|truncatechars:120 }}</div>
+      <div class="bg-dark-700 rounded-lg px-2.5 py-1.5 font-mono text-[12px] text-dark-200 break-all max-h-12 overflow-y-auto leading-relaxed select-all">{{ lip.smiles|truncatechars:120 }}</div>
     </div>
-    <div class="px-4 pb-3 flex flex-wrap gap-1 text-[10px]">
+    <div class="px-4 pb-3 flex flex-wrap gap-1 text-[13px]">
       {% if lip.has_ester %}<span class="px-1.5 py-0.5 rounded tag-ester font-semibold">Ester</span>{% endif %}
       {% if lip.has_carbonate %}<span class="px-1.5 py-0.5 rounded tag-carbonate font-semibold">Carbonate</span>{% endif %}
       {% if lip.has_disulfide %}<span class="px-1.5 py-0.5 rounded tag-disulfide font-semibold">Disulfide</span>{% endif %}
@@ -84,8 +84,8 @@
   <!-- Radar Chart -->
   <div class="col-span-5 bg-dark-600 border border-dark-400 rounded-xl">
     <div class="px-5 py-3 border-b border-dark-400">
-      <div class="text-[13px] font-semibold">Descriptor Overlay</div>
-      <div class="text-[10px] text-dark-200">Normalized descriptors (0–1) vs LNPDB range</div>
+      <div class="text-[16px] font-semibold">물성 오버레이</div>
+      <div class="text-[13px] text-dark-200">Normalized descriptors (0–1) vs LNPDB range</div>
     </div>
     <div class="p-4 flex items-center justify-center">
       <canvas id="compare-radar" width="400" height="380"></canvas>
@@ -95,76 +95,76 @@
   <!-- Property Comparison Table -->
   <div class="col-span-7 bg-dark-600 border border-dark-400 rounded-xl">
     <div class="px-5 py-3 border-b border-dark-400">
-      <div class="text-[13px] font-semibold">Property Comparison</div>
-      <div class="text-[10px] text-dark-200">Raw descriptor values side-by-side</div>
+      <div class="text-[16px] font-semibold">물성 비교</div>
+      <div class="text-[13px] text-dark-200">Raw descriptor values side-by-side</div>
     </div>
     <div class="overflow-x-auto">
-      <table class="w-full text-[12px]">
+      <table class="w-full text-[15px]">
         <thead>
           <tr class="border-b border-dark-400">
-            <th class="text-left px-4 py-2.5 text-[10px] text-dark-200 uppercase font-semibold">Property</th>
+            <th class="text-left px-4 py-2.5 text-[13px] text-dark-200 uppercase font-semibold">물성</th>
             {% for lip in lipids %}
-            <th class="text-right px-4 py-2.5 text-[10px] uppercase font-semibold compare-colors-{{ forloop.counter0 }}" style="color: var(--cc)">{{ lip.name|truncatechars:15 }}</th>
+            <th class="text-right px-4 py-2.5 text-[13px] uppercase font-semibold compare-colors-{{ forloop.counter0 }}" style="color: var(--cc)">{{ lip.name|truncatechars:15 }}</th>
             {% endfor %}
           </tr>
         </thead>
         <tbody>
           <tr class="border-b border-white/[0.03] hover:bg-blue-500/[0.03]">
-            <td class="px-4 py-2 text-dark-200 text-[11px]">Molecular Weight</td>
+            <td class="px-4 py-2 text-dark-200 text-[14px]">분자량</td>
             {% for lip in lipids %}
             <td class="px-4 py-2 text-right font-mono font-semibold text-dark-50">{{ lip.molecular_weight|floatformat:1|default:"-" }}</td>
             {% endfor %}
           </tr>
           <tr class="border-b border-white/[0.03] hover:bg-blue-500/[0.03]">
-            <td class="px-4 py-2 text-dark-200 text-[11px]">LogP</td>
+            <td class="px-4 py-2 text-dark-200 text-[14px]">LogP</td>
             {% for lip in lipids %}
             <td class="px-4 py-2 text-right font-mono font-semibold text-dark-50">{{ lip.logp|floatformat:2|default:"-" }}</td>
             {% endfor %}
           </tr>
           <tr class="border-b border-white/[0.03] hover:bg-blue-500/[0.03]">
-            <td class="px-4 py-2 text-dark-200 text-[11px]">TPSA</td>
+            <td class="px-4 py-2 text-dark-200 text-[14px]">TPSA</td>
             {% for lip in lipids %}
             <td class="px-4 py-2 text-right font-mono font-semibold text-dark-50">{{ lip.tpsa|floatformat:1|default:"-" }}</td>
             {% endfor %}
           </tr>
           <tr class="border-b border-white/[0.03] hover:bg-blue-500/[0.03]">
-            <td class="px-4 py-2 text-dark-200 text-[11px]">HBD / HBA</td>
+            <td class="px-4 py-2 text-dark-200 text-[14px]">HBD / HBA</td>
             {% for lip in lipids %}
             <td class="px-4 py-2 text-right font-mono font-semibold text-dark-50">{{ lip.hbd|default:"-" }} / {{ lip.hba|default:"-" }}</td>
             {% endfor %}
           </tr>
           <tr class="border-b border-white/[0.03] hover:bg-blue-500/[0.03]">
-            <td class="px-4 py-2 text-dark-200 text-[11px]">Rotatable Bonds</td>
+            <td class="px-4 py-2 text-dark-200 text-[14px]">회전 결합</td>
             {% for lip in lipids %}
             <td class="px-4 py-2 text-right font-mono font-semibold text-dark-50">{{ lip.rotatable_bonds|default:"-" }}</td>
             {% endfor %}
           </tr>
           <tr class="border-b border-white/[0.03] hover:bg-blue-500/[0.03]">
-            <td class="px-4 py-2 text-dark-200 text-[11px]">Rings</td>
+            <td class="px-4 py-2 text-dark-200 text-[14px]">고리</td>
             {% for lip in lipids %}
             <td class="px-4 py-2 text-right font-mono font-semibold text-dark-50">{{ lip.rings|default:"-" }}</td>
             {% endfor %}
           </tr>
           <tr class="border-b border-white/[0.03] hover:bg-blue-500/[0.03]">
-            <td class="px-4 py-2 text-dark-200 text-[11px]">Fsp3</td>
+            <td class="px-4 py-2 text-dark-200 text-[14px]">Fsp3</td>
             {% for lip in lipids %}
             <td class="px-4 py-2 text-right font-mono font-semibold text-dark-50">{{ lip.fsp3|floatformat:3|default:"-" }}</td>
             {% endfor %}
           </tr>
           <tr class="border-b border-white/[0.03] hover:bg-blue-500/[0.03]">
-            <td class="px-4 py-2 text-dark-200 text-[11px]">Heavy Atoms</td>
+            <td class="px-4 py-2 text-dark-200 text-[14px]">중원자</td>
             {% for lip in lipids %}
             <td class="px-4 py-2 text-right font-mono font-semibold text-dark-50">{{ lip.heavy_atoms|default:"-" }}</td>
             {% endfor %}
           </tr>
           <tr class="border-b border-white/[0.03] hover:bg-blue-500/[0.03]">
-            <td class="px-4 py-2 text-dark-200 text-[11px]">N Count</td>
+            <td class="px-4 py-2 text-dark-200 text-[14px]">질소 수</td>
             {% for lip in lipids %}
             <td class="px-4 py-2 text-right font-mono font-semibold text-dark-50">{{ lip.nitrogen_count|default:"-" }}</td>
             {% endfor %}
           </tr>
           <tr class="border-b border-white/[0.03] hover:bg-blue-500/[0.03]">
-            <td class="px-4 py-2 text-dark-200 text-[11px]">Molar Refractivity</td>
+            <td class="px-4 py-2 text-dark-200 text-[14px]">몰 굴절률</td>
             {% for lip in lipids %}
             <td class="px-4 py-2 text-right font-mono font-semibold text-dark-50">{{ lip.molar_refractivity|floatformat:1|default:"-" }}</td>
             {% endfor %}
@@ -180,24 +180,24 @@
   {% for lip in lipids %}
   <div class="bg-dark-600 border border-dark-400 rounded-xl compare-colors-{{ forloop.counter0 }}">
     <div class="px-4 py-3 border-b border-dark-400">
-      <div class="text-[12px] font-semibold" style="color: var(--cc)">{{ lip.name|truncatechars:20 }}</div>
-      <div class="text-[10px] text-dark-200">Structural Components</div>
+      <div class="text-[15px] font-semibold" style="color: var(--cc)">{{ lip.name|truncatechars:20 }}</div>
+      <div class="text-[13px] text-dark-200">구조 성분</div>
     </div>
-    <div class="p-4 space-y-2 text-[11px]">
+    <div class="p-4 space-y-2 text-[14px]">
       <div class="flex justify-between">
-        <span class="text-dark-200">Head Group</span>
+        <span class="text-dark-200">헤드 그룹</span>
         <span class="font-mono text-dark-50">{{ lip.head_group.name|default:"N/A" }}</span>
       </div>
       <div class="flex justify-between">
-        <span class="text-dark-200">Linker</span>
+        <span class="text-dark-200">링커</span>
         <span class="font-mono text-dark-50">{{ lip.linker.name|default:"N/A" }}</span>
       </div>
       <div class="flex justify-between">
-        <span class="text-dark-200">Tail 1</span>
+        <span class="text-dark-200">꼬리 1</span>
         <span class="font-mono text-dark-50">{{ lip.tail1.name|default:"N/A" }}</span>
       </div>
       <div class="flex justify-between">
-        <span class="text-dark-200">Tail 2</span>
+        <span class="text-dark-200">꼬리 2</span>
         <span class="font-mono text-dark-50">{{ lip.tail2.name|default:"N/A" }}</span>
       </div>
     </div>
@@ -208,8 +208,8 @@
 <!-- ROW 4: Experiment Stats Bar Chart -->
 <div class="bg-dark-600 border border-dark-400 rounded-xl mb-4">
   <div class="px-5 py-3 border-b border-dark-400">
-    <div class="text-[13px] font-semibold">Experiment Statistics</div>
-    <div class="text-[10px] text-dark-200">Total results and average values per lipid</div>
+    <div class="text-[16px] font-semibold">실험 통계</div>
+    <div class="text-[13px] text-dark-200">Total results and average values per lipid</div>
   </div>
   <div class="p-4 flex items-center justify-center">
     <canvas id="exp-chart" width="600" height="250"></canvas>
@@ -220,9 +220,9 @@
 <!-- EMPTY STATE -->
 <div class="bg-dark-600 border border-dark-400 rounded-xl p-12 text-center">
   <div class="text-[40px] mb-3 opacity-20">&#x2696;</div>
-  <div class="text-[15px] font-semibold text-dark-100 mb-2">No Lipids Selected</div>
-  <p class="text-[12px] text-dark-200 mb-4 max-w-md mx-auto">Search for lipids above to add them to the comparison. You can compare up to 4 ionizable lipids side-by-side with overlaid radar charts and property tables.</p>
-  <a href="{% url 'compounds:list' %}" class="inline-block px-5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-[12px] font-semibold transition">Browse Lipid Explorer</a>
+  <div class="text-[18px] font-semibold text-dark-100 mb-2">지질이 선택되지 않았습니다</div>
+  <p class="text-[15px] text-dark-200 mb-4 max-w-md mx-auto">위에서 지질을 검색하여 비교에 추가하세요. 최대 4개 이온화 지질을 레이더 차트와 물성 테이블로 비교할 수 있습니다.</p>
+  <a href="{% url 'compounds:list' %}" class="inline-block px-5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-[15px] font-semibold transition">지질 탐색기 열기</a>
 </div>
 {% endif %}
 
@@ -256,12 +256,12 @@ document.addEventListener("DOMContentLoaded", function() {
           const ids = getCurrentIds();
           const items = (data.results || []).filter(r => !ids.includes(String(r.id)));
           if (items.length === 0) {
-            dropdown.innerHTML = '<div class="px-4 py-3 text-[11px] text-dark-200">No results</div>';
+            dropdown.innerHTML = '<div class="px-4 py-3 text-[14px] text-dark-200">검색 결과 없음</div>';
           } else {
             dropdown.innerHTML = items.slice(0, 8).map(r => `
-              <div class="search-result px-4 py-2.5 cursor-pointer border-b border-dark-400/50" onclick="addLipid(${r.id})">
-                <div class="text-[12px] text-dark-50 font-medium">${r.name}</div>
-                <div class="text-[10px] text-dark-200 font-mono truncate mt-0.5">${r.smiles ? r.smiles.substring(0, 60) + '...' : ''}</div>
+              <div class="search-result px-4 py-2.5 cursor-pointer border-b border-dark-400/50" onmousedown="addLipid(${r.pk || r.id})">
+                <div class="text-[15px] text-dark-50 font-medium">${r.name}</div>
+                <div class="text-[13px] text-dark-200 font-mono truncate mt-0.5">${r.smiles ? r.smiles.substring(0, 60) + '...' : ''}</div>
               </div>
             `).join('');
           }

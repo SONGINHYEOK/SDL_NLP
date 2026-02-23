@@ -5,70 +5,70 @@
 {% block content %}
 <div class="flex justify-between items-end mb-6">
   <div>
-    <h2 class="text-[22px] font-bold tracking-tight">LNP Formulations</h2>
-    <p class="text-[13px] text-dark-100 mt-1">{{ total|default:"0" }} formulations</p>
+    <h2 class="text-[28px] font-bold tracking-tight">LNP 제형</h2>
+    <p class="text-[16px] text-dark-100 mt-1">{{ total|default:"0" }} formulations</p>
   </div>
-  <a href="{% url 'formulations:designer' %}" class="px-5 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-[12px] font-semibold">+ New Design</a>
+  <a href="{% url 'formulations:designer' %}" class="px-5 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-[15px] font-semibold">+ 새 설계</a>
 </div>
 
 <div class="bg-dark-600 border border-dark-400 rounded-xl p-4 mb-4">
   <form method="get" class="flex flex-wrap gap-3 items-end">
     <div class="flex-1 min-w-[240px]">
-      <label class="text-[10px] text-dark-200 font-semibold uppercase tracking-wide block mb-1.5">Search</label>
-      <input type="text" name="q" value="{{ query }}" placeholder="Formulation ID or lipid name..."
-        class="w-full bg-dark-700 border border-dark-400 rounded-lg px-3.5 py-2 text-[13px] text-dark-50 placeholder-dark-200 focus:border-blue-500 focus:outline-none">
+      <label class="text-[13px] text-dark-200 font-semibold uppercase tracking-wide block mb-1.5">검색</label>
+      <input type="text" name="q" value="{{ query }}" placeholder="제형 ID 또는 지질 이름..."
+        class="w-full bg-dark-700 border border-dark-400 rounded-lg px-3.5 py-2 text-[16px] text-dark-50 placeholder-dark-200 focus:border-blue-500 focus:outline-none">
     </div>
     <div class="w-36">
-      <label class="text-[10px] text-dark-200 font-semibold uppercase tracking-wide block mb-1.5">Mixing</label>
-      <select name="mixing" class="w-full bg-dark-700 border border-dark-400 rounded-lg px-3 py-2 text-[13px] text-dark-50 focus:border-blue-500 focus:outline-none">
+      <label class="text-[13px] text-dark-200 font-semibold uppercase tracking-wide block mb-1.5">혼합 방식</label>
+      <select name="mixing" class="w-full bg-dark-700 border border-dark-400 rounded-lg px-3 py-2 text-[16px] text-dark-50 focus:border-blue-500 focus:outline-none">
         <option value="">All</option>
-        <option value="microfluidics" {% if request.GET.mixing == 'microfluidics' %}selected{% endif %}>Microfluidics</option>
-        <option value="handmixed" {% if request.GET.mixing == 'handmixed' %}selected{% endif %}>Hand Mixed</option>
+        <option value="microfluidics" {% if request.GET.mixing == 'microfluidics' %}selected{% endif %}>미세유체역학</option>
+        <option value="handmixed" {% if request.GET.mixing == 'handmixed' %}selected{% endif %}>수동 혼합</option>
       </select>
     </div>
-    <button type="submit" class="px-5 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-[13px] font-semibold">Filter</button>
+    <button type="submit" class="px-5 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-[16px] font-semibold">필터</button>
   </form>
 </div>
 
 <div class="bg-dark-600 border border-dark-400 rounded-xl overflow-hidden">
   <div class="overflow-x-auto">
-    <table class="w-full text-[12px]">
+    <table class="w-full text-[15px]">
       <thead><tr class="border-b border-dark-400">
-        <th class="text-left px-4 py-3 text-[10px] text-dark-200 uppercase font-semibold">Formulation ID</th>
-        <th class="text-left px-4 py-3 text-[10px] text-dark-200 uppercase font-semibold">Ionizable Lipid</th>
-        <th class="text-left px-4 py-3 text-[10px] text-dark-200 uppercase font-semibold">Helper</th>
-        <th class="text-left px-4 py-3 text-[10px] text-dark-200 uppercase font-semibold">PEG</th>
-        <th class="text-center px-4 py-3 text-[10px] text-dark-200 uppercase font-semibold">Ratio (IL:HL:Chol:PEG)</th>
-        <th class="text-center px-4 py-3 text-[10px] text-dark-200 uppercase font-semibold">Mixing</th>
-        <th class="text-right px-4 py-3 text-[10px] text-dark-200 uppercase font-semibold">Results</th>
+        <th class="text-left px-4 py-3 text-[13px] text-dark-200 uppercase font-semibold">제형 ID</th>
+        <th class="text-left px-4 py-3 text-[13px] text-dark-200 uppercase font-semibold">이온화 지질</th>
+        <th class="text-left px-4 py-3 text-[13px] text-dark-200 uppercase font-semibold">보조 지질</th>
+        <th class="text-left px-4 py-3 text-[13px] text-dark-200 uppercase font-semibold">PEG</th>
+        <th class="text-center px-4 py-3 text-[13px] text-dark-200 uppercase font-semibold">비율 (IL:HL:Chol:PEG)</th>
+        <th class="text-center px-4 py-3 text-[13px] text-dark-200 uppercase font-semibold">혼합</th>
+        <th class="text-right px-4 py-3 text-[13px] text-dark-200 uppercase font-semibold">결과</th>
       </tr></thead>
       <tbody>
         {% for f in page %}
         <tr class="border-b border-white/[0.03] hover:bg-blue-500/[0.03]">
-          <td class="px-4 py-2.5 font-mono text-[11px] text-blue-400">{{ f.formulation_id|truncatechars:20 }}</td>
+          <td class="px-4 py-2.5 font-mono text-[14px] text-blue-400">{{ f.formulation_id|truncatechars:20 }}</td>
           <td class="px-4 py-2.5 font-medium">
             <a href="{% url 'compounds:detail' f.ionizable_lipid.pk %}" class="hover:text-blue-400">{{ f.ionizable_lipid.name|truncatechars:25 }}</a>
           </td>
           <td class="px-4 py-2.5 text-dark-100">{{ f.helper_lipid.name|default:"-" }}</td>
-          <td class="px-4 py-2.5 text-dark-100 text-[11px]">{{ f.peg_lipid.name|default:"-"|truncatechars:15 }}</td>
-          <td class="px-4 py-2.5 text-center font-mono text-[11px] text-dark-100">{{ f.composition_str }}</td>
+          <td class="px-4 py-2.5 text-dark-100 text-[14px]">{{ f.peg_lipid.name|default:"-"|truncatechars:15 }}</td>
+          <td class="px-4 py-2.5 text-center font-mono text-[14px] text-dark-100">{{ f.composition_str }}</td>
           <td class="px-4 py-2.5 text-center">
-            <span class="px-2 py-0.5 rounded text-[9px] font-semibold {% if f.mixing_method == 'microfluidics' %}bg-blue-500/10 text-blue-400{% else %}bg-dark-300 text-dark-100{% endif %}">{{ f.get_mixing_method_display }}</span>
+            <span class="px-2 py-0.5 rounded text-[12px] font-semibold {% if f.mixing_method == 'microfluidics' %}bg-blue-500/10 text-blue-400{% else %}bg-dark-300 text-dark-100{% endif %}">{{ f.get_mixing_method_display }}</span>
           </td>
           <td class="px-4 py-2.5 text-right font-mono text-dark-100">{{ f.result_count }}</td>
         </tr>
         {% empty %}
-        <tr><td colspan="7" class="px-4 py-8 text-center text-dark-200">No formulations found.</td></tr>
+        <tr><td colspan="7" class="px-4 py-8 text-center text-dark-200">제형 데이터가 없습니다.</td></tr>
         {% endfor %}
       </tbody>
     </table>
   </div>
   {% if page.has_other_pages %}
   <div class="px-4 py-3 border-t border-dark-400 flex items-center justify-between">
-    <span class="text-[11px] text-dark-200">Page {{ page.number }} of {{ page.paginator.num_pages }}</span>
+    <span class="text-[14px] text-dark-200">{{ page.number }} / {{ page.paginator.num_pages }} 페이지</span>
     <div class="flex gap-1">
-      {% if page.has_previous %}<a href="?page={{ page.previous_page_number }}&q={{ query }}" class="px-3 py-1 rounded bg-dark-500 text-[11px] hover:bg-dark-400">Prev</a>{% endif %}
-      {% if page.has_next %}<a href="?page={{ page.next_page_number }}&q={{ query }}" class="px-3 py-1 rounded bg-dark-500 text-[11px] hover:bg-dark-400">Next</a>{% endif %}
+      {% if page.has_previous %}<a href="?page={{ page.previous_page_number }}&q={{ query }}" class="px-3 py-1 rounded bg-dark-500 text-[14px] hover:bg-dark-400">이전</a>{% endif %}
+      {% if page.has_next %}<a href="?page={{ page.next_page_number }}&q={{ query }}" class="px-3 py-1 rounded bg-dark-500 text-[14px] hover:bg-dark-400">다음</a>{% endif %}
     </div>
   </div>
   {% endif %}

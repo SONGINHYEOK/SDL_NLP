@@ -4,31 +4,31 @@
 
 {% block content %}
 <div class="mb-7">
-  <h2 class="text-[22px] font-bold tracking-tight">Reagent Inventory</h2>
-  <p class="text-[13px] text-dark-100 mt-1">Track reagents, consumables, and stock levels for the LNP synthesis pipeline</p>
+  <h2 class="text-[28px] font-bold tracking-tight">시약 재고</h2>
+  <p class="text-[16px] text-dark-100 mt-1">LNP 합성 파이프라인의 시약, 소모품, 재고 수준 관리</p>
 </div>
 
 <!-- STAT CARDS -->
 <div class="grid grid-cols-4 gap-3.5 mb-6">
   <div class="stat-card bg-dark-600 border border-dark-400 rounded-xl p-5">
-    <div class="text-[11px] text-dark-200 font-semibold uppercase tracking-wide mb-2">Total Reagents</div>
-    <div class="text-[28px] font-extrabold font-mono tracking-tighter text-blue-400">{{ total_reagents }}</div>
-    <div class="text-[11px] text-dark-100 mt-1.5">Registered items</div>
+    <div class="text-[14px] text-dark-200 font-semibold uppercase tracking-wide mb-2">총 시약</div>
+    <div class="text-[36px] font-extrabold font-mono tracking-tighter text-blue-400">{{ total_reagents }}</div>
+    <div class="text-[14px] text-dark-100 mt-1.5">등록 품목</div>
   </div>
   <div class="stat-card bg-dark-600 border border-dark-400 rounded-xl p-5">
-    <div class="text-[11px] text-dark-200 font-semibold uppercase tracking-wide mb-2">Low Stock Alerts</div>
-    <div class="text-[28px] font-extrabold font-mono tracking-tighter {% if low_stock_count > 0 %}text-rose-400{% else %}text-emerald-400{% endif %}">{{ low_stock_count }}</div>
-    <div class="text-[11px] text-dark-100 mt-1.5">Need attention</div>
+    <div class="text-[14px] text-dark-200 font-semibold uppercase tracking-wide mb-2">부족 알림</div>
+    <div class="text-[36px] font-extrabold font-mono tracking-tighter {% if low_stock_count > 0 %}text-rose-400{% else %}text-emerald-400{% endif %}">{{ low_stock_count }}</div>
+    <div class="text-[14px] text-dark-100 mt-1.5">확인 필요</div>
   </div>
   <div class="stat-card bg-dark-600 border border-dark-400 rounded-xl p-5">
-    <div class="text-[11px] text-dark-200 font-semibold uppercase tracking-wide mb-2">Consumptions</div>
-    <div class="text-[28px] font-extrabold font-mono tracking-tighter text-amber-400">{{ recent_consumption_count }}</div>
-    <div class="text-[11px] text-dark-100 mt-1.5">Total records</div>
+    <div class="text-[14px] text-dark-200 font-semibold uppercase tracking-wide mb-2">소모 기록</div>
+    <div class="text-[36px] font-extrabold font-mono tracking-tighter text-amber-400">{{ recent_consumption_count }}</div>
+    <div class="text-[14px] text-dark-100 mt-1.5">총 기록</div>
   </div>
   <div class="stat-card bg-dark-600 border border-dark-400 rounded-xl p-5">
-    <div class="text-[11px] text-dark-200 font-semibold uppercase tracking-wide mb-2">Categories</div>
-    <div class="text-[28px] font-extrabold font-mono tracking-tighter text-violet-400">{{ category_count }}</div>
-    <div class="text-[11px] text-dark-100 mt-1.5">Reagent types</div>
+    <div class="text-[14px] text-dark-200 font-semibold uppercase tracking-wide mb-2">카테고리</div>
+    <div class="text-[36px] font-extrabold font-mono tracking-tighter text-violet-400">{{ category_count }}</div>
+    <div class="text-[14px] text-dark-100 mt-1.5">시약 유형</div>
   </div>
 </div>
 
@@ -38,26 +38,26 @@
   <!-- LOW STOCK ALERTS -->
   <div class="col-span-4 bg-dark-600 border border-dark-400 rounded-xl">
     <div class="px-5 py-3 border-b border-dark-400">
-      <div class="text-[13px] font-semibold">Low Stock Alerts</div>
-      <div class="text-[10px] text-dark-200">Items below minimum threshold</div>
+      <div class="text-[16px] font-semibold">부족 알림</div>
+      <div class="text-[13px] text-dark-200">최소 기준 이하 품목</div>
     </div>
     <div class="p-4 space-y-2.5">
       {% for r in low_stock %}
       <div class="p-3 bg-dark-700/50 rounded-lg border-l-2 {% if r.stock_status == 'critical' %}border-rose-500{% else %}border-amber-500{% endif %}">
         <div class="flex items-center justify-between mb-1.5">
-          <span class="text-[11px] font-semibold text-dark-50">{{ r.name }}</span>
+          <span class="text-[14px] font-semibold text-dark-50">{{ r.name }}</span>
           <span class="w-2 h-2 rounded-full {% if r.stock_status == 'critical' %}bg-rose-400{% else %}bg-amber-400{% endif %}"></span>
         </div>
         <div class="flex items-center gap-2 mb-1">
           <div class="flex-1 h-1.5 bg-white/5 rounded-full overflow-hidden">
             <div class="h-full rounded-full {% if r.stock_status == 'critical' %}bg-rose-500{% else %}bg-amber-500{% endif %}" style="width:{{ r.stock_pct }}%"></div>
           </div>
-          <span class="text-[9px] font-mono text-dark-200">{{ r.stock_pct }}%</span>
+          <span class="text-[12px] font-mono text-dark-200">{{ r.stock_pct }}%</span>
         </div>
-        <div class="text-[9px] text-dark-200">{{ r.current_stock }} / {{ r.minimum_stock }} {{ r.unit }}</div>
+        <div class="text-[12px] text-dark-200">{{ r.current_stock }} / {{ r.minimum_stock }} {{ r.unit }}</div>
       </div>
       {% empty %}
-      <div class="text-[11px] text-dark-200 text-center py-8">All stocks are healthy</div>
+      <div class="text-[14px] text-dark-200 text-center py-8">모든 재고 정상</div>
       {% endfor %}
     </div>
   </div>
@@ -65,28 +65,28 @@
   <!-- REAGENT TABLE -->
   <div class="col-span-8 bg-dark-600 border border-dark-400 rounded-xl">
     <div class="px-5 py-3 border-b border-dark-400">
-      <div class="text-[13px] font-semibold">All Reagents</div>
-      <div class="text-[10px] text-dark-200">{{ total_reagents }} items across {{ category_count }} categories</div>
+      <div class="text-[16px] font-semibold">전체 시약</div>
+      <div class="text-[13px] text-dark-200">{{ total_reagents }} items across {{ category_count }} categories</div>
     </div>
     <div class="overflow-x-auto">
-      <table class="w-full text-[12px]">
+      <table class="w-full text-[15px]">
         <thead>
           <tr class="border-b border-dark-400">
-            <th class="text-left px-4 py-3 text-[10px] text-dark-200 uppercase font-semibold tracking-wide">Reagent</th>
-            <th class="text-left px-4 py-3 text-[10px] text-dark-200 uppercase font-semibold tracking-wide">Category</th>
-            <th class="text-left px-4 py-3 text-[10px] text-dark-200 uppercase font-semibold tracking-wide">Stock Level</th>
-            <th class="text-left px-4 py-3 text-[10px] text-dark-200 uppercase font-semibold tracking-wide">Storage</th>
-            <th class="text-center px-4 py-3 text-[10px] text-dark-200 uppercase font-semibold tracking-wide">Status</th>
+            <th class="text-left px-4 py-3 text-[13px] text-dark-200 uppercase font-semibold tracking-wide">시약</th>
+            <th class="text-left px-4 py-3 text-[13px] text-dark-200 uppercase font-semibold tracking-wide">카테고리</th>
+            <th class="text-left px-4 py-3 text-[13px] text-dark-200 uppercase font-semibold tracking-wide">재고 수준</th>
+            <th class="text-left px-4 py-3 text-[13px] text-dark-200 uppercase font-semibold tracking-wide">보관 조건</th>
+            <th class="text-center px-4 py-3 text-[13px] text-dark-200 uppercase font-semibold tracking-wide">상태</th>
           </tr>
         </thead>
         <tbody>
           {% for r in reagent_list %}
           <tr class="border-b border-white/[0.03] hover:bg-blue-500/[0.03]">
             <td class="px-4 py-2.5">
-              <div class="text-[11px] font-semibold text-dark-50">{{ r.name }}</div>
+              <div class="text-[14px] font-semibold text-dark-50">{{ r.name }}</div>
             </td>
             <td class="px-4 py-2.5">
-              <span class="px-2 py-0.5 rounded text-[9px] font-semibold
+              <span class="px-2 py-0.5 rounded text-[12px] font-semibold
                 {% if r.category == 'solvent' %}bg-blue-500/10 text-blue-400
                 {% elif r.category == 'buffer' %}bg-cyan-500/10 text-cyan-400
                 {% elif r.category == 'lipid_stock' %}bg-violet-500/10 text-violet-400
@@ -102,10 +102,10 @@
                     {% elif r.stock_status == 'warning' %}bg-amber-500
                     {% else %}bg-emerald-500{% endif %}" style="width:{{ r.stock_pct }}%"></div>
                 </div>
-                <span class="text-[10px] font-mono text-dark-200">{{ r.current_stock }} {{ r.unit }}</span>
+                <span class="text-[13px] font-mono text-dark-200">{{ r.current_stock }} {{ r.unit }}</span>
               </div>
             </td>
-            <td class="px-4 py-2.5 text-[10px] text-dark-200">{{ r.storage }}</td>
+            <td class="px-4 py-2.5 text-[13px] text-dark-200">{{ r.storage }}</td>
             <td class="px-4 py-2.5 text-center">
               <span class="w-2 h-2 rounded-full inline-block
                 {% if r.stock_status == 'critical' %}bg-rose-400
@@ -114,7 +114,7 @@
             </td>
           </tr>
           {% empty %}
-          <tr><td colspan="5" class="px-4 py-8 text-center text-dark-200">No reagents registered. Run seed_inventory.py to load data.</td></tr>
+          <tr><td colspan="5" class="px-4 py-8 text-center text-dark-200">등록된 시약이 없습니다. seed_inventory.py를 실행하세요.</td></tr>
           {% endfor %}
         </tbody>
       </table>
@@ -125,19 +125,19 @@
 <!-- CONSUMPTION TIMELINE -->
 <div class="bg-dark-600 border border-dark-400 rounded-xl">
   <div class="px-5 py-3 border-b border-dark-400">
-    <div class="text-[13px] font-semibold">Recent Consumptions</div>
-    <div class="text-[10px] text-dark-200">Last 20 reagent usage records</div>
+    <div class="text-[16px] font-semibold">최근 소모 기록</div>
+    <div class="text-[13px] text-dark-200">최근 20건 시약 사용 기록</div>
   </div>
   <div class="overflow-x-auto">
-    <table class="w-full text-[12px]">
+    <table class="w-full text-[15px]">
       <thead>
         <tr class="border-b border-dark-400">
-          <th class="text-left px-4 py-3 text-[10px] text-dark-200 uppercase font-semibold tracking-wide">Reagent</th>
-          <th class="text-right px-4 py-3 text-[10px] text-dark-200 uppercase font-semibold tracking-wide">Quantity</th>
-          <th class="text-left px-4 py-3 text-[10px] text-dark-200 uppercase font-semibold tracking-wide">Lot</th>
-          <th class="text-left px-4 py-3 text-[10px] text-dark-200 uppercase font-semibold tracking-wide">Workflow</th>
-          <th class="text-left px-4 py-3 text-[10px] text-dark-200 uppercase font-semibold tracking-wide">Step</th>
-          <th class="text-left px-4 py-3 text-[10px] text-dark-200 uppercase font-semibold tracking-wide">Time</th>
+          <th class="text-left px-4 py-3 text-[13px] text-dark-200 uppercase font-semibold tracking-wide">시약</th>
+          <th class="text-right px-4 py-3 text-[13px] text-dark-200 uppercase font-semibold tracking-wide">수량</th>
+          <th class="text-left px-4 py-3 text-[13px] text-dark-200 uppercase font-semibold tracking-wide">로트</th>
+          <th class="text-left px-4 py-3 text-[13px] text-dark-200 uppercase font-semibold tracking-wide">워크플로우</th>
+          <th class="text-left px-4 py-3 text-[13px] text-dark-200 uppercase font-semibold tracking-wide">단계</th>
+          <th class="text-left px-4 py-3 text-[13px] text-dark-200 uppercase font-semibold tracking-wide">시간</th>
         </tr>
       </thead>
       <tbody>
@@ -145,17 +145,17 @@
         <tr class="border-b border-white/[0.03] hover:bg-blue-500/[0.03]">
           <td class="px-4 py-2.5 font-medium text-dark-50">{{ c.reagent.name }}</td>
           <td class="px-4 py-2.5 text-right font-mono font-semibold text-rose-400">-{{ c.quantity_used }} {{ c.reagent.get_unit_display }}</td>
-          <td class="px-4 py-2.5 text-[10px] text-dark-200 font-mono">{{ c.stock_lot.lot_number|default:"-" }}</td>
-          <td class="px-4 py-2.5 text-[10px] text-dark-100">{% if c.workflow_step %}{{ c.workflow_step.workflow.name }}{% else %}-{% endif %}</td>
+          <td class="px-4 py-2.5 text-[13px] text-dark-200 font-mono">{{ c.stock_lot.lot_number|default:"-" }}</td>
+          <td class="px-4 py-2.5 text-[13px] text-dark-100">{% if c.workflow_step %}{{ c.workflow_step.workflow.name }}{% else %}-{% endif %}</td>
           <td class="px-4 py-2.5">
             {% if c.workflow_step %}
-            <span class="px-2 py-0.5 rounded text-[9px] font-semibold bg-blue-500/10 text-blue-400">{{ c.workflow_step.get_step_type_display }}</span>
+            <span class="px-2 py-0.5 rounded text-[12px] font-semibold bg-blue-500/10 text-blue-400">{{ c.workflow_step.get_step_type_display }}</span>
             {% else %}-{% endif %}
           </td>
-          <td class="px-4 py-2.5 text-[10px] text-dark-200">{{ c.timestamp|timesince }} ago</td>
+          <td class="px-4 py-2.5 text-[13px] text-dark-200">{{ c.timestamp|timesince }} ago</td>
         </tr>
         {% empty %}
-        <tr><td colspan="6" class="px-4 py-8 text-center text-dark-200">No consumption records yet. Run a workflow to generate data.</td></tr>
+        <tr><td colspan="6" class="px-4 py-8 text-center text-dark-200">소모 기록이 없습니다. 워크플로우를 실행하세요.</td></tr>
         {% endfor %}
       </tbody>
     </table>

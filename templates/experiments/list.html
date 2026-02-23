@@ -1,35 +1,35 @@
 {% extends "base/base.html" %}
-{% block title %}OmniLNP - Experiment Explorer{% endblock %}
-{% block breadcrumb %}Data / <strong class="text-dark-50">Experiment Explorer</strong>{% endblock %}
+{% block title %}OmniLNP - 실험 탐색기{% endblock %}
+{% block breadcrumb %}Data / <strong class="text-dark-50">실험 탐색기</strong>{% endblock %}
 {% block content %}
 <div class="flex justify-between items-end mb-6">
   <div>
-    <h2 class="text-[22px] font-bold tracking-tight">Experiment Explorer</h2>
-    <p class="text-[13px] text-dark-100 mt-1">{{ total|default:"0" }} experiment results from LNPDB</p>
+    <h2 class="text-[28px] font-bold tracking-tight">실험 탐색기</h2>
+    <p class="text-[16px] text-dark-100 mt-1">{{ total|default:"0" }} experiment results from LNPDB</p>
   </div>
 </div>
 
 <!-- STAT CARDS -->
 <div class="grid grid-cols-4 gap-3.5 mb-5">
   <div class="stat-card bg-dark-600 border border-dark-400 rounded-xl p-5">
-    <div class="text-[11px] text-dark-200 font-semibold uppercase tracking-wide mb-2">Total Results</div>
-    <div class="text-[28px] font-extrabold font-mono tracking-tighter text-blue-400">{{ total|default:"0" }}</div>
-    <div class="text-[11px] text-dark-100 mt-1.5">LNPDB measurements</div>
+    <div class="text-[14px] text-dark-200 font-semibold uppercase tracking-wide mb-2">총 결과</div>
+    <div class="text-[36px] font-extrabold font-mono tracking-tighter text-blue-400">{{ total|default:"0" }}</div>
+    <div class="text-[14px] text-dark-100 mt-1.5">LNPDB 측정 데이터</div>
   </div>
   <div class="stat-card bg-dark-600 border border-dark-400 rounded-xl p-5">
-    <div class="text-[11px] text-dark-200 font-semibold uppercase tracking-wide mb-2">Assay Methods</div>
-    <div class="text-[28px] font-extrabold font-mono tracking-tighter text-emerald-400">{{ method_count|default:"0" }}</div>
-    <div class="text-[11px] text-dark-100 mt-1.5">Measurement types</div>
+    <div class="text-[14px] text-dark-200 font-semibold uppercase tracking-wide mb-2">분석 방법</div>
+    <div class="text-[36px] font-extrabold font-mono tracking-tighter text-emerald-400">{{ method_count|default:"0" }}</div>
+    <div class="text-[14px] text-dark-100 mt-1.5">측정 유형</div>
   </div>
   <div class="stat-card bg-dark-600 border border-dark-400 rounded-xl p-5">
-    <div class="text-[11px] text-dark-200 font-semibold uppercase tracking-wide mb-2">Cargo Types</div>
-    <div class="text-[28px] font-extrabold font-mono tracking-tighter text-violet-400">3</div>
-    <div class="text-[11px] text-dark-100 mt-1.5">mRNA / siRNA / pDNA</div>
+    <div class="text-[14px] text-dark-200 font-semibold uppercase tracking-wide mb-2">카고 유형</div>
+    <div class="text-[36px] font-extrabold font-mono tracking-tighter text-violet-400">3</div>
+    <div class="text-[14px] text-dark-100 mt-1.5">mRNA / siRNA / pDNA</div>
   </div>
   <div class="stat-card bg-dark-600 border border-dark-400 rounded-xl p-5">
-    <div class="text-[11px] text-dark-200 font-semibold uppercase tracking-wide mb-2">Bio Models</div>
-    <div class="text-[28px] font-extrabold font-mono tracking-tighter text-amber-400">{{ model_names|length }}</div>
-    <div class="text-[11px] text-dark-100 mt-1.5">Cell lines & in vivo</div>
+    <div class="text-[14px] text-dark-200 font-semibold uppercase tracking-wide mb-2">생물 모델</div>
+    <div class="text-[36px] font-extrabold font-mono tracking-tighter text-amber-400">{{ model_names|length }}</div>
+    <div class="text-[14px] text-dark-100 mt-1.5">세포주 및 in vivo</div>
   </div>
 </div>
 
@@ -37,22 +37,22 @@
 <div class="bg-dark-600 border border-dark-400 rounded-xl p-4 mb-4">
   <form method="get" class="flex flex-wrap gap-3 items-end">
     <div class="flex-1 min-w-[220px]">
-      <label class="text-[10px] text-dark-200 font-semibold uppercase tracking-wide block mb-1.5">Search</label>
-      <input type="text" name="q" value="{{ query }}" placeholder="LNP ID or Lipid name..."
-        class="w-full bg-dark-700 border border-dark-400 rounded-lg px-3.5 py-2 text-[13px] text-dark-50 placeholder-dark-200 focus:border-blue-500 focus:outline-none">
+      <label class="text-[13px] text-dark-200 font-semibold uppercase tracking-wide block mb-1.5">검색</label>
+      <input type="text" name="q" value="{{ query }}" placeholder="LNP ID 또는 지질 이름..."
+        class="w-full bg-dark-700 border border-dark-400 rounded-lg px-3.5 py-2 text-[16px] text-dark-50 placeholder-dark-200 focus:border-blue-500 focus:outline-none">
     </div>
     <div class="w-52">
-      <label class="text-[10px] text-dark-200 font-semibold uppercase tracking-wide block mb-1.5">Method</label>
-      <select name="method" class="w-full bg-dark-700 border border-dark-400 rounded-lg px-3 py-2 text-[13px] text-dark-50 focus:border-blue-500 focus:outline-none">
-        <option value="">All Methods</option>
+      <label class="text-[13px] text-dark-200 font-semibold uppercase tracking-wide block mb-1.5">분석법</label>
+      <select name="method" class="w-full bg-dark-700 border border-dark-400 rounded-lg px-3 py-2 text-[16px] text-dark-50 focus:border-blue-500 focus:outline-none">
+        <option value="">전체 분석법</option>
         {% for val, label in methods %}
         <option value="{{ val }}" {% if current_method == val %}selected{% endif %}>{{ label }}</option>
         {% endfor %}
       </select>
     </div>
     <div class="w-32">
-      <label class="text-[10px] text-dark-200 font-semibold uppercase tracking-wide block mb-1.5">Cargo</label>
-      <select name="cargo" class="w-full bg-dark-700 border border-dark-400 rounded-lg px-3 py-2 text-[13px] text-dark-50 focus:border-blue-500 focus:outline-none">
+      <label class="text-[13px] text-dark-200 font-semibold uppercase tracking-wide block mb-1.5">카고</label>
+      <select name="cargo" class="w-full bg-dark-700 border border-dark-400 rounded-lg px-3 py-2 text-[16px] text-dark-50 focus:border-blue-500 focus:outline-none">
         <option value="">All</option>
         {% for val, label in cargos %}
         <option value="{{ val }}" {% if current_cargo == val %}selected{% endif %}>{{ label }}</option>
@@ -60,16 +60,16 @@
       </select>
     </div>
     <div class="w-40">
-      <label class="text-[10px] text-dark-200 font-semibold uppercase tracking-wide block mb-1.5">Model</label>
-      <select name="model" class="w-full bg-dark-700 border border-dark-400 rounded-lg px-3 py-2 text-[13px] text-dark-50 focus:border-blue-500 focus:outline-none">
-        <option value="">All Models</option>
+      <label class="text-[13px] text-dark-200 font-semibold uppercase tracking-wide block mb-1.5">모델</label>
+      <select name="model" class="w-full bg-dark-700 border border-dark-400 rounded-lg px-3 py-2 text-[16px] text-dark-50 focus:border-blue-500 focus:outline-none">
+        <option value="">전체 모델</option>
         {% for m in model_names %}
         <option value="{{ m }}" {% if current_model == m %}selected{% endif %}>{{ m }}</option>
         {% endfor %}
       </select>
     </div>
-    <button type="submit" class="px-5 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-[13px] font-semibold">Filter</button>
-    <a href="{% url 'experiments:list' %}" class="px-4 py-2 border border-dark-400 hover:border-dark-300 rounded-lg text-[13px] text-dark-100">Reset</a>
+    <button type="submit" class="px-5 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-[16px] font-semibold">필터</button>
+    <a href="{% url 'experiments:list' %}" class="px-4 py-2 border border-dark-400 hover:border-dark-300 rounded-lg text-[16px] text-dark-100">초기화</a>
   </form>
 </div>
 

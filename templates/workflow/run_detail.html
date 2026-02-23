@@ -17,29 +17,29 @@
 <div class="flex justify-between items-end mb-6">
   <div>
     <div class="flex items-center gap-3 mb-1">
-      <a href="{% url 'workflow:pipeline' %}" class="text-[11px] text-dark-200 hover:text-blue-400">&larr; All Workflows</a>
+      <a href="{% url 'workflow:pipeline' %}" class="text-[14px] text-dark-200 hover:text-blue-400">&larr; 전체 워크플로우</a>
     </div>
-    <h2 class="text-[22px] font-bold tracking-tight">{{ run.name }}</h2>
-    <p class="text-[13px] text-dark-100 mt-1">Iteration {{ run.iteration }} &middot; {{ run.progress_pct }}% complete</p>
+    <h2 class="text-[28px] font-bold tracking-tight">{{ run.name }}</h2>
+    <p class="text-[16px] text-dark-100 mt-1">Iteration {{ run.iteration }} &middot; {{ run.progress_pct }}% complete</p>
   </div>
   <div class="flex items-center gap-3">
     <!-- Run control buttons -->
     {% if run.can_pause %}
     <form method="post" action="{% url 'workflow:pause_run' run.pk %}">{% csrf_token %}
-      <button type="submit" class="px-3.5 py-1.5 border border-yellow-500/40 hover:bg-yellow-500/10 text-yellow-400 text-[11px] font-semibold rounded-lg transition">Pause</button>
+      <button type="submit" class="px-3.5 py-1.5 border border-yellow-500/40 hover:bg-yellow-500/10 text-yellow-400 text-[14px] font-semibold rounded-lg transition">일시정지</button>
     </form>
     {% endif %}
     {% if run.can_resume %}
     <form method="post" action="{% url 'workflow:resume_run' run.pk %}">{% csrf_token %}
-      <button type="submit" class="px-3.5 py-1.5 border border-emerald-500/40 hover:bg-emerald-500/10 text-emerald-400 text-[11px] font-semibold rounded-lg transition">Resume</button>
+      <button type="submit" class="px-3.5 py-1.5 border border-emerald-500/40 hover:bg-emerald-500/10 text-emerald-400 text-[14px] font-semibold rounded-lg transition">재개</button>
     </form>
     {% endif %}
     {% if run.can_cancel %}
-    <form method="post" action="{% url 'workflow:cancel_run' run.pk %}" onsubmit="return confirm('Cancel this workflow? Incomplete steps will be skipped.')">{% csrf_token %}
-      <button type="submit" class="px-3.5 py-1.5 border border-rose-500/40 hover:bg-rose-500/10 text-rose-400 text-[11px] font-semibold rounded-lg transition">Cancel</button>
+    <form method="post" action="{% url 'workflow:cancel_run' run.pk %}" onsubmit="return confirm('이 워크플로우를 취소하시겠습니까? 미완료 단계는 건너뜁니다.')">{% csrf_token %}
+      <button type="submit" class="px-3.5 py-1.5 border border-rose-500/40 hover:bg-rose-500/10 text-rose-400 text-[14px] font-semibold rounded-lg transition">취소</button>
     </form>
     {% endif %}
-    <span class="px-3 py-1.5 rounded-lg text-[12px] font-semibold
+    <span class="px-3 py-1.5 rounded-lg text-[15px] font-semibold
       {% if run.status == 'completed' %}bg-emerald-500/10 text-emerald-400
       {% elif run.status == 'running' %}bg-blue-500/10 text-blue-400
       {% elif run.status == 'failed' %}bg-rose-500/10 text-rose-400
@@ -53,20 +53,20 @@
 <!-- RUN INFO CARDS -->
 <div class="grid grid-cols-4 gap-3.5 mb-6">
   <div class="stat-card bg-dark-600 border border-dark-400 rounded-xl p-5">
-    <div class="text-[10px] text-dark-200 uppercase font-semibold tracking-wide mb-1">Iteration</div>
-    <div class="text-[22px] font-extrabold font-mono text-blue-400">{{ run.iteration }}</div>
+    <div class="text-[13px] text-dark-200 uppercase font-semibold tracking-wide mb-1">반복</div>
+    <div class="text-[28px] font-extrabold font-mono text-blue-400">{{ run.iteration }}</div>
   </div>
   <div class="stat-card bg-dark-600 border border-dark-400 rounded-xl p-5">
-    <div class="text-[10px] text-dark-200 uppercase font-semibold tracking-wide mb-1">Progress</div>
-    <div class="text-[22px] font-extrabold font-mono text-emerald-400">{{ run.progress_pct }}%</div>
+    <div class="text-[13px] text-dark-200 uppercase font-semibold tracking-wide mb-1">진행률</div>
+    <div class="text-[28px] font-extrabold font-mono text-emerald-400">{{ run.progress_pct }}%</div>
   </div>
   <div class="stat-card bg-dark-600 border border-dark-400 rounded-xl p-5">
-    <div class="text-[10px] text-dark-200 uppercase font-semibold tracking-wide mb-1">AI Model</div>
-    <div class="text-[13px] font-semibold text-dark-50 mt-1">{{ run.ai_model.name|default:"Not assigned" }}</div>
+    <div class="text-[13px] text-dark-200 uppercase font-semibold tracking-wide mb-1">AI 모델</div>
+    <div class="text-[16px] font-semibold text-dark-50 mt-1">{{ run.ai_model.name|default:"미지정" }}</div>
   </div>
   <div class="stat-card bg-dark-600 border border-dark-400 rounded-xl p-5">
-    <div class="text-[10px] text-dark-200 uppercase font-semibold tracking-wide mb-1">Created</div>
-    <div class="text-[13px] font-semibold text-dark-50 mt-1">{{ run.created_at|timesince }} ago</div>
+    <div class="text-[13px] text-dark-200 uppercase font-semibold tracking-wide mb-1">생성일</div>
+    <div class="text-[16px] font-semibold text-dark-50 mt-1">{{ run.created_at|timesince }} ago</div>
   </div>
 </div>
 
@@ -81,7 +81,7 @@
         {% elif run.status == 'cancelled' %}bg-gray-500
         {% else %}bg-blue-500{% endif %}" style="width:{{ run.progress_pct }}%"></div>
     </div>
-    <span class="text-[12px] font-mono text-dark-100">{{ run.progress_pct }}%</span>
+    <span class="text-[15px] font-mono text-dark-100">{{ run.progress_pct }}%</span>
   </div>
 </div>
 
@@ -98,7 +98,7 @@
         {% elif step.status == 'failed' %}bg-rose-500/5
         {% elif step.status == 'awaiting_approval' %}bg-amber-500/5
         {% else %}bg-dark-700{% endif %}">
-        <div class="w-10 h-10 rounded-full flex items-center justify-center text-[13px] font-bold
+        <div class="w-10 h-10 rounded-full flex items-center justify-center text-[16px] font-bold
           {% if step.status == 'completed' %}bg-emerald-500/15 text-emerald-400 border-2 border-emerald-500/30
           {% elif step.status == 'running' %}bg-blue-500/15 text-blue-400 border-2 border-blue-500/30 step-running
           {% elif step.status == 'failed' %}bg-rose-500/15 text-rose-400 border-2 border-rose-500/30
@@ -116,8 +116,8 @@
       <div class="flex-1 p-5">
         <div class="flex items-center justify-between mb-3">
           <div>
-            <div class="text-[13px] font-semibold">Step {{ step.step_order }}: {{ step.get_step_type_display }}</div>
-            <div class="text-[11px] text-dark-200 mt-0.5">
+            <div class="text-[16px] font-semibold">Step {{ step.step_order }}: {{ step.get_step_type_display }}</div>
+            <div class="text-[14px] text-dark-200 mt-0.5">
               {% if step.equipment %}Equipment: {{ step.equipment.name }} &middot; {% endif %}
               {% if step.started_at and step.completed_at %}
               Duration: {{ step.started_at|timesince:step.completed_at }}
@@ -132,21 +132,21 @@
             <!-- Action buttons -->
             {% if step.status == 'awaiting_approval' %}
             <form method="post" action="{% url 'workflow:approve_step' run.pk step.pk %}" class="inline">{% csrf_token %}
-              <button type="submit" class="px-3 py-1 bg-emerald-600 hover:bg-emerald-500 text-white text-[10px] font-semibold rounded-lg transition">Approve &amp; Continue</button>
+              <button type="submit" class="px-3 py-1 bg-emerald-600 hover:bg-emerald-500 text-white text-[13px] font-semibold rounded-lg transition">승인 및 계속</button>
             </form>
             {% endif %}
             {% if step.status == 'running' %}
             <form method="post" action="{% url 'workflow:simulate_step' run.pk step.pk %}" class="inline">{% csrf_token %}
-              <button type="submit" class="px-3 py-1 bg-blue-600 hover:bg-blue-500 text-white text-[10px] font-semibold rounded-lg transition">Simulate Completion</button>
+              <button type="submit" class="px-3 py-1 bg-blue-600 hover:bg-blue-500 text-white text-[13px] font-semibold rounded-lg transition">시뮬레이션</button>
             </form>
             {% endif %}
             {% if step.status == 'awaiting_approval' or step.status == 'completed' or step.status == 'failed' %}
-            <form method="post" action="{% url 'workflow:reject_step' run.pk step.pk %}" class="inline" onsubmit="return confirm('Reject and retry this step?')">{% csrf_token %}
-              <button type="submit" class="px-3 py-1 border border-rose-500/40 hover:bg-rose-500/10 text-rose-400 text-[10px] font-semibold rounded-lg transition">Reject &amp; Retry</button>
+            <form method="post" action="{% url 'workflow:reject_step' run.pk step.pk %}" class="inline" onsubmit="return confirm('이 단계를 반려하고 재시도하시겠습니까?')">{% csrf_token %}
+              <button type="submit" class="px-3 py-1 border border-rose-500/40 hover:bg-rose-500/10 text-rose-400 text-[13px] font-semibold rounded-lg transition">반려 및 재시도</button>
             </form>
             {% endif %}
             <!-- Status badge -->
-            <span class="px-2 py-0.5 rounded text-[10px] font-semibold
+            <span class="px-2 py-0.5 rounded text-[13px] font-semibold
               {% if step.status == 'completed' %}bg-emerald-500/10 text-emerald-400
               {% elif step.status == 'running' %}bg-blue-500/10 text-blue-400
               {% elif step.status == 'failed' %}bg-rose-500/10 text-rose-400
@@ -160,14 +160,14 @@
         <div class="grid grid-cols-2 gap-4">
           {% if step.input_data %}
           <div>
-            <div class="text-[10px] text-dark-200 uppercase font-semibold tracking-wide mb-2">Input Data</div>
-            <div class="bg-dark-700 rounded-lg p-3 json-viewer font-mono text-[10px] text-dark-100">{{ step.input_data }}</div>
+            <div class="text-[13px] text-dark-200 uppercase font-semibold tracking-wide mb-2">입력 데이터</div>
+            <div class="bg-dark-700 rounded-lg p-3 json-viewer font-mono text-[13px] text-dark-100">{{ step.input_data }}</div>
           </div>
           {% endif %}
           {% if step.output_data %}
           <div>
-            <div class="text-[10px] text-dark-200 uppercase font-semibold tracking-wide mb-2">Output Data</div>
-            <div class="bg-dark-700 rounded-lg p-3 json-viewer font-mono text-[10px] text-dark-100">{{ step.output_data }}</div>
+            <div class="text-[13px] text-dark-200 uppercase font-semibold tracking-wide mb-2">출력 데이터</div>
+            <div class="bg-dark-700 rounded-lg p-3 json-viewer font-mono text-[13px] text-dark-100">{{ step.output_data }}</div>
           </div>
           {% endif %}
         </div>
@@ -179,8 +179,8 @@
 
 {% if run.description %}
 <div class="bg-dark-600 border border-dark-400 rounded-xl p-5 mt-6">
-  <div class="text-[10px] text-dark-200 uppercase font-semibold tracking-wide mb-2">Description</div>
-  <p class="text-[12px] text-dark-100">{{ run.description }}</p>
+  <div class="text-[13px] text-dark-200 uppercase font-semibold tracking-wide mb-2">설명</div>
+  <p class="text-[15px] text-dark-100">{{ run.description }}</p>
 </div>
 {% endif %}
 
@@ -189,17 +189,17 @@
 <div class="bg-dark-600 border border-dark-400 rounded-xl mt-6 overflow-hidden" id="report-section">
   <div class="flex items-center justify-between px-5 py-4 border-b border-dark-400">
     <div class="flex items-center gap-2">
-      <span class="text-[14px]">&#128203;</span>
-      <span class="text-[14px] font-semibold">AI 결과 보고서</span>
+      <span class="text-[17px]">&#128203;</span>
+      <span class="text-[17px] font-semibold">AI 결과 보고서</span>
     </div>
     <div class="flex items-center gap-2">
       {% if run.report_text %}
       <button onclick="generateReport(true)"
-        class="px-2.5 py-1 border border-dark-300 hover:border-blue-500/40 hover:bg-blue-500/10 text-dark-100 hover:text-blue-400 text-[10px] font-semibold rounded-lg transition"
+        class="px-2.5 py-1 border border-dark-300 hover:border-blue-500/40 hover:bg-blue-500/10 text-dark-100 hover:text-blue-400 text-[13px] font-semibold rounded-lg transition"
         id="btn-regenerate">재생성</button>
       {% else %}
       <button onclick="generateReport(false)"
-        class="px-3.5 py-1.5 bg-blue-600 hover:bg-blue-500 text-white text-[11px] font-semibold rounded-lg transition"
+        class="px-3.5 py-1.5 bg-blue-600 hover:bg-blue-500 text-white text-[14px] font-semibold rounded-lg transition"
         id="btn-generate">보고서 생성</button>
       {% endif %}
     </div>
@@ -208,21 +208,21 @@
   <!-- Loading spinner -->
   <div id="report-loading" class="hidden px-5 py-10 text-center">
     <div class="inline-block w-6 h-6 border-2 border-blue-400 border-t-transparent rounded-full animate-spin mb-3"></div>
-    <p class="text-[12px] text-dark-200">보고서를 생성하고 있습니다...</p>
+    <p class="text-[15px] text-dark-200">보고서를 생성하고 있습니다...</p>
   </div>
 
   <!-- Error message -->
   <div id="report-error" class="hidden px-5 py-4">
-    <div class="bg-rose-500/10 border border-rose-500/30 rounded-lg px-4 py-3 text-[12px] text-rose-400"></div>
+    <div class="bg-rose-500/10 border border-rose-500/30 rounded-lg px-4 py-3 text-[15px] text-rose-400"></div>
   </div>
 
   <!-- Report content -->
   <div id="report-content" class="px-5 py-5 {% if not run.report_text %}hidden{% endif %}">
     <div id="report-body" class="prose prose-invert prose-sm max-w-none
-      text-[13px] leading-relaxed text-dark-100
-      [&_h3]:text-[14px] [&_h3]:font-bold [&_h3]:text-dark-50 [&_h3]:mt-6 [&_h3]:mb-3
-      [&_h2]:text-[15px] [&_h2]:font-bold [&_h2]:text-dark-50 [&_h2]:mt-6 [&_h2]:mb-3
-      [&_h1]:text-[16px] [&_h1]:font-bold [&_h1]:text-dark-50 [&_h1]:mt-6 [&_h1]:mb-3
+      text-[16px] leading-relaxed text-dark-100
+      [&_h3]:text-[17px] [&_h3]:font-bold [&_h3]:text-dark-50 [&_h3]:mt-6 [&_h3]:mb-3
+      [&_h2]:text-[18px] [&_h2]:font-bold [&_h2]:text-dark-50 [&_h2]:mt-6 [&_h2]:mb-3
+      [&_h1]:text-[20px] [&_h1]:font-bold [&_h1]:text-dark-50 [&_h1]:mt-6 [&_h1]:mb-3
       [&_strong]:text-dark-50
       [&_ul]:space-y-1 [&_ol]:space-y-1
       [&_li]:text-dark-100
@@ -291,7 +291,7 @@ function generateReport(regenerate) {
     // Switch to regenerate button
     const header = document.querySelector('#report-section .flex.items-center.gap-2:last-child');
     if (header) {
-      header.innerHTML = '<button onclick="generateReport(true)" class="px-2.5 py-1 border border-dark-300 hover:border-blue-500/40 hover:bg-blue-500/10 text-dark-100 hover:text-blue-400 text-[10px] font-semibold rounded-lg transition" id="btn-regenerate">재생성</button>';
+      header.innerHTML = '<button onclick="generateReport(true)" class="px-2.5 py-1 border border-dark-300 hover:border-blue-500/40 hover:bg-blue-500/10 text-dark-100 hover:text-blue-400 text-[13px] font-semibold rounded-lg transition" id="btn-regenerate">재생성</button>';
     }
   })
   .catch(() => {

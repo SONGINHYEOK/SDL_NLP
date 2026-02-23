@@ -1,15 +1,15 @@
 {% extends "base/base.html" %}
 {% load tz %}
-{% block title %}OmniLNP - Equipment Monitor{% endblock %}
-{% block breadcrumb %}Lab / <strong class="text-dark-50">Equipment Monitor</strong>{% endblock %}
+{% block title %}OmniLNP - 장비 모니터링{% endblock %}
+{% block breadcrumb %}Lab / <strong class="text-dark-50">장비 모니터링</strong>{% endblock %}
 {% block content %}
 <div class="flex justify-between items-end mb-6">
   <div>
-    <h2 class="text-[22px] font-bold tracking-tight">Equipment Monitor</h2>
-    <p class="text-[13px] text-dark-100 mt-1">{{ equipment_list|length }} connected instruments</p>
+    <h2 class="text-[28px] font-bold tracking-tight">장비 모니터링</h2>
+    <p class="text-[16px] text-dark-100 mt-1">{{ equipment_list|length }} 연결된 장비</p>
   </div>
   <div class="flex gap-2">
-    <span class="px-3 py-1.5 rounded-lg bg-dark-600 border border-dark-400 text-[11px] text-dark-100">REST API: <span class="font-mono text-blue-400">/api/equipment/devices/</span></span>
+    <span class="px-3 py-1.5 rounded-lg bg-dark-600 border border-dark-400 text-[14px] text-dark-100">REST API: <span class="font-mono text-blue-400">/api/equipment/devices/</span></span>
   </div>
 </div>
 
@@ -29,11 +29,11 @@
           {% elif st.status == 'offline' %}bg-dark-200
           {% else %}bg-dark-100{% endif %}"></div>
         <div>
-          <div class="text-[13px] font-semibold">{{ eq.name }}</div>
-          <div class="text-[10px] text-dark-200">{{ eq.get_equipment_type_display }}</div>
+          <div class="text-[16px] font-semibold">{{ eq.name }}</div>
+          <div class="text-[13px] text-dark-200">{{ eq.get_equipment_type_display }}</div>
         </div>
       </div>
-      <span class="px-2 py-0.5 rounded text-[9px] font-semibold
+      <span class="px-2 py-0.5 rounded text-[12px] font-semibold
         {% if eq.protocol == 'rest_api' %}bg-blue-500/10 text-blue-400
         {% elif eq.protocol == 'mqtt' %}bg-emerald-500/10 text-emerald-400
         {% elif eq.protocol == 'opcua' %}bg-violet-500/10 text-violet-400
@@ -43,23 +43,23 @@
     <!-- Card Body -->
     <div class="px-5 py-4">
       <div class="flex items-center justify-between mb-3">
-        <span class="text-[10px] text-dark-200 uppercase font-semibold tracking-wide">Status</span>
+        <span class="text-[13px] text-dark-200 uppercase font-semibold tracking-wide">상태</span>
         {% if st %}
-        <span class="px-2.5 py-1 rounded-lg text-[11px] font-semibold
+        <span class="px-2.5 py-1 rounded-lg text-[14px] font-semibold
           {% if st.status == 'running' %}bg-emerald-500/10 text-emerald-400
           {% elif st.status == 'error' %}bg-rose-500/10 text-rose-400
           {% elif st.status == 'maintenance' %}bg-amber-500/10 text-amber-400
           {% elif st.status == 'offline' %}bg-dark-500 text-dark-200
           {% else %}bg-dark-500 text-dark-100{% endif %}">{{ st.get_status_display }}</span>
         {% else %}
-        <span class="px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-dark-500 text-dark-200">No Data</span>
+        <span class="px-2.5 py-1 rounded-lg text-[14px] font-semibold bg-dark-500 text-dark-200">데이터 없음</span>
         {% endif %}
       </div>
 
       {% if st %}
       <!-- Latest Message -->
       {% if st.message %}
-      <div class="text-[11px] text-dark-100 mb-3 line-clamp-2">{{ st.message }}</div>
+      <div class="text-[14px] text-dark-100 mb-3 line-clamp-2">{{ st.message }}</div>
       {% endif %}
 
       <!-- Metadata -->
@@ -67,40 +67,40 @@
       <div class="grid grid-cols-2 gap-2 mb-3">
         {% for key, val in st.metadata.items %}
         <div class="bg-dark-700 rounded-lg px-3 py-2">
-          <div class="text-[9px] text-dark-200 uppercase">{{ key }}</div>
-          <div class="text-[13px] font-mono font-semibold text-dark-50">{{ val }}</div>
+          <div class="text-[12px] text-dark-200 uppercase">{{ key }}</div>
+          <div class="text-[16px] font-mono font-semibold text-dark-50">{{ val }}</div>
         </div>
         {% endfor %}
       </div>
       {% endif %}
 
-      <div class="text-[10px] text-dark-200">Last update: {{ st.timestamp|timesince }} ago</div>
+      <div class="text-[13px] text-dark-200">Last update: {{ st.timestamp|timesince }} ago</div>
       {% else %}
-      <div class="text-[11px] text-dark-200 py-4 text-center">No status reported yet</div>
+      <div class="text-[14px] text-dark-200 py-4 text-center">보고된 상태 없음</div>
       {% endif %}
 
       <!-- Connection indicator -->
       <div class="flex items-center gap-2 mt-3 pt-3 border-t border-dark-400">
         <div class="w-2 h-2 rounded-full {% if eq.is_connected %}bg-emerald-400{% else %}bg-dark-200{% endif %}"></div>
-        <span class="text-[10px] {% if eq.is_connected %}text-emerald-400{% else %}text-dark-200{% endif %}">{{ eq.is_connected|yesno:"Connected,Disconnected" }}</span>
+        <span class="text-[13px] {% if eq.is_connected %}text-emerald-400{% else %}text-dark-200{% endif %}">{{ eq.is_connected|yesno:"Connected,Disconnected" }}</span>
         {% if eq.manufacturer %}
-        <span class="text-[10px] text-dark-200 ml-auto">{{ eq.manufacturer }}</span>
+        <span class="text-[13px] text-dark-200 ml-auto">{{ eq.manufacturer }}</span>
         {% endif %}
       </div>
     </div>
 
     <!-- Expandable Detail / Command Panel -->
     <div id="detail-{{ eq.pk }}" class="hidden border-t border-dark-400 px-5 py-4 bg-dark-700">
-      <div class="text-[10px] text-dark-200 uppercase font-semibold tracking-wide mb-3">Send Command</div>
+      <div class="text-[13px] text-dark-200 uppercase font-semibold tracking-wide mb-3">명령 전송</div>
       <div class="flex gap-2 mb-4">
-        <input type="text" id="cmd-{{ eq.pk }}" placeholder="e.g. start, calibrate, measure..."
-          class="flex-1 bg-dark-800 border border-dark-400 rounded-lg px-3 py-2 text-[12px] text-dark-50 placeholder-dark-200 focus:border-blue-500 focus:outline-none">
-        <button onclick="sendCommand({{ eq.pk }})" class="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-[11px] font-semibold">Send</button>
+        <input type="text" id="cmd-{{ eq.pk }}" placeholder="예: start, calibrate, measure..."
+          class="flex-1 bg-dark-800 border border-dark-400 rounded-lg px-3 py-2 text-[15px] text-dark-50 placeholder-dark-200 focus:border-blue-500 focus:outline-none">
+        <button onclick="sendCommand({{ eq.pk }})" class="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-[14px] font-semibold">전송</button>
       </div>
-      <div id="cmd-result-{{ eq.pk }}" class="text-[11px] text-dark-100"></div>
+      <div id="cmd-result-{{ eq.pk }}" class="text-[14px] text-dark-100"></div>
 
       {% if eq.endpoint_url %}
-      <div class="mt-3 text-[10px] text-dark-200">
+      <div class="mt-3 text-[13px] text-dark-200">
         Endpoint: <span class="font-mono text-dark-100">{{ eq.endpoint_url }}</span>
       </div>
       {% endif %}
@@ -113,8 +113,8 @@
 <!-- STATUS TIMELINE -->
 <div class="bg-dark-600 border border-dark-400 rounded-xl">
   <div class="px-5 py-4 border-b border-dark-400">
-    <div class="text-[13px] font-semibold">Status Timeline</div>
-    <div class="text-[11px] text-dark-200">Recent status changes across all equipment</div>
+    <div class="text-[16px] font-semibold">상태 타임라인</div>
+    <div class="text-[14px] text-dark-200">전체 장비의 최근 상태 변경 기록</div>
   </div>
   <div class="p-5 space-y-3" id="timeline">
     {% for item in equipment_list %}
@@ -128,16 +128,16 @@
         {% else %}bg-dark-100{% endif %}"></div>
       <div class="flex-1 min-w-0">
         <div class="flex items-center gap-2">
-          <span class="text-[11px] font-semibold text-dark-50">{{ eq.name }}</span>
-          <span class="px-1.5 py-0.5 rounded text-[9px] font-semibold
+          <span class="text-[14px] font-semibold text-dark-50">{{ eq.name }}</span>
+          <span class="px-1.5 py-0.5 rounded text-[12px] font-semibold
             {% if log.status == 'running' %}bg-emerald-500/10 text-emerald-400
             {% elif log.status == 'error' %}bg-rose-500/10 text-rose-400
             {% elif log.status == 'maintenance' %}bg-amber-500/10 text-amber-400
             {% else %}bg-dark-500 text-dark-100{% endif %}">{{ log.get_status_display }}</span>
-          <span class="text-[10px] text-dark-200 ml-auto flex-shrink-0">{{ log.timestamp|timesince }} ago</span>
+          <span class="text-[13px] text-dark-200 ml-auto flex-shrink-0">{{ log.timestamp|timesince }} ago</span>
         </div>
         {% if log.message %}
-        <div class="text-[10px] text-dark-200 mt-0.5 truncate">{{ log.message }}</div>
+        <div class="text-[13px] text-dark-200 mt-0.5 truncate">{{ log.message }}</div>
         {% endif %}
       </div>
     </div>

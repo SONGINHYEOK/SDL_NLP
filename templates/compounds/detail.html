@@ -1,6 +1,6 @@
 {% extends "base/base.html" %}
 {% block title %}{{ lipid.name }} - OmniLNP{% endblock %}
-{% block breadcrumb %}Data / Lipid Explorer / <strong class="text-dark-50">{{ lipid.name|truncatechars:40 }}</strong>{% endblock %}
+{% block breadcrumb %}Data / 지질 탐색기 / <strong class="text-dark-50">{{ lipid.name|truncatechars:40 }}</strong>{% endblock %}
 
 {% block extra_head %}
 <script src="https://unpkg.com/smiles-drawer@2.1.7/dist/smiles-drawer.min.js"></script>
@@ -24,10 +24,10 @@
   <div class="flex-1">
     <div class="flex items-center gap-3 mb-2">
       {% if prev_lipid %}<a href="{% url 'compounds:detail' prev_lipid.pk %}" class="w-7 h-7 rounded-lg border border-dark-400 flex items-center justify-center text-dark-200 hover:border-dark-300 hover:text-white text-xs">&larr;</a>{% endif %}
-      <h2 class="text-[22px] font-bold tracking-tight">{{ lipid.name }}</h2>
+      <h2 class="text-[28px] font-bold tracking-tight">{{ lipid.name }}</h2>
       {% if next_lipid %}<a href="{% url 'compounds:detail' next_lipid.pk %}" class="w-7 h-7 rounded-lg border border-dark-400 flex items-center justify-center text-dark-200 hover:border-dark-300 hover:text-white text-xs">&rarr;</a>{% endif %}
     </div>
-    <div class="flex items-center gap-2 text-[11px]">
+    <div class="flex items-center gap-2 text-[14px]">
       <span class="px-2 py-0.5 rounded bg-blue-500/10 text-blue-400 font-semibold">{{ lipid.get_source_display }}</span>
       {% if lipid.has_ester %}<span class="px-2 py-0.5 rounded tag-ester font-semibold">Ester</span>{% endif %}
       {% if lipid.has_carbonate %}<span class="px-2 py-0.5 rounded tag-carbonate font-semibold">Carbonate</span>{% endif %}
@@ -35,7 +35,7 @@
       <span class="text-dark-200 ml-2">{{ total_results }} experiment results</span>
     </div>
   </div>
-  <a href="{% url 'compounds:list' %}" class="px-4 py-2 border border-dark-400 hover:border-dark-300 rounded-lg text-[12px] text-dark-100 transition">Back to Explorer</a>
+  <a href="{% url 'compounds:list' %}" class="px-4 py-2 border border-dark-400 hover:border-dark-300 rounded-lg text-[15px] text-dark-100 transition">탐색기로 돌아가기</a>
 </div>
 
 <!-- ROW 1: Structure + Radar + Properties -->
@@ -44,22 +44,22 @@
   <!-- 2D STRUCTURE (SmilesDrawer) -->
   <div class="bg-dark-600 border border-dark-400 rounded-xl glow-blue">
     <div class="px-5 py-3 border-b border-dark-400">
-      <div class="text-[13px] font-semibold">2D Structure</div>
+      <div class="text-[16px] font-semibold">2D 구조</div>
     </div>
     <div class="p-4 flex items-center justify-center" style="min-height: 320px">
       <canvas id="mol-canvas" width="420" height="300"></canvas>
     </div>
     <div class="px-5 pb-4">
-      <div class="text-[10px] text-dark-200 font-semibold uppercase tracking-wide mb-1.5">SMILES</div>
-      <div class="bg-dark-700 rounded-lg px-3 py-2 font-mono text-[10px] text-dark-100 break-all select-all max-h-16 overflow-y-auto leading-relaxed">{{ lipid.smiles }}</div>
+      <div class="text-[13px] text-dark-200 font-semibold uppercase tracking-wide mb-1.5">SMILES</div>
+      <div class="bg-dark-700 rounded-lg px-3 py-2 font-mono text-[13px] text-dark-100 break-all select-all max-h-16 overflow-y-auto leading-relaxed">{{ lipid.smiles }}</div>
     </div>
   </div>
 
   <!-- RADAR CHART (vs DB Average) -->
   <div class="bg-dark-600 border border-dark-400 rounded-xl">
     <div class="px-5 py-3 border-b border-dark-400">
-      <div class="text-[13px] font-semibold">Descriptor Profile</div>
-      <div class="text-[10px] text-dark-200">vs. LNPDB Average ({{ lipid.name|truncatechars:15 }} = blue)</div>
+      <div class="text-[16px] font-semibold">물성 프로파일</div>
+      <div class="text-[13px] text-dark-200">vs. LNPDB Average ({{ lipid.name|truncatechars:15 }} = blue)</div>
     </div>
     <div class="p-4 flex items-center justify-center">
       <canvas id="radar-chart" width="360" height="330"></canvas>
@@ -70,75 +70,75 @@
   <div class="space-y-2.5">
     <div class="grid grid-cols-2 gap-2">
       <div class="prop-card bg-dark-600 border border-dark-400 rounded-xl px-4 py-3">
-        <div class="text-[10px] text-dark-200 font-semibold uppercase tracking-wide">Molecular Weight</div>
-        <div class="text-[20px] font-extrabold font-mono text-blue-400 mt-1">{{ lipid.molecular_weight|floatformat:1|default:"-" }}</div>
-        <div class="text-[10px] text-dark-200">Da</div>
+        <div class="text-[13px] text-dark-200 font-semibold uppercase tracking-wide">분자량</div>
+        <div class="text-[24px] font-extrabold font-mono text-blue-400 mt-1">{{ lipid.molecular_weight|floatformat:1|default:"-" }}</div>
+        <div class="text-[13px] text-dark-200">Da</div>
       </div>
       <div class="prop-card bg-dark-600 border border-dark-400 rounded-xl px-4 py-3">
-        <div class="text-[10px] text-dark-200 font-semibold uppercase tracking-wide">LogP</div>
-        <div class="text-[20px] font-extrabold font-mono text-cyan-400 mt-1">{{ lipid.logp|floatformat:2|default:"-" }}</div>
-        <div class="text-[10px] text-dark-200">Lipophilicity</div>
+        <div class="text-[13px] text-dark-200 font-semibold uppercase tracking-wide">LogP</div>
+        <div class="text-[24px] font-extrabold font-mono text-cyan-400 mt-1">{{ lipid.logp|floatformat:2|default:"-" }}</div>
+        <div class="text-[13px] text-dark-200">지용성</div>
       </div>
     </div>
     <div class="grid grid-cols-2 gap-2">
       <div class="prop-card bg-dark-600 border border-dark-400 rounded-xl px-4 py-3">
-        <div class="text-[10px] text-dark-200 font-semibold uppercase tracking-wide">TPSA</div>
-        <div class="text-[20px] font-extrabold font-mono text-emerald-400 mt-1">{{ lipid.tpsa|floatformat:1|default:"-" }}</div>
-        <div class="text-[10px] text-dark-200">Angstrom^2</div>
+        <div class="text-[13px] text-dark-200 font-semibold uppercase tracking-wide">TPSA</div>
+        <div class="text-[24px] font-extrabold font-mono text-emerald-400 mt-1">{{ lipid.tpsa|floatformat:1|default:"-" }}</div>
+        <div class="text-[13px] text-dark-200">Angstrom^2</div>
       </div>
       <div class="prop-card bg-dark-600 border border-dark-400 rounded-xl px-4 py-3">
-        <div class="text-[10px] text-dark-200 font-semibold uppercase tracking-wide">HBD / HBA</div>
-        <div class="text-[20px] font-extrabold font-mono text-violet-400 mt-1">{{ lipid.hbd|default:"-" }} / {{ lipid.hba|default:"-" }}</div>
-        <div class="text-[10px] text-dark-200">H-Bond Donors / Acceptors</div>
+        <div class="text-[13px] text-dark-200 font-semibold uppercase tracking-wide">HBD / HBA</div>
+        <div class="text-[24px] font-extrabold font-mono text-violet-400 mt-1">{{ lipid.hbd|default:"-" }} / {{ lipid.hba|default:"-" }}</div>
+        <div class="text-[13px] text-dark-200">수소결합 공여/수용체</div>
       </div>
     </div>
     <div class="grid grid-cols-3 gap-2">
       <div class="prop-card bg-dark-600 border border-dark-400 rounded-xl px-3 py-2.5">
-        <div class="text-[9px] text-dark-200 font-semibold uppercase">Rot. Bonds</div>
-        <div class="text-[16px] font-bold font-mono text-amber-400 mt-0.5">{{ lipid.rotatable_bonds|default:"-" }}</div>
+        <div class="text-[12px] text-dark-200 font-semibold uppercase">회전 결합</div>
+        <div class="text-[20px] font-bold font-mono text-amber-400 mt-0.5">{{ lipid.rotatable_bonds|default:"-" }}</div>
       </div>
       <div class="prop-card bg-dark-600 border border-dark-400 rounded-xl px-3 py-2.5">
-        <div class="text-[9px] text-dark-200 font-semibold uppercase">Rings</div>
-        <div class="text-[16px] font-bold font-mono text-amber-400 mt-0.5">{{ lipid.rings|default:"-" }}</div>
+        <div class="text-[12px] text-dark-200 font-semibold uppercase">고리</div>
+        <div class="text-[20px] font-bold font-mono text-amber-400 mt-0.5">{{ lipid.rings|default:"-" }}</div>
       </div>
       <div class="prop-card bg-dark-600 border border-dark-400 rounded-xl px-3 py-2.5">
-        <div class="text-[9px] text-dark-200 font-semibold uppercase">Fsp3</div>
-        <div class="text-[16px] font-bold font-mono text-amber-400 mt-0.5">{{ lipid.fsp3|floatformat:2|default:"-" }}</div>
+        <div class="text-[12px] text-dark-200 font-semibold uppercase">Fsp3</div>
+        <div class="text-[20px] font-bold font-mono text-amber-400 mt-0.5">{{ lipid.fsp3|floatformat:2|default:"-" }}</div>
       </div>
     </div>
     <div class="grid grid-cols-3 gap-2">
       <div class="prop-card bg-dark-600 border border-dark-400 rounded-xl px-3 py-2.5">
-        <div class="text-[9px] text-dark-200 font-semibold uppercase">Heavy Atoms</div>
-        <div class="text-[16px] font-bold font-mono text-dark-50 mt-0.5">{{ lipid.heavy_atoms|default:"-" }}</div>
+        <div class="text-[12px] text-dark-200 font-semibold uppercase">중원자</div>
+        <div class="text-[20px] font-bold font-mono text-dark-50 mt-0.5">{{ lipid.heavy_atoms|default:"-" }}</div>
       </div>
       <div class="prop-card bg-dark-600 border border-dark-400 rounded-xl px-3 py-2.5">
-        <div class="text-[9px] text-dark-200 font-semibold uppercase">N Count</div>
-        <div class="text-[16px] font-bold font-mono text-dark-50 mt-0.5">{{ lipid.nitrogen_count|default:"-" }}</div>
+        <div class="text-[12px] text-dark-200 font-semibold uppercase">질소 수</div>
+        <div class="text-[20px] font-bold font-mono text-dark-50 mt-0.5">{{ lipid.nitrogen_count|default:"-" }}</div>
       </div>
       <div class="prop-card bg-dark-600 border border-dark-400 rounded-xl px-3 py-2.5">
-        <div class="text-[9px] text-dark-200 font-semibold uppercase">Molar Ref</div>
-        <div class="text-[16px] font-bold font-mono text-dark-50 mt-0.5">{{ lipid.molar_refractivity|floatformat:0|default:"-" }}</div>
+        <div class="text-[12px] text-dark-200 font-semibold uppercase">몰 굴절률</div>
+        <div class="text-[20px] font-bold font-mono text-dark-50 mt-0.5">{{ lipid.molar_refractivity|floatformat:0|default:"-" }}</div>
       </div>
     </div>
 
     <!-- Structural Components -->
     <div class="bg-dark-600 border border-dark-400 rounded-xl px-4 py-3">
-      <div class="text-[10px] text-dark-200 font-semibold uppercase tracking-wide mb-2">Structural Components</div>
-      <div class="space-y-1.5 text-[11px]">
+      <div class="text-[13px] text-dark-200 font-semibold uppercase tracking-wide mb-2">구조 성분</div>
+      <div class="space-y-1.5 text-[14px]">
         <div class="flex justify-between">
-          <span class="text-dark-200">Head Group</span>
+          <span class="text-dark-200">헤드 그룹</span>
           <span class="font-mono text-dark-50">{{ lipid.head_group.name|default:"N/A" }}</span>
         </div>
         <div class="flex justify-between">
-          <span class="text-dark-200">Linker</span>
+          <span class="text-dark-200">링커</span>
           <span class="font-mono text-dark-50">{{ lipid.linker.name|default:"N/A" }}</span>
         </div>
         <div class="flex justify-between">
-          <span class="text-dark-200">Tail 1</span>
+          <span class="text-dark-200">꼬리 1</span>
           <span class="font-mono text-dark-50">{{ lipid.tail1.name|default:"N/A" }}</span>
         </div>
         <div class="flex justify-between">
-          <span class="text-dark-200">Tail 2</span>
+          <span class="text-dark-200">꼬리 2</span>
           <span class="font-mono text-dark-50">{{ lipid.tail2.name|default:"N/A" }}</span>
         </div>
       </div>
@@ -152,19 +152,19 @@
   <!-- By Method -->
   <div class="bg-dark-600 border border-dark-400 rounded-xl">
     <div class="px-5 py-3 border-b border-dark-400">
-      <div class="text-[13px] font-semibold">By Assay Method</div>
+      <div class="text-[16px] font-semibold">분석법별</div>
     </div>
     <div class="p-4 space-y-2">
       {% for m in method_summary %}
       <div class="flex items-center gap-2">
-        <span class="text-[10px] text-dark-100 w-40 text-right truncate">{{ m.method }}</span>
+        <span class="text-[13px] text-dark-100 w-40 text-right truncate">{{ m.method }}</span>
         <div class="flex-1 h-1.5 bg-white/5 rounded-full overflow-hidden">
           <div class="h-full rounded-full bg-blue-500" style="width:{% widthratio m.count method_summary.0.count 100 %}%"></div>
         </div>
-        <span class="text-[10px] font-mono text-dark-200 w-8 text-right">{{ m.count }}</span>
+        <span class="text-[13px] font-mono text-dark-200 w-8 text-right">{{ m.count }}</span>
       </div>
       {% empty %}
-      <div class="text-[11px] text-dark-200 text-center py-4">No experiment data</div>
+      <div class="text-[14px] text-dark-200 text-center py-4">실험 데이터 없음</div>
       {% endfor %}
     </div>
   </div>
@@ -172,20 +172,20 @@
   <!-- By Model -->
   <div class="bg-dark-600 border border-dark-400 rounded-xl">
     <div class="px-5 py-3 border-b border-dark-400">
-      <div class="text-[13px] font-semibold">By Model System</div>
+      <div class="text-[16px] font-semibold">모델별</div>
     </div>
     <div class="p-4 space-y-2">
       {% for m in model_summary %}
       <div class="flex items-center gap-2">
-        <span class="text-[10px] text-dark-100 w-28 text-right truncate">{{ m.experiment__model_name }}</span>
+        <span class="text-[13px] text-dark-100 w-28 text-right truncate">{{ m.experiment__model_name }}</span>
         <div class="flex-1 h-1.5 bg-white/5 rounded-full overflow-hidden">
           <div class="h-full rounded-full bg-emerald-500" style="width:{% widthratio m.count model_summary.0.count 100 %}%"></div>
         </div>
-        <span class="text-[10px] font-mono text-dark-200 w-8 text-right">{{ m.count }}</span>
-        <span class="text-[9px] font-mono text-dark-200 w-14 text-right">avg {{ m.avg_val|floatformat:2 }}</span>
+        <span class="text-[13px] font-mono text-dark-200 w-8 text-right">{{ m.count }}</span>
+        <span class="text-[12px] font-mono text-dark-200 w-14 text-right">avg {{ m.avg_val|floatformat:2 }}</span>
       </div>
       {% empty %}
-      <div class="text-[11px] text-dark-200 text-center py-4">No experiment data</div>
+      <div class="text-[14px] text-dark-200 text-center py-4">실험 데이터 없음</div>
       {% endfor %}
     </div>
   </div>
@@ -193,8 +193,8 @@
   <!-- Value Distribution (Luminescence) -->
   <div class="bg-dark-600 border border-dark-400 rounded-xl">
     <div class="px-5 py-3 border-b border-dark-400">
-      <div class="text-[13px] font-semibold">Value Distribution</div>
-      <div class="text-[10px] text-dark-200">Luminescence (normalized)</div>
+      <div class="text-[16px] font-semibold">값 분포</div>
+      <div class="text-[13px] text-dark-200">Luminescence (normalized)</div>
     </div>
     <div class="p-4 flex items-center justify-center">
       <canvas id="value-hist" width="320" height="220"></canvas>
@@ -206,12 +206,12 @@
 <div class="bg-dark-600 border border-dark-400 rounded-xl">
   <div class="px-5 py-3 border-b border-dark-400 flex justify-between items-center">
     <div>
-      <div class="text-[13px] font-semibold">Experiment Results</div>
-      <div class="text-[10px] text-dark-200">Showing up to 50 of {{ total_results }} results for {{ lipid.name|truncatechars:20 }}</div>
+      <div class="text-[16px] font-semibold">실험 결과</div>
+      <div class="text-[13px] text-dark-200">Showing up to 50 of {{ total_results }} results for {{ lipid.name|truncatechars:20 }}</div>
     </div>
     <div class="flex gap-2">
       {% for c in cargo_summary %}
-      <span class="px-2 py-0.5 rounded text-[10px] font-semibold
+      <span class="px-2 py-0.5 rounded text-[13px] font-semibold
         {% if c.experiment__cargo == 'mRNA' %}tag-mrna{% elif c.experiment__cargo == 'siRNA' %}tag-sirna{% else %}tag-pdna{% endif %}">
         {{ c.experiment__cargo }} ({{ c.count }})
       </span>
@@ -219,26 +219,26 @@
     </div>
   </div>
   <div class="overflow-x-auto">
-    <table class="w-full text-[12px]">
+    <table class="w-full text-[15px]">
       <thead><tr class="border-b border-dark-400">
-        <th class="text-left px-4 py-2.5 text-[10px] text-dark-200 uppercase font-semibold">LNP ID</th>
-        <th class="text-left px-4 py-2.5 text-[10px] text-dark-200 uppercase font-semibold">Formulation</th>
-        <th class="text-left px-4 py-2.5 text-[10px] text-dark-200 uppercase font-semibold">Cargo</th>
-        <th class="text-left px-4 py-2.5 text-[10px] text-dark-200 uppercase font-semibold">Model</th>
-        <th class="text-left px-4 py-2.5 text-[10px] text-dark-200 uppercase font-semibold">Method</th>
-        <th class="text-right px-4 py-2.5 text-[10px] text-dark-200 uppercase font-semibold">Value</th>
+        <th class="text-left px-4 py-2.5 text-[13px] text-dark-200 uppercase font-semibold">LNP ID</th>
+        <th class="text-left px-4 py-2.5 text-[13px] text-dark-200 uppercase font-semibold">제형</th>
+        <th class="text-left px-4 py-2.5 text-[13px] text-dark-200 uppercase font-semibold">카고</th>
+        <th class="text-left px-4 py-2.5 text-[13px] text-dark-200 uppercase font-semibold">모델</th>
+        <th class="text-left px-4 py-2.5 text-[13px] text-dark-200 uppercase font-semibold">분석법</th>
+        <th class="text-right px-4 py-2.5 text-[13px] text-dark-200 uppercase font-semibold">값</th>
       </tr></thead>
       <tbody>
         {% for r in results %}
         <tr class="border-b border-white/[0.03] hover:bg-blue-500/[0.03]">
-          <td class="px-4 py-2 font-mono text-[11px] text-blue-400">{{ r.lnp_id }}</td>
-          <td class="px-4 py-2 font-mono text-[10px] text-dark-100">{{ r.formulation.formulation_id|truncatechars:20 }}</td>
+          <td class="px-4 py-2 font-mono text-[14px] text-blue-400">{{ r.lnp_id }}</td>
+          <td class="px-4 py-2 font-mono text-[13px] text-dark-100">{{ r.formulation.formulation_id|truncatechars:20 }}</td>
           <td class="px-4 py-2">
-            <span class="px-1.5 py-0.5 rounded text-[9px] font-semibold
+            <span class="px-1.5 py-0.5 rounded text-[12px] font-semibold
               {% if r.experiment.cargo == 'mRNA' %}tag-mrna{% elif r.experiment.cargo == 'siRNA' %}tag-sirna{% else %}tag-pdna{% endif %}">{{ r.experiment.cargo }}</span>
           </td>
-          <td class="px-4 py-2 text-dark-100 text-[11px]">{{ r.experiment.model_name }}</td>
-          <td class="px-4 py-2 text-[10px] text-dark-200">{{ r.method|truncatechars:25 }}</td>
+          <td class="px-4 py-2 text-dark-100 text-[14px]">{{ r.experiment.model_name }}</td>
+          <td class="px-4 py-2 text-[13px] text-dark-200">{{ r.method|truncatechars:25 }}</td>
           <td class="px-4 py-2 text-right font-mono font-semibold">
             {% if r.value >= 1.0 %}
             <span class="text-emerald-400">{{ r.value|floatformat:4 }}</span>
@@ -250,7 +250,7 @@
           </td>
         </tr>
         {% empty %}
-        <tr><td colspan="6" class="px-4 py-8 text-center text-dark-200">No experiment results for this lipid.</td></tr>
+        <tr><td colspan="6" class="px-4 py-8 text-center text-dark-200">이 지질에 대한 실험 결과가 없습니다.</td></tr>
         {% endfor %}
       </tbody>
     </table>
@@ -382,7 +382,7 @@ document.addEventListener("DOMContentLoaded", function() {
       }
     });
   } else {
-    document.getElementById("value-hist").parentElement.innerHTML = '<div class="text-[11px] text-dark-200 text-center py-8">No luminescence data</div>';
+    document.getElementById("value-hist").parentElement.innerHTML = '<div class="text-[14px] text-dark-200 text-center py-8">발광 데이터 없음</div>';
   }
 });
 </script>

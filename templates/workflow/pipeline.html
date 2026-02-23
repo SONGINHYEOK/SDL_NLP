@@ -1,6 +1,6 @@
 {% extends "base/base.html" %}
 {% block title %}OmniLNP - Workflow Pipeline{% endblock %}
-{% block breadcrumb %}Lab / <strong class="text-dark-50">Workflow Pipeline</strong>{% endblock %}
+{% block breadcrumb %}Lab / <strong class="text-dark-50">워크플로우 파이프라인</strong>{% endblock %}
 
 {% block extra_head %}
 <style>
@@ -12,29 +12,29 @@
 {% block content %}
 <div class="flex justify-between items-end mb-6">
   <div>
-    <h2 class="text-[22px] font-bold tracking-tight">Workflow Pipeline</h2>
-    <p class="text-[13px] text-dark-100 mt-1">Closed-loop optimization: Design &rarr; Synthesize &rarr; Formulate &rarr; Analyze &rarr; Learn</p>
+    <h2 class="text-[28px] font-bold tracking-tight">워크플로우 파이프라인</h2>
+    <p class="text-[16px] text-dark-100 mt-1">자율 최적화: 설계 &rarr; 합성 &rarr; 제형화 &rarr; 분석 &rarr; 학습</p>
   </div>
-  <a href="{% url 'workflow:create_run' %}" class="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-[12px] font-semibold rounded-lg transition">+ New Workflow</a>
+  <a href="{% url 'workflow:create_run' %}" class="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-[15px] font-semibold rounded-lg transition">+ 새 워크플로우</a>
 </div>
 
 <!-- STAT CARDS -->
 <div class="grid grid-cols-3 gap-3.5 mb-6">
   {% with active=0 completed=0 failed=0 %}
   <div class="stat-card bg-dark-600 border border-dark-400 rounded-xl p-5">
-    <div class="text-[11px] text-dark-200 font-semibold uppercase tracking-wide mb-2">Total Runs</div>
-    <div class="text-[28px] font-extrabold font-mono tracking-tighter text-blue-400">{{ runs|length }}</div>
-    <div class="text-[11px] text-dark-100 mt-1.5">Optimization cycles</div>
+    <div class="text-[14px] text-dark-200 font-semibold uppercase tracking-wide mb-2">총 실행</div>
+    <div class="text-[36px] font-extrabold font-mono tracking-tighter text-blue-400">{{ runs|length }}</div>
+    <div class="text-[14px] text-dark-100 mt-1.5">최적화 사이클</div>
   </div>
   <div class="stat-card bg-dark-600 border border-dark-400 rounded-xl p-5">
-    <div class="text-[11px] text-dark-200 font-semibold uppercase tracking-wide mb-2">Active</div>
-    <div class="text-[28px] font-extrabold font-mono tracking-tighter text-emerald-400" id="active-count">-</div>
-    <div class="text-[11px] text-dark-100 mt-1.5">Currently running</div>
+    <div class="text-[14px] text-dark-200 font-semibold uppercase tracking-wide mb-2">실행 중</div>
+    <div class="text-[36px] font-extrabold font-mono tracking-tighter text-emerald-400" id="active-count">-</div>
+    <div class="text-[14px] text-dark-100 mt-1.5">현재 실행 중</div>
   </div>
   <div class="stat-card bg-dark-600 border border-dark-400 rounded-xl p-5">
-    <div class="text-[11px] text-dark-200 font-semibold uppercase tracking-wide mb-2">Completed</div>
-    <div class="text-[28px] font-extrabold font-mono tracking-tighter text-violet-400" id="completed-count">-</div>
-    <div class="text-[11px] text-dark-100 mt-1.5">Finished cycles</div>
+    <div class="text-[14px] text-dark-200 font-semibold uppercase tracking-wide mb-2">완료</div>
+    <div class="text-[36px] font-extrabold font-mono tracking-tighter text-violet-400" id="completed-count">-</div>
+    <div class="text-[14px] text-dark-100 mt-1.5">완료된 사이클</div>
   </div>
   {% endwith %}
 </div>
@@ -47,12 +47,12 @@
     <div class="px-5 py-4 border-b border-dark-400 flex items-center justify-between">
       <div class="flex items-center gap-4">
         <div>
-          <div class="text-[14px] font-semibold">{{ run.name }}</div>
-          <div class="text-[11px] text-dark-200">Iteration {{ run.iteration }}{% if run.ai_model %} &middot; {{ run.ai_model.name }}{% endif %}</div>
+          <div class="text-[17px] font-semibold">{{ run.name }}</div>
+          <div class="text-[14px] text-dark-200">Iteration {{ run.iteration }}{% if run.ai_model %} &middot; {{ run.ai_model.name }}{% endif %}</div>
         </div>
       </div>
       <div class="flex items-center gap-3">
-        <span class="px-2.5 py-1 rounded-lg text-[11px] font-semibold
+        <span class="px-2.5 py-1 rounded-lg text-[14px] font-semibold
           {% if run.status == 'completed' %}bg-emerald-500/10 text-emerald-400
           {% elif run.status == 'running' %}bg-blue-500/10 text-blue-400
           {% elif run.status == 'failed' %}bg-rose-500/10 text-rose-400
@@ -61,7 +61,7 @@
           {% elif run.status == 'paused' %}bg-yellow-500/10 text-yellow-400
           {% elif run.status == 'cancelled' %}bg-gray-500/10 text-gray-400
           {% else %}bg-dark-500 text-dark-100{% endif %}">{{ run.get_status_display }}</span>
-        <a href="{% url 'workflow:detail' run.pk %}" class="px-3 py-1.5 border border-dark-400 hover:border-blue-500 rounded-lg text-[11px] text-dark-100 hover:text-blue-400">Details</a>
+        <a href="{% url 'workflow:detail' run.pk %}" class="px-3 py-1.5 border border-dark-400 hover:border-blue-500 rounded-lg text-[14px] text-dark-100 hover:text-blue-400">상세</a>
       </div>
     </div>
 
@@ -74,7 +74,7 @@
             {% elif run.status == 'failed' %}bg-rose-500
             {% else %}bg-blue-500{% endif %}" style="width:{{ run.progress_pct }}%"></div>
         </div>
-        <span class="text-[11px] font-mono text-dark-200 w-10 text-right">{{ run.progress_pct }}%</span>
+        <span class="text-[14px] font-mono text-dark-200 w-10 text-right">{{ run.progress_pct }}%</span>
       </div>
     </div>
 
@@ -89,7 +89,7 @@
           {% else %}bg-dark-400{% endif %}"></div>
         {% endif %}
         <div class="flex flex-col items-center gap-2">
-          <div class="w-11 h-11 rounded-full flex items-center justify-center text-[13px] font-bold
+          <div class="w-11 h-11 rounded-full flex items-center justify-center text-[16px] font-bold
             {% if step.status == 'completed' %}bg-emerald-500/15 text-emerald-400 border-2 border-emerald-500/30
             {% elif step.status == 'running' %}bg-blue-500/15 text-blue-400 border-2 border-blue-500/30 step-running
             {% elif step.status == 'failed' %}bg-rose-500/15 text-rose-400 border-2 border-rose-500/30
@@ -102,14 +102,14 @@
             {% else %}{{ step.step_order }}{% endif %}
           </div>
           <div class="text-center">
-            <div class="text-[10px] font-semibold
+            <div class="text-[13px] font-semibold
               {% if step.status == 'completed' %}text-emerald-400
               {% elif step.status == 'running' %}text-blue-400
               {% elif step.status == 'failed' %}text-rose-400
               {% elif step.status == 'awaiting_approval' %}text-amber-400
               {% else %}text-dark-200{% endif %}">{{ step.get_step_type_display }}</div>
             {% if step.equipment %}
-            <div class="text-[9px] text-dark-200 mt-0.5">{{ step.equipment.name }}</div>
+            <div class="text-[12px] text-dark-200 mt-0.5">{{ step.equipment.name }}</div>
             {% endif %}
           </div>
         </div>
@@ -118,7 +118,7 @@
     </div>
 
     <!-- Timestamps -->
-    <div class="px-5 py-3 border-t border-dark-400 flex items-center justify-between text-[10px] text-dark-200">
+    <div class="px-5 py-3 border-t border-dark-400 flex items-center justify-between text-[13px] text-dark-200">
       <span>Created {{ run.created_at|timesince }} ago</span>
       {% if run.completed_at %}
       <span>Completed {{ run.completed_at|timesince }} ago</span>
@@ -127,7 +127,7 @@
   </div>
   {% empty %}
   <div class="bg-dark-600 border border-dark-400 rounded-xl p-8 text-center text-dark-200">
-    No workflow runs yet. Start a new optimization cycle.
+    워크플로우 실행 기록이 없습니다. 새 최적화 사이클을 시작하세요.
   </div>
   {% endfor %}
 </div>

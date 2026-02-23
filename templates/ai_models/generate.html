@@ -5,8 +5,8 @@
 {% block content %}
 <div class="flex justify-between items-end mb-6">
   <div>
-    <h2 class="text-[22px] font-bold tracking-tight">AI Structure Generation</h2>
-    <p class="text-[13px] text-dark-100 mt-1">Generate novel ionizable lipid candidates with target properties</p>
+    <h2 class="text-[28px] font-bold tracking-tight">AI 구조 생성</h2>
+    <p class="text-[16px] text-dark-100 mt-1">목표 물성에 맞는 새로운 이온화 지질 후보 생성</p>
   </div>
 </div>
 
@@ -16,38 +16,38 @@
     <!-- Target Properties -->
     <div class="bg-dark-600 border border-dark-400 rounded-xl">
       <div class="px-5 py-3 border-b border-dark-400">
-        <div class="text-[13px] font-semibold">Target Properties</div>
-        <div class="text-[10px] text-dark-200">Define desired molecular descriptor ranges</div>
+        <div class="text-[16px] font-semibold">목표 물성</div>
+        <div class="text-[13px] text-dark-200">원하는 분자 물성 범위 설정</div>
       </div>
       <div class="p-5 space-y-4">
         <div class="grid grid-cols-2 gap-3">
           <div>
-            <label class="text-[10px] text-dark-200 font-semibold uppercase tracking-wide block mb-1.5">MW Min</label>
-            <input type="number" id="mw-min" value="400" class="w-full bg-dark-700 border border-dark-400 rounded-lg px-3 py-2 text-[13px] font-mono text-dark-50 focus:border-blue-500 focus:outline-none">
+            <label class="text-[13px] text-dark-200 font-semibold uppercase tracking-wide block mb-1.5">MW Min</label>
+            <input type="number" id="mw-min" value="400" class="w-full bg-dark-700 border border-dark-400 rounded-lg px-3 py-2 text-[16px] font-mono text-dark-50 focus:border-blue-500 focus:outline-none">
           </div>
           <div>
-            <label class="text-[10px] text-dark-200 font-semibold uppercase tracking-wide block mb-1.5">MW Max</label>
-            <input type="number" id="mw-max" value="1500" class="w-full bg-dark-700 border border-dark-400 rounded-lg px-3 py-2 text-[13px] font-mono text-dark-50 focus:border-blue-500 focus:outline-none">
-          </div>
-        </div>
-        <div class="grid grid-cols-2 gap-3">
-          <div>
-            <label class="text-[10px] text-dark-200 font-semibold uppercase tracking-wide block mb-1.5">LogP Min</label>
-            <input type="number" id="logp-min" value="5" step="0.5" class="w-full bg-dark-700 border border-dark-400 rounded-lg px-3 py-2 text-[13px] font-mono text-dark-50 focus:border-blue-500 focus:outline-none">
-          </div>
-          <div>
-            <label class="text-[10px] text-dark-200 font-semibold uppercase tracking-wide block mb-1.5">LogP Max</label>
-            <input type="number" id="logp-max" value="30" step="0.5" class="w-full bg-dark-700 border border-dark-400 rounded-lg px-3 py-2 text-[13px] font-mono text-dark-50 focus:border-blue-500 focus:outline-none">
+            <label class="text-[13px] text-dark-200 font-semibold uppercase tracking-wide block mb-1.5">MW Max</label>
+            <input type="number" id="mw-max" value="1500" class="w-full bg-dark-700 border border-dark-400 rounded-lg px-3 py-2 text-[16px] font-mono text-dark-50 focus:border-blue-500 focus:outline-none">
           </div>
         </div>
         <div class="grid grid-cols-2 gap-3">
           <div>
-            <label class="text-[10px] text-dark-200 font-semibold uppercase tracking-wide block mb-1.5">TPSA Min</label>
-            <input type="number" id="tpsa-min" value="20" class="w-full bg-dark-700 border border-dark-400 rounded-lg px-3 py-2 text-[13px] font-mono text-dark-50 focus:border-blue-500 focus:outline-none">
+            <label class="text-[13px] text-dark-200 font-semibold uppercase tracking-wide block mb-1.5">LogP Min</label>
+            <input type="number" id="logp-min" value="5" step="0.5" class="w-full bg-dark-700 border border-dark-400 rounded-lg px-3 py-2 text-[16px] font-mono text-dark-50 focus:border-blue-500 focus:outline-none">
           </div>
           <div>
-            <label class="text-[10px] text-dark-200 font-semibold uppercase tracking-wide block mb-1.5">TPSA Max</label>
-            <input type="number" id="tpsa-max" value="120" class="w-full bg-dark-700 border border-dark-400 rounded-lg px-3 py-2 text-[13px] font-mono text-dark-50 focus:border-blue-500 focus:outline-none">
+            <label class="text-[13px] text-dark-200 font-semibold uppercase tracking-wide block mb-1.5">LogP Max</label>
+            <input type="number" id="logp-max" value="30" step="0.5" class="w-full bg-dark-700 border border-dark-400 rounded-lg px-3 py-2 text-[16px] font-mono text-dark-50 focus:border-blue-500 focus:outline-none">
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="text-[13px] text-dark-200 font-semibold uppercase tracking-wide block mb-1.5">TPSA Min</label>
+            <input type="number" id="tpsa-min" value="20" class="w-full bg-dark-700 border border-dark-400 rounded-lg px-3 py-2 text-[16px] font-mono text-dark-50 focus:border-blue-500 focus:outline-none">
+          </div>
+          <div>
+            <label class="text-[13px] text-dark-200 font-semibold uppercase tracking-wide block mb-1.5">TPSA Max</label>
+            <input type="number" id="tpsa-max" value="120" class="w-full bg-dark-700 border border-dark-400 rounded-lg px-3 py-2 text-[16px] font-mono text-dark-50 focus:border-blue-500 focus:outline-none">
           </div>
         </div>
       </div>
@@ -56,16 +56,16 @@
     <!-- Structural Constraints -->
     <div class="bg-dark-600 border border-dark-400 rounded-xl">
       <div class="px-5 py-3 border-b border-dark-400">
-        <div class="text-[13px] font-semibold">Structural Constraints</div>
+        <div class="text-[16px] font-semibold">구조 제약 조건</div>
       </div>
       <div class="p-5 space-y-3">
         <label class="flex items-center gap-3 cursor-pointer">
           <input type="checkbox" id="has-ester" class="w-4 h-4 rounded bg-dark-700 border-dark-400 text-blue-500 focus:ring-blue-500">
-          <span class="text-[12px] text-dark-100">Require ester bond</span>
+          <span class="text-[15px] text-dark-100">에스터 결합 필수</span>
         </label>
         <label class="flex items-center gap-3 cursor-pointer">
           <input type="checkbox" id="has-disulfide" class="w-4 h-4 rounded bg-dark-700 border-dark-400 text-blue-500 focus:ring-blue-500">
-          <span class="text-[12px] text-dark-100">Require disulfide bond</span>
+          <span class="text-[15px] text-dark-100">이황화 결합 필수</span>
         </label>
       </div>
     </div>
@@ -73,30 +73,30 @@
     <!-- Generation Settings -->
     <div class="bg-dark-600 border border-dark-400 rounded-xl">
       <div class="px-5 py-3 border-b border-dark-400">
-        <div class="text-[13px] font-semibold">Generation Settings</div>
+        <div class="text-[16px] font-semibold">생성 설정</div>
       </div>
       <div class="p-5">
-        <label class="text-[10px] text-dark-200 font-semibold uppercase tracking-wide block mb-2">Number of Candidates</label>
+        <label class="text-[13px] text-dark-200 font-semibold uppercase tracking-wide block mb-2">후보 수</label>
         <div class="flex gap-2">
-          <button class="gen-count px-4 py-2 rounded-lg text-[12px] font-semibold border border-dark-400 bg-dark-500 text-dark-100 hover:border-blue-500" data-count="5">5</button>
-          <button class="gen-count px-4 py-2 rounded-lg text-[12px] font-semibold border border-blue-500 bg-blue-500/10 text-blue-400" data-count="10">10</button>
-          <button class="gen-count px-4 py-2 rounded-lg text-[12px] font-semibold border border-dark-400 bg-dark-500 text-dark-100 hover:border-blue-500" data-count="20">20</button>
+          <button class="gen-count px-4 py-2 rounded-lg text-[15px] font-semibold border border-dark-400 bg-dark-500 text-dark-100 hover:border-blue-500" data-count="5">5</button>
+          <button class="gen-count px-4 py-2 rounded-lg text-[15px] font-semibold border border-blue-500 bg-blue-500/10 text-blue-400" data-count="10">10</button>
+          <button class="gen-count px-4 py-2 rounded-lg text-[15px] font-semibold border border-dark-400 bg-dark-500 text-dark-100 hover:border-blue-500" data-count="20">20</button>
         </div>
       </div>
     </div>
 
-    <button onclick="runGeneration()" class="w-full px-5 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-[13px] font-semibold transition-colors">
-      Generate Candidates
+    <button onclick="runGeneration()" class="w-full px-5 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-[16px] font-semibold transition-colors">
+      후보 생성
     </button>
 
     {% for m in generator_models %}
     <div class="bg-dark-600 border border-dark-400 rounded-xl p-5">
-      <div class="text-[11px] font-semibold text-dark-50 mb-1">{{ m.name }} v{{ m.version }}</div>
-      <p class="text-[10px] text-dark-200">{{ m.description|default:"Structure generation model" }}</p>
+      <div class="text-[14px] font-semibold text-dark-50 mb-1">{{ m.name }} v{{ m.version }}</div>
+      <p class="text-[13px] text-dark-200">{{ m.description|default:"Structure generation model" }}</p>
       {% if m.metrics %}
       <div class="flex gap-2 mt-2">
         {% for key, val in m.metrics.items %}
-        <span class="px-2 py-0.5 rounded bg-dark-700 text-[9px] font-mono text-dark-100">{{ key }}: {{ val }}</span>
+        <span class="px-2 py-0.5 rounded bg-dark-700 text-[12px] font-mono text-dark-100">{{ key }}: {{ val }}</span>
         {% endfor %}
       </div>
       {% endif %}
@@ -109,9 +109,9 @@
     <div class="bg-dark-600 border border-dark-400 rounded-xl">
       <div class="px-5 py-3 border-b border-dark-400 flex justify-between items-center">
         <div>
-          <div class="text-[13px] font-semibold">Generated Candidates</div>
-          <div class="text-[10px] text-dark-200" id="candidates-count">
-            {% if candidates %}{{ candidates|length }} candidates{% else %}Click Generate to create candidates{% endif %}
+          <div class="text-[16px] font-semibold">생성된 후보</div>
+          <div class="text-[13px] text-dark-200" id="candidates-count">
+            {% if candidates %}{{ candidates|length }} 후보{% else %}후보 생성 버튼을 클릭하세요{% endif %}
           </div>
         </div>
       </div>
@@ -123,37 +123,37 @@
             <div class="flex items-start justify-between mb-2">
               <div class="flex items-center gap-2">
                 {% if c.pareto_rank and c.pareto_rank <= 3 %}
-                <span class="px-2 py-0.5 rounded text-[9px] font-bold bg-amber-500/10 text-amber-400">#{{ c.pareto_rank }}</span>
+                <span class="px-2 py-0.5 rounded text-[12px] font-bold bg-amber-500/10 text-amber-400">#{{ c.pareto_rank }}</span>
                 {% elif c.pareto_rank %}
-                <span class="px-2 py-0.5 rounded text-[9px] font-semibold bg-dark-500 text-dark-200">#{{ c.pareto_rank }}</span>
+                <span class="px-2 py-0.5 rounded text-[12px] font-semibold bg-dark-500 text-dark-200">#{{ c.pareto_rank }}</span>
                 {% endif %}
-                <span class="px-2 py-0.5 rounded text-[9px] font-semibold
+                <span class="px-2 py-0.5 rounded text-[12px] font-semibold
                   {% if c.status == 'generated' %}bg-blue-500/10 text-blue-400
                   {% elif c.status == 'selected' %}bg-violet-500/10 text-violet-400
                   {% elif c.status == 'synthesized' %}bg-amber-500/10 text-amber-400
                   {% elif c.status == 'tested' %}bg-emerald-500/10 text-emerald-400
                   {% elif c.status == 'validated' %}bg-cyan-500/10 text-cyan-400
                   {% else %}bg-rose-500/10 text-rose-400{% endif %}">{{ c.get_status_display }}</span>
-                <span class="text-[10px] text-dark-200">Gen {{ c.generation }}</span>
+                <span class="text-[13px] text-dark-200">Gen {{ c.generation }}</span>
               </div>
-              <button class="px-3 py-1 border border-dark-400 hover:border-blue-500 rounded-lg text-[10px] text-dark-100 hover:text-blue-400">Select</button>
+              <button class="px-3 py-1 border border-dark-400 hover:border-blue-500 rounded-lg text-[13px] text-dark-100 hover:text-blue-400">Select</button>
             </div>
-            <div class="font-mono text-[10px] text-dark-200 mb-2 truncate">{{ c.smiles|truncatechars:80 }}</div>
+            <div class="font-mono text-[13px] text-dark-200 mb-2 truncate">{{ c.smiles|truncatechars:80 }}</div>
             <div class="flex items-center gap-3">
               <div class="flex items-center gap-1.5">
-                <span class="text-[9px] text-dark-200">Efficacy</span>
+                <span class="text-[12px] text-dark-200">Efficacy</span>
                 <div class="w-16 h-1.5 bg-white/5 rounded-full overflow-hidden"><div class="h-full bg-emerald-400 rounded-full" style="width:{% widthratio c.efficacy_score|default:0 1 100 %}%"></div></div>
-                <span class="text-[10px] font-mono text-emerald-400">{{ c.efficacy_score|floatformat:2|default:"-" }}</span>
+                <span class="text-[13px] font-mono text-emerald-400">{{ c.efficacy_score|floatformat:2|default:"-" }}</span>
               </div>
               <div class="flex items-center gap-1.5">
-                <span class="text-[9px] text-dark-200">Stability</span>
+                <span class="text-[12px] text-dark-200">Stability</span>
                 <div class="w-16 h-1.5 bg-white/5 rounded-full overflow-hidden"><div class="h-full bg-blue-400 rounded-full" style="width:{% widthratio c.stability_score|default:0 1 100 %}%"></div></div>
-                <span class="text-[10px] font-mono text-blue-400">{{ c.stability_score|floatformat:2|default:"-" }}</span>
+                <span class="text-[13px] font-mono text-blue-400">{{ c.stability_score|floatformat:2|default:"-" }}</span>
               </div>
               <div class="flex items-center gap-1.5">
-                <span class="text-[9px] text-dark-200">Safety</span>
+                <span class="text-[12px] text-dark-200">Safety</span>
                 <div class="w-16 h-1.5 bg-white/5 rounded-full overflow-hidden"><div class="h-full bg-violet-400 rounded-full" style="width:{% widthratio c.safety_score|default:0 1 100 %}%"></div></div>
-                <span class="text-[10px] font-mono text-violet-400">{{ c.safety_score|floatformat:2|default:"-" }}</span>
+                <span class="text-[13px] font-mono text-violet-400">{{ c.safety_score|floatformat:2|default:"-" }}</span>
               </div>
             </div>
           </div>
@@ -161,8 +161,8 @@
         </div>
         {% else %}
         <div class="p-8 text-center text-dark-200">
-          <div class="text-[28px] mb-2">&#9883;</div>
-          <div class="text-[11px]">Set target properties and click Generate</div>
+          <div class="text-[36px] mb-2">&#9883;</div>
+          <div class="text-[14px]">목표 물성을 설정하고 후보 생성을 클릭하세요</div>
         </div>
         {% endif %}
       </div>
@@ -190,7 +190,7 @@ document.querySelectorAll('.gen-count').forEach(btn => {
 function runGeneration() {
   const list = document.getElementById('candidates-list');
   const countEl = document.getElementById('candidates-count');
-  list.innerHTML = '<div class="p-8 text-center text-blue-400 text-[11px]">Generating candidates...</div>';
+  list.innerHTML = '<div class="p-8 text-center text-blue-400 text-[14px]">후보 생성 중...</div>';
 
   const formData = new FormData();
   formData.append('count', selectedCount);
@@ -207,10 +207,10 @@ function runGeneration() {
   .then(r => r.json())
   .then(data => {
     if (!data.candidates || data.candidates.length === 0) {
-      list.innerHTML = '<div class="p-8 text-center text-dark-200 text-[11px]">No candidates match the criteria. Try wider ranges.</div>';
+      list.innerHTML = '<div class="p-8 text-center text-dark-200 text-[14px]">조건에 맞는 후보가 없습니다. 더 넓은 범위로 시도하세요.</div>';
       return;
     }
-    countEl.textContent = data.candidates.length + ' candidates generated';
+    countEl.textContent = data.candidates.length + '개 후보 생성됨';
 
     let html = '<div class="divide-y divide-dark-400">';
     data.candidates.forEach((c, i) => {
@@ -219,30 +219,30 @@ function runGeneration() {
       <div class="px-5 py-4 hover:bg-blue-500/[0.02]">
         <div class="flex items-start justify-between mb-2">
           <div class="flex items-center gap-2">
-            <span class="px-2 py-0.5 rounded text-[9px] ${rankClass}">#${c.pareto_rank}</span>
-            <span class="text-[11px] font-semibold text-dark-50">${c.name}</span>
+            <span class="px-2 py-0.5 rounded text-[12px] ${rankClass}">#${c.pareto_rank}</span>
+            <span class="text-[14px] font-semibold text-dark-50">${c.name}</span>
           </div>
           <div class="flex items-center gap-2">
-            <span class="text-[10px] font-mono text-dark-200">MW ${c.mw.toFixed(0)}</span>
-            <span class="text-[10px] font-mono text-dark-200">LogP ${c.logp.toFixed(1)}</span>
+            <span class="text-[13px] font-mono text-dark-200">MW ${c.mw.toFixed(0)}</span>
+            <span class="text-[13px] font-mono text-dark-200">LogP ${c.logp.toFixed(1)}</span>
           </div>
         </div>
-        <div class="font-mono text-[10px] text-dark-200 mb-2 truncate">${c.smiles.substring(0,80)}...</div>
+        <div class="font-mono text-[13px] text-dark-200 mb-2 truncate">${c.smiles.substring(0,80)}...</div>
         <div class="flex items-center gap-3">
           <div class="flex items-center gap-1.5">
-            <span class="text-[9px] text-dark-200">Efficacy</span>
+            <span class="text-[12px] text-dark-200">Efficacy</span>
             <div class="w-16 h-1.5 bg-white/5 rounded-full overflow-hidden"><div class="h-full bg-emerald-400 rounded-full" style="width:${c.efficacy*100}%"></div></div>
-            <span class="text-[10px] font-mono text-emerald-400">${c.efficacy.toFixed(3)}</span>
+            <span class="text-[13px] font-mono text-emerald-400">${c.efficacy.toFixed(3)}</span>
           </div>
           <div class="flex items-center gap-1.5">
-            <span class="text-[9px] text-dark-200">Stability</span>
+            <span class="text-[12px] text-dark-200">Stability</span>
             <div class="w-16 h-1.5 bg-white/5 rounded-full overflow-hidden"><div class="h-full bg-blue-400 rounded-full" style="width:${c.stability*100}%"></div></div>
-            <span class="text-[10px] font-mono text-blue-400">${c.stability.toFixed(3)}</span>
+            <span class="text-[13px] font-mono text-blue-400">${c.stability.toFixed(3)}</span>
           </div>
           <div class="flex items-center gap-1.5">
-            <span class="text-[9px] text-dark-200">Safety</span>
+            <span class="text-[12px] text-dark-200">Safety</span>
             <div class="w-16 h-1.5 bg-white/5 rounded-full overflow-hidden"><div class="h-full bg-violet-400 rounded-full" style="width:${c.safety*100}%"></div></div>
-            <span class="text-[10px] font-mono text-violet-400">${c.safety.toFixed(3)}</span>
+            <span class="text-[13px] font-mono text-violet-400">${c.safety.toFixed(3)}</span>
           </div>
         </div>
       </div>`;
@@ -251,7 +251,7 @@ function runGeneration() {
     list.innerHTML = html;
   })
   .catch(err => {
-    list.innerHTML = `<div class="p-8 text-center text-rose-400 text-[11px]">Error: ${err.message}</div>`;
+    list.innerHTML = `<div class="p-8 text-center text-rose-400 text-[14px]">Error: ${err.message}</div>`;
   });
 }
 

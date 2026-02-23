@@ -4,8 +4,8 @@
 
 {% block content %}
 <div class="mb-7">
-  <h2 class="text-[22px] font-bold tracking-tight">Equipment Maintenance</h2>
-  <p class="text-[13px] text-dark-100 mt-1">Calibration schedules, preventive maintenance, and service history</p>
+  <h2 class="text-[28px] font-bold tracking-tight">장비 유지보수</h2>
+  <p class="text-[16px] text-dark-100 mt-1">교정 일정, 예방 정비, 서비스 이력 관리</p>
 </div>
 
 <!-- OVERDUE ALERTS -->
@@ -14,19 +14,19 @@
   <div class="px-5 py-3 border-b border-rose-500/20 flex items-center gap-2">
     <span class="w-2.5 h-2.5 rounded-full bg-rose-400 animate-pulse"></span>
     <div>
-      <div class="text-[13px] font-semibold text-rose-400">Overdue Maintenance</div>
-      <div class="text-[10px] text-dark-200">{{ overdue_count }} item{{ overdue_count|pluralize }} past scheduled date</div>
+      <div class="text-[16px] font-semibold text-rose-400">기한 초과 정비</div>
+      <div class="text-[13px] text-dark-200">{{ overdue_count }} item{{ overdue_count|pluralize }} past scheduled date</div>
     </div>
   </div>
   <div class="p-4 space-y-2.5">
     {% for m in overdue %}
     <div class="flex items-center gap-3 p-3 bg-rose-500/5 border border-rose-500/10 rounded-lg">
       <div class="flex-1">
-        <div class="text-[12px] font-semibold text-dark-50">{{ m.equipment.name }}</div>
-        <div class="text-[10px] text-dark-200">{{ m.description|default:m.get_maintenance_type_display }}</div>
+        <div class="text-[15px] font-semibold text-dark-50">{{ m.equipment.name }}</div>
+        <div class="text-[13px] text-dark-200">{{ m.description|default:m.get_maintenance_type_display }}</div>
       </div>
-      <span class="px-2 py-0.5 rounded text-[9px] font-semibold bg-rose-500/10 text-rose-400">{{ m.get_maintenance_type_display }}</span>
-      <span class="text-[10px] font-mono text-rose-400">Due: {{ m.scheduled_date }}</span>
+      <span class="px-2 py-0.5 rounded text-[12px] font-semibold bg-rose-500/10 text-rose-400">{{ m.get_maintenance_type_display }}</span>
+      <span class="text-[13px] font-mono text-rose-400">Due: {{ m.scheduled_date }}</span>
     </div>
     {% endfor %}
   </div>
@@ -38,31 +38,31 @@
   <!-- UPCOMING MAINTENANCE -->
   <div class="col-span-6 bg-dark-600 border border-dark-400 rounded-xl">
     <div class="px-5 py-3 border-b border-dark-400">
-      <div class="text-[13px] font-semibold">Scheduled Maintenance</div>
-      <div class="text-[10px] text-dark-200">{{ upcoming_count }} upcoming</div>
+      <div class="text-[16px] font-semibold">예정 정비</div>
+      <div class="text-[13px] text-dark-200">{{ upcoming_count }} upcoming</div>
     </div>
     <div class="p-4 space-y-2.5">
       {% for m in upcoming %}
       <div class="flex items-center gap-3 p-3 bg-dark-700/50 rounded-lg">
         <div class="flex-1 min-w-0">
-          <div class="text-[11px] font-semibold text-dark-50 truncate">{{ m.equipment.name }}</div>
-          <div class="text-[9px] text-dark-200">{{ m.description|default:"-"|truncatechars:60 }}</div>
+          <div class="text-[14px] font-semibold text-dark-50 truncate">{{ m.equipment.name }}</div>
+          <div class="text-[12px] text-dark-200">{{ m.description|default:"-"|truncatechars:60 }}</div>
         </div>
-        <span class="px-2 py-0.5 rounded text-[9px] font-semibold whitespace-nowrap
+        <span class="px-2 py-0.5 rounded text-[12px] font-semibold whitespace-nowrap
           {% if m.maintenance_type == 'calibration' %}bg-blue-500/10 text-blue-400
           {% elif m.maintenance_type == 'preventive' %}bg-emerald-500/10 text-emerald-400
           {% elif m.maintenance_type == 'cleaning' %}bg-cyan-500/10 text-cyan-400
           {% elif m.maintenance_type == 'software_update' %}bg-violet-500/10 text-violet-400
           {% else %}bg-amber-500/10 text-amber-400{% endif %}">{{ m.get_maintenance_type_display }}</span>
         <div class="text-right">
-          <div class="text-[10px] font-mono text-dark-100">{{ m.scheduled_date }}</div>
-          <div class="text-[8px] text-dark-200">
-            {% if m.status == 'in_progress' %}In Progress{% else %}Scheduled{% endif %}
+          <div class="text-[13px] font-mono text-dark-100">{{ m.scheduled_date }}</div>
+          <div class="text-[11px] text-dark-200">
+            {% if m.status == 'in_progress' %}진행 중{% else %}예정{% endif %}
           </div>
         </div>
       </div>
       {% empty %}
-      <div class="text-[11px] text-dark-200 text-center py-8">No upcoming maintenance</div>
+      <div class="text-[14px] text-dark-200 text-center py-8">예정된 정비 없음</div>
       {% endfor %}
     </div>
   </div>
@@ -70,33 +70,33 @@
   <!-- COMPLETED HISTORY -->
   <div class="col-span-6 bg-dark-600 border border-dark-400 rounded-xl">
     <div class="px-5 py-3 border-b border-dark-400">
-      <div class="text-[13px] font-semibold">Completed History</div>
-      <div class="text-[10px] text-dark-200">{{ completed_count }} recent records</div>
+      <div class="text-[16px] font-semibold">완료 이력</div>
+      <div class="text-[13px] text-dark-200">{{ completed_count }} recent records</div>
     </div>
     <div class="p-4 space-y-2.5">
       {% for m in completed %}
       <div class="p-3 bg-dark-700/50 rounded-lg">
         <div class="flex items-center justify-between mb-1.5">
           <div class="flex items-center gap-2">
-            <span class="text-[11px] font-semibold text-dark-50">{{ m.equipment.name }}</span>
-            <span class="px-2 py-0.5 rounded text-[9px] font-semibold
+            <span class="text-[14px] font-semibold text-dark-50">{{ m.equipment.name }}</span>
+            <span class="px-2 py-0.5 rounded text-[12px] font-semibold
               {% if m.maintenance_type == 'calibration' %}bg-blue-500/10 text-blue-400
               {% elif m.maintenance_type == 'preventive' %}bg-emerald-500/10 text-emerald-400
               {% elif m.maintenance_type == 'cleaning' %}bg-cyan-500/10 text-cyan-400
               {% elif m.maintenance_type == 'software_update' %}bg-violet-500/10 text-violet-400
               {% else %}bg-amber-500/10 text-amber-400{% endif %}">{{ m.get_maintenance_type_display }}</span>
           </div>
-          <span class="px-1.5 py-0.5 rounded text-[8px] font-semibold bg-emerald-500/10 text-emerald-400">Completed</span>
+          <span class="px-1.5 py-0.5 rounded text-[11px] font-semibold bg-emerald-500/10 text-emerald-400">완료</span>
         </div>
-        <div class="text-[10px] text-dark-200">{{ m.description|default:"-"|truncatechars:80 }}</div>
-        <div class="flex items-center gap-4 mt-1.5 text-[9px] text-dark-200">
+        <div class="text-[13px] text-dark-200">{{ m.description|default:"-"|truncatechars:80 }}</div>
+        <div class="flex items-center gap-4 mt-1.5 text-[12px] text-dark-200">
           <span>Completed: {{ m.completed_date }}</span>
           {% if m.next_due_date %}<span>Next due: {{ m.next_due_date }}</span>{% endif %}
           {% if m.performed_by %}<span>By: {{ m.performed_by.username }}</span>{% endif %}
           {% if m.cost %}<span>Cost: ${{ m.cost }}</span>{% endif %}
         </div>
         {% if m.calibration_data %}
-        <div class="mt-2 p-2 bg-dark-800/50 rounded text-[9px] font-mono text-dark-100">
+        <div class="mt-2 p-2 bg-dark-800/50 rounded text-[12px] font-mono text-dark-100">
           {% for key, val in m.calibration_data.items %}
           <span class="inline-block mr-3">{{ key }}: {{ val }}</span>
           {% endfor %}
@@ -104,7 +104,7 @@
         {% endif %}
       </div>
       {% empty %}
-      <div class="text-[11px] text-dark-200 text-center py-8">No completed maintenance records</div>
+      <div class="text-[14px] text-dark-200 text-center py-8">완료된 정비 기록 없음</div>
       {% endfor %}
     </div>
   </div>

@@ -20,36 +20,36 @@
 
 {% block content %}
 <div class="mb-7">
-  <h2 class="text-[22px] font-bold tracking-tight">Platform Overview</h2>
-  <p class="text-[13px] text-dark-100 mt-1">LNPDB v1.0 Seed Data -- Song, Baek & Seo (2026) Sci Data</p>
+  <h2 class="text-[28px] font-bold tracking-tight">플랫폼 개요</h2>
+  <p class="text-[16px] text-dark-100 mt-1">LNPDB v1.0 Seed Data -- Song, Baek & Seo (2026) Sci Data</p>
 </div>
 
 <!-- STAT CARDS -->
 <div class="grid grid-cols-5 gap-3.5 mb-6">
   <div class="stat-card bg-dark-600 border border-dark-400 rounded-xl p-5">
-    <div class="text-[11px] text-dark-200 font-semibold uppercase tracking-wide mb-2">Total Records</div>
-    <div class="text-[28px] font-extrabold font-mono tracking-tighter text-blue-400">{{ total_results|default:"0" }}</div>
-    <div class="text-[11px] text-dark-100 mt-1.5">From 43 publications</div>
+    <div class="text-[14px] text-dark-200 font-semibold uppercase tracking-wide mb-2">총 실험 기록</div>
+    <div class="text-[36px] font-extrabold font-mono tracking-tighter text-blue-400">{{ total_results|default:"0" }}</div>
+    <div class="text-[14px] text-dark-100 mt-1.5">43편 논문 데이터</div>
   </div>
   <div class="stat-card bg-dark-600 border border-dark-400 rounded-xl p-5">
-    <div class="text-[11px] text-dark-200 font-semibold uppercase tracking-wide mb-2">Ionizable Lipids</div>
-    <div class="text-[28px] font-extrabold font-mono tracking-tighter text-emerald-400">{{ total_lipids|default:"0" }}</div>
-    <div class="text-[11px] text-dark-100 mt-1.5">{{ total_heads }} head groups</div>
+    <div class="text-[14px] text-dark-200 font-semibold uppercase tracking-wide mb-2">이온화 지질</div>
+    <div class="text-[36px] font-extrabold font-mono tracking-tighter text-emerald-400">{{ total_lipids|default:"0" }}</div>
+    <div class="text-[14px] text-dark-100 mt-1.5">{{ total_heads }} head groups</div>
   </div>
   <div class="stat-card bg-dark-600 border border-dark-400 rounded-xl p-5">
-    <div class="text-[11px] text-dark-200 font-semibold uppercase tracking-wide mb-2">AI Models</div>
-    <div class="text-[28px] font-extrabold font-mono tracking-tighter text-violet-400">{{ total_models|default:"0" }}</div>
-    <div class="text-[11px] text-dark-100 mt-1.5">{{ active_models }} active</div>
+    <div class="text-[14px] text-dark-200 font-semibold uppercase tracking-wide mb-2">AI 모델</div>
+    <div class="text-[36px] font-extrabold font-mono tracking-tighter text-violet-400">{{ total_models|default:"0" }}</div>
+    <div class="text-[14px] text-dark-100 mt-1.5">{{ active_models }} active</div>
   </div>
   <div class="stat-card bg-dark-600 border border-dark-400 rounded-xl p-5">
-    <div class="text-[11px] text-dark-200 font-semibold uppercase tracking-wide mb-2">Equipment</div>
-    <div class="text-[28px] font-extrabold font-mono tracking-tighter text-amber-400">{{ total_equipment|default:"0" }}</div>
-    <div class="text-[11px] text-dark-100 mt-1.5">{{ online_equipment }} online</div>
+    <div class="text-[14px] text-dark-200 font-semibold uppercase tracking-wide mb-2">장비</div>
+    <div class="text-[36px] font-extrabold font-mono tracking-tighter text-amber-400">{{ total_equipment|default:"0" }}</div>
+    <div class="text-[14px] text-dark-100 mt-1.5">{{ online_equipment }} online</div>
   </div>
   <div class="stat-card bg-dark-600 border border-dark-400 rounded-xl p-5">
-    <div class="text-[11px] text-dark-200 font-semibold uppercase tracking-wide mb-2">Workflows</div>
-    <div class="text-[28px] font-extrabold font-mono tracking-tighter text-teal-400">{{ total_workflows|default:"0" }}</div>
-    <div class="text-[11px] text-dark-100 mt-1.5">{{ running_workflows }} running</div>
+    <div class="text-[14px] text-dark-200 font-semibold uppercase tracking-wide mb-2">워크플로우</div>
+    <div class="text-[36px] font-extrabold font-mono tracking-tighter text-teal-400">{{ total_workflows|default:"0" }}</div>
+    <div class="text-[14px] text-dark-100 mt-1.5">{{ running_workflows }} running</div>
   </div>
 </div>
 
@@ -60,10 +60,10 @@
   <div class="col-span-5 bg-dark-600 border border-dark-400 rounded-xl">
     <div class="px-5 py-3 border-b border-dark-400 flex justify-between items-center">
       <div>
-        <div class="text-[13px] font-semibold">Equipment Status</div>
-        <div class="text-[10px] text-dark-200">{{ online_equipment }}/{{ total_equipment }} online</div>
+        <div class="text-[16px] font-semibold">장비 상태</div>
+        <div class="text-[13px] text-dark-200">{{ online_equipment }}/{{ total_equipment }} online</div>
       </div>
-      <a href="{% url 'equipment:monitor' %}" class="text-[10px] text-blue-400 hover:underline">View All</a>
+      <a href="{% url 'equipment:monitor' %}" class="text-[13px] text-blue-400 hover:underline">전체 보기</a>
     </div>
     <div class="p-4 space-y-2.5">
       {% for eq in equip_statuses %}
@@ -77,13 +77,13 @@
             {% else %}bg-dark-300{% endif %}"></div>
         </div>
         <div class="flex-1 min-w-0">
-          <div class="text-[11px] font-semibold text-dark-50 truncate">{{ eq.name }}</div>
-          <div class="text-[9px] text-dark-200">{{ eq.protocol }}</div>
+          <div class="text-[14px] font-semibold text-dark-50 truncate">{{ eq.name }}</div>
+          <div class="text-[12px] text-dark-200">{{ eq.protocol }}</div>
         </div>
-        <span class="px-2 py-0.5 rounded text-[9px] font-semibold equip-{{ eq.status }}">{{ eq.status }}</span>
+        <span class="px-2 py-0.5 rounded text-[12px] font-semibold equip-{{ eq.status }}">{{ eq.status }}</span>
       </div>
       {% empty %}
-      <div class="text-[11px] text-dark-200 text-center py-4">No equipment registered</div>
+      <div class="text-[14px] text-dark-200 text-center py-4">등록된 장비 없음</div>
       {% endfor %}
     </div>
   </div>
@@ -92,24 +92,24 @@
   <div class="col-span-7 bg-dark-600 border border-dark-400 rounded-xl">
     <div class="px-5 py-3 border-b border-dark-400 flex justify-between items-center">
       <div>
-        <div class="text-[13px] font-semibold">Workflow Runs</div>
-        <div class="text-[10px] text-dark-200">Closed-loop optimization progress</div>
+        <div class="text-[16px] font-semibold">워크플로우 실행</div>
+        <div class="text-[13px] text-dark-200">자율 최적화 루프 진행 상태</div>
       </div>
-      <a href="{% url 'workflow:pipeline' %}" class="text-[10px] text-blue-400 hover:underline">View All</a>
+      <a href="{% url 'workflow:pipeline' %}" class="text-[13px] text-blue-400 hover:underline">전체 보기</a>
     </div>
     <div class="p-4 space-y-3">
       {% for run in active_runs %}
       <div class="bg-dark-700/50 rounded-lg p-3.5">
         <div class="flex items-center justify-between mb-3">
           <div class="flex items-center gap-2">
-            <span class="text-[12px] font-semibold text-dark-50">{{ run.name }}</span>
-            <span class="px-1.5 py-0.5 rounded text-[9px] font-semibold
+            <span class="text-[15px] font-semibold text-dark-50">{{ run.name }}</span>
+            <span class="px-1.5 py-0.5 rounded text-[12px] font-semibold
               {% if run.status == 'running' %}bg-blue-500/10 text-blue-400
               {% elif run.status == 'completed' %}bg-emerald-500/10 text-emerald-400
               {% elif run.status == 'failed' %}bg-red-500/10 text-red-400
               {% else %}bg-dark-300/20 text-dark-200{% endif %}">{{ run.status }}</span>
           </div>
-          <span class="text-[10px] text-dark-200 font-mono">Iter {{ run.iteration }} | {{ run.progress }}%</span>
+          <span class="text-[13px] text-dark-200 font-mono">Iter {{ run.iteration }} | {{ run.progress }}%</span>
         </div>
         <!-- Step indicators -->
         <div class="flex items-center gap-1.5">
@@ -124,7 +124,7 @@
         </div>
         <div class="flex items-center gap-3 mt-2">
           {% for step in run.steps %}
-          <span class="text-[8px] text-dark-200 text-center" style="flex:1">{{ step.type }}</span>
+          <span class="text-[11px] text-dark-200 text-center" style="flex:1">{{ step.type }}</span>
           {% endfor %}
         </div>
         <!-- Progress bar -->
@@ -135,7 +135,7 @@
         </div>
       </div>
       {% empty %}
-      <div class="text-[11px] text-dark-200 text-center py-6">No workflow runs yet</div>
+      <div class="text-[14px] text-dark-200 text-center py-6">워크플로우 실행 기록 없음</div>
       {% endfor %}
     </div>
   </div>
@@ -146,17 +146,17 @@
 <div class="bg-dark-600 border border-dark-400 rounded-xl mb-4">
   <div class="px-5 py-3 border-b border-dark-400 flex justify-between items-center">
     <div>
-      <div class="text-[13px] font-semibold">Inventory Alerts</div>
-      <div class="text-[10px] text-dark-200">{{ inventory_alerts|length }} reagent{{ inventory_alerts|length|pluralize }} below minimum stock</div>
+      <div class="text-[16px] font-semibold">재고 알림</div>
+      <div class="text-[13px] text-dark-200">{{ inventory_alerts|length }} reagent{{ inventory_alerts|length|pluralize }} below minimum stock</div>
     </div>
-    <a href="{% url 'inventory:dashboard' %}" class="text-[10px] text-blue-400 hover:underline">View Inventory</a>
+    <a href="{% url 'inventory:dashboard' %}" class="text-[13px] text-blue-400 hover:underline">재고 관리</a>
   </div>
   <div class="p-4 flex flex-wrap gap-3">
     {% for a in inventory_alerts %}
     <div class="flex items-center gap-2 px-3 py-2 bg-dark-700/50 rounded-lg">
       <span class="w-2 h-2 rounded-full {% if a.status == 'critical' %}bg-rose-400{% else %}bg-amber-400{% endif %}"></span>
-      <span class="text-[11px] font-semibold text-dark-50">{{ a.name }}</span>
-      <span class="text-[10px] font-mono text-dark-200">{{ a.current }}/{{ a.minimum }} {{ a.unit }}</span>
+      <span class="text-[14px] font-semibold text-dark-50">{{ a.name }}</span>
+      <span class="text-[13px] font-mono text-dark-200">{{ a.current }}/{{ a.minimum }} {{ a.unit }}</span>
     </div>
     {% endfor %}
   </div>
@@ -170,37 +170,37 @@
   <div class="col-span-5 bg-dark-600 border border-dark-400 rounded-xl">
     <div class="px-5 py-3 border-b border-dark-400 flex justify-between items-center">
       <div>
-        <div class="text-[13px] font-semibold">AI Models</div>
-        <div class="text-[10px] text-dark-200">{{ active_models }} active / {{ total_models }} total</div>
+        <div class="text-[16px] font-semibold">AI 모델</div>
+        <div class="text-[13px] text-dark-200">{{ active_models }} active / {{ total_models }} total</div>
       </div>
-      <a href="{% url 'ai_models:predict' %}" class="text-[10px] text-blue-400 hover:underline">Use AI</a>
+      <a href="{% url 'ai_models:predict' %}" class="text-[13px] text-blue-400 hover:underline">AI 사용</a>
     </div>
     <div class="p-4 space-y-2.5">
       {% for m in ai_models_summary %}
       <div class="flex items-center gap-3 p-2.5 bg-dark-700/50 rounded-lg">
-        <div class="w-8 h-8 rounded-lg flex items-center justify-center text-[11px] font-bold
+        <div class="w-8 h-8 rounded-lg flex items-center justify-center text-[14px] font-bold
           {% if m.active %}bg-violet-500/15 text-violet-400 border border-violet-500/20{% else %}bg-dark-400/30 text-dark-200 border border-dark-400{% endif %}">
           {% if 'Predictor' in m.type %}P{% elif 'Generator' in m.type %}G{% elif 'Optimizer' in m.type %}O{% else %}E{% endif %}
         </div>
         <div class="flex-1 min-w-0">
-          <div class="text-[11px] font-semibold text-dark-50 truncate">{{ m.name }}</div>
-          <div class="text-[9px] text-dark-200">{{ m.type }} &middot; v{{ m.version }}</div>
+          <div class="text-[14px] font-semibold text-dark-50 truncate">{{ m.name }}</div>
+          <div class="text-[12px] text-dark-200">{{ m.type }} &middot; v{{ m.version }}</div>
         </div>
         <div class="text-right">
           {% if m.active %}
-          <span class="px-1.5 py-0.5 rounded text-[8px] font-semibold bg-emerald-500/10 text-emerald-400">Active</span>
+          <span class="px-1.5 py-0.5 rounded text-[11px] font-semibold bg-emerald-500/10 text-emerald-400">Active</span>
           {% else %}
-          <span class="px-1.5 py-0.5 rounded text-[8px] font-semibold bg-dark-300/20 text-dark-200">Inactive</span>
+          <span class="px-1.5 py-0.5 rounded text-[11px] font-semibold bg-dark-300/20 text-dark-200">Inactive</span>
           {% endif %}
           {% if m.metrics %}
-          <div class="text-[9px] text-dark-200 font-mono mt-0.5">
+          <div class="text-[12px] text-dark-200 font-mono mt-0.5">
             {% for key, val in m.metrics.items %}{{ key }}: {{ val }}{% if not forloop.last %}, {% endif %}{% endfor %}
           </div>
           {% endif %}
         </div>
       </div>
       {% empty %}
-      <div class="text-[11px] text-dark-200 text-center py-6">No AI models registered</div>
+      <div class="text-[14px] text-dark-200 text-center py-6">등록된 AI 모델 없음</div>
       {% endfor %}
     </div>
   </div>
@@ -208,8 +208,8 @@
   <!-- CLOSED-LOOP PIPELINE DIAGRAM -->
   <div class="col-span-7 bg-dark-600 border border-dark-400 rounded-xl">
     <div class="px-5 py-3 border-b border-dark-400">
-      <div class="text-[13px] font-semibold">Closed-loop Optimization Pipeline</div>
-      <div class="text-[10px] text-dark-200">AI Design &rarr; Synthesize &rarr; Formulate &rarr; Analyze &rarr; Learn</div>
+      <div class="text-[16px] font-semibold">자율 최적화 파이프라인</div>
+      <div class="text-[13px] text-dark-200">AI 설계 &rarr; 합성 &rarr; 제형화 &rarr; 분석 &rarr; 학습</div>
     </div>
     <div class="flex items-center justify-around py-8 px-6">
       {% with step_names="AI Design,Synthesize,Formulate,Analyze,Learn" step_icons="&#9881;,&#9874;,&#10697;,&#128300;,&#9889;" step_colors="blue,emerald,amber,violet,cyan" %}
@@ -219,47 +219,47 @@
         <div class="w-14 h-14 rounded-full border-2 border-blue-500/40 bg-blue-500/10 flex items-center justify-center mx-auto mb-2">
           <span class="text-blue-400 text-lg">&#9881;</span>
         </div>
-        <div class="text-[10px] font-semibold text-dark-50">AI Design</div>
-        <div class="text-[8px] text-dark-200 mt-0.5">Structure gen</div>
+        <div class="text-[13px] font-semibold text-dark-50">AI 설계</div>
+        <div class="text-[11px] text-dark-200 mt-0.5">구조 생성</div>
       </div>
       <div class="text-dark-300 text-xl">&#10142;</div>
       <div class="text-center">
         <div class="w-14 h-14 rounded-full border-2 border-emerald-500/40 bg-emerald-500/10 flex items-center justify-center mx-auto mb-2">
           <span class="text-emerald-400 text-lg">&#9874;</span>
         </div>
-        <div class="text-[10px] font-semibold text-dark-50">Synthesize</div>
-        <div class="text-[8px] text-dark-200 mt-0.5">Liquid handler</div>
+        <div class="text-[13px] font-semibold text-dark-50">합성</div>
+        <div class="text-[11px] text-dark-200 mt-0.5">리퀴드 핸들러</div>
       </div>
       <div class="text-dark-300 text-xl">&#10142;</div>
       <div class="text-center">
         <div class="w-14 h-14 rounded-full border-2 border-amber-500/40 bg-amber-500/10 flex items-center justify-center mx-auto mb-2">
           <span class="text-amber-400 text-lg">&#9878;</span>
         </div>
-        <div class="text-[10px] font-semibold text-dark-50">Formulate</div>
-        <div class="text-[8px] text-dark-200 mt-0.5">Microfluidic</div>
+        <div class="text-[13px] font-semibold text-dark-50">제형화</div>
+        <div class="text-[11px] text-dark-200 mt-0.5">미세유체</div>
       </div>
       <div class="text-dark-300 text-xl">&#10142;</div>
       <div class="text-center">
         <div class="w-14 h-14 rounded-full border-2 border-violet-500/40 bg-violet-500/10 flex items-center justify-center mx-auto mb-2">
           <span class="text-violet-400 text-lg">&#128269;</span>
         </div>
-        <div class="text-[10px] font-semibold text-dark-50">Analyze</div>
-        <div class="text-[8px] text-dark-200 mt-0.5">DLS + Plate</div>
+        <div class="text-[13px] font-semibold text-dark-50">분석</div>
+        <div class="text-[11px] text-dark-200 mt-0.5">DLS + 플레이트</div>
       </div>
       <div class="text-dark-300 text-xl">&#10142;</div>
       <div class="text-center">
         <div class="w-14 h-14 rounded-full border-2 border-cyan-500/40 bg-cyan-500/10 flex items-center justify-center mx-auto mb-2">
           <span class="text-cyan-400 text-lg">&#9889;</span>
         </div>
-        <div class="text-[10px] font-semibold text-dark-50">Learn</div>
-        <div class="text-[8px] text-dark-200 mt-0.5">Retrain AI</div>
+        <div class="text-[13px] font-semibold text-dark-50">학습</div>
+        <div class="text-[11px] text-dark-200 mt-0.5">AI 재학습</div>
       </div>
       {% endwith %}
     </div>
     <div class="px-6 pb-4 flex justify-center">
-      <div class="flex items-center gap-2 text-[9px] text-dark-200 bg-dark-700/50 rounded-full px-4 py-1.5">
+      <div class="flex items-center gap-2 text-[12px] text-dark-200 bg-dark-700/50 rounded-full px-4 py-1.5">
         <span>&#8635;</span>
-        <span>Autonomous closed-loop: each iteration improves the AI model</span>
+        <span>자율 폐쇄 루프: 매 반복마다 AI 모델이 개선됩니다</span>
       </div>
     </div>
   </div>
@@ -269,17 +269,17 @@
 <div class="grid grid-cols-2 gap-4 mb-4">
   <div class="bg-dark-600 border border-dark-400 rounded-xl">
     <div class="px-5 py-4 border-b border-dark-400">
-      <div class="text-[13px] font-semibold">Experimental Models</div>
-      <div class="text-[11px] text-dark-200">Top cell lines and in vivo models</div>
+      <div class="text-[16px] font-semibold">실험 모델</div>
+      <div class="text-[14px] text-dark-200">주요 세포주 및 in vivo 모델</div>
     </div>
     <div class="p-5 space-y-2">
       {% for m in model_dist %}
       <div class="flex items-center gap-3">
-        <span class="text-[11px] text-dark-100 w-24 text-right">{{ m.model_name }}</span>
+        <span class="text-[14px] text-dark-100 w-24 text-right">{{ m.model_name }}</span>
         <div class="flex-1 h-1.5 bg-white/5 rounded-full overflow-hidden">
           <div class="h-full rounded-full bg-blue-500" style="width:{% widthratio m.count model_dist.0.count 100 %}%"></div>
         </div>
-        <span class="text-[10px] font-mono text-dark-200 w-12">{{ m.count }}</span>
+        <span class="text-[13px] font-mono text-dark-200 w-12">{{ m.count }}</span>
       </div>
       {% endfor %}
     </div>
@@ -287,17 +287,17 @@
 
   <div class="bg-dark-600 border border-dark-400 rounded-xl">
     <div class="px-5 py-4 border-b border-dark-400">
-      <div class="text-[13px] font-semibold">Most Studied Lipids</div>
-      <div class="text-[11px] text-dark-200">By experiment count</div>
+      <div class="text-[16px] font-semibold">연구 빈도 상위 지질</div>
+      <div class="text-[14px] text-dark-200">실험 횟수 기준</div>
     </div>
     <div class="p-5 space-y-2">
       {% for lp in top_lipids %}
       <div class="flex items-center gap-3">
-        <span class="text-[11px] font-mono text-dark-100 w-40 text-right truncate">{{ lp.formulation__ionizable_lipid__name }}</span>
+        <span class="text-[14px] font-mono text-dark-100 w-40 text-right truncate">{{ lp.formulation__ionizable_lipid__name }}</span>
         <div class="flex-1 h-1.5 bg-white/5 rounded-full overflow-hidden">
           <div class="h-full rounded-full bg-gradient-to-r from-blue-500 to-cyan-400" style="width:{% widthratio lp.count top_lipids.0.count 100 %}%"></div>
         </div>
-        <span class="text-[10px] font-mono text-dark-200 w-12">{{ lp.count }}</span>
+        <span class="text-[13px] font-mono text-dark-200 w-12">{{ lp.count }}</span>
       </div>
       {% endfor %}
     </div>
@@ -307,20 +307,20 @@
 <!-- QUICK ACTIONS -->
 <div class="grid grid-cols-4 gap-3 mb-4">
   <a href="{% url 'compounds:list' %}" class="bg-dark-600 border border-dark-400 rounded-xl p-4 hover:border-blue-500/30 transition group">
-    <div class="text-[12px] font-semibold text-dark-50 group-hover:text-blue-400 transition">Explore Lipids</div>
-    <div class="text-[10px] text-dark-200 mt-1">Browse {{ total_lipids }} ionizable lipids</div>
+    <div class="text-[15px] font-semibold text-dark-50 group-hover:text-blue-400 transition">지질 탐색</div>
+    <div class="text-[13px] text-dark-200 mt-1">{{ total_lipids }}개 이온화 지질 탐색</div>
   </a>
   <a href="{% url 'formulations:designer' %}" class="bg-dark-600 border border-dark-400 rounded-xl p-4 hover:border-emerald-500/30 transition group">
-    <div class="text-[12px] font-semibold text-dark-50 group-hover:text-emerald-400 transition">Design Formulation</div>
-    <div class="text-[10px] text-dark-200 mt-1">4-component molar ratio designer</div>
+    <div class="text-[15px] font-semibold text-dark-50 group-hover:text-emerald-400 transition">제형 설계</div>
+    <div class="text-[13px] text-dark-200 mt-1">4성분 몰비 설계 도구</div>
   </a>
   <a href="{% url 'ai_models:generate' %}" class="bg-dark-600 border border-dark-400 rounded-xl p-4 hover:border-violet-500/30 transition group">
-    <div class="text-[12px] font-semibold text-dark-50 group-hover:text-violet-400 transition">Generate Structures</div>
-    <div class="text-[10px] text-dark-200 mt-1">AI-driven lipid generation</div>
+    <div class="text-[15px] font-semibold text-dark-50 group-hover:text-violet-400 transition">구조 생성</div>
+    <div class="text-[13px] text-dark-200 mt-1">AI 기반 지질 생성</div>
   </a>
   <a href="{% url 'ai_models:optimize' %}" class="bg-dark-600 border border-dark-400 rounded-xl p-4 hover:border-amber-500/30 transition group">
-    <div class="text-[12px] font-semibold text-dark-50 group-hover:text-amber-400 transition">Optimize LNP</div>
-    <div class="text-[10px] text-dark-200 mt-1">Multi-objective optimization</div>
+    <div class="text-[15px] font-semibold text-dark-50 group-hover:text-amber-400 transition">LNP 최적화</div>
+    <div class="text-[13px] text-dark-200 mt-1">다목적 최적화</div>
   </a>
 </div>
 
@@ -328,40 +328,40 @@
 <div class="bg-dark-600 border border-dark-400 rounded-xl">
   <div class="px-5 py-4 border-b border-dark-400 flex justify-between items-center">
     <div>
-      <div class="text-[13px] font-semibold">Recent Data (LNPDB)</div>
-      <div class="text-[11px] text-dark-200">Showing 20 of {{ total_results }} records</div>
+      <div class="text-[16px] font-semibold">최근 데이터 (LNPDB)</div>
+      <div class="text-[14px] text-dark-200">Showing 20 of {{ total_results }} records</div>
     </div>
-    <a href="{% url 'experiments:list' %}" class="text-[11px] text-blue-400 hover:underline">View All</a>
+    <a href="{% url 'experiments:list' %}" class="text-[14px] text-blue-400 hover:underline">전체 보기</a>
   </div>
   <div class="overflow-x-auto">
-    <table class="w-full text-[12px]">
+    <table class="w-full text-[15px]">
       <thead>
         <tr class="border-b border-dark-400">
-          <th class="text-left px-4 py-3 text-[10px] text-dark-200 uppercase font-semibold tracking-wide">LNP ID</th>
-          <th class="text-left px-4 py-3 text-[10px] text-dark-200 uppercase font-semibold tracking-wide">Ionizable Lipid</th>
-          <th class="text-left px-4 py-3 text-[10px] text-dark-200 uppercase font-semibold tracking-wide">Cargo</th>
-          <th class="text-left px-4 py-3 text-[10px] text-dark-200 uppercase font-semibold tracking-wide">Model</th>
-          <th class="text-left px-4 py-3 text-[10px] text-dark-200 uppercase font-semibold tracking-wide">Method</th>
-          <th class="text-right px-4 py-3 text-[10px] text-dark-200 uppercase font-semibold tracking-wide">Value</th>
+          <th class="text-left px-4 py-3 text-[13px] text-dark-200 uppercase font-semibold tracking-wide">LNP ID</th>
+          <th class="text-left px-4 py-3 text-[13px] text-dark-200 uppercase font-semibold tracking-wide">이온화 지질</th>
+          <th class="text-left px-4 py-3 text-[13px] text-dark-200 uppercase font-semibold tracking-wide">카고</th>
+          <th class="text-left px-4 py-3 text-[13px] text-dark-200 uppercase font-semibold tracking-wide">모델</th>
+          <th class="text-left px-4 py-3 text-[13px] text-dark-200 uppercase font-semibold tracking-wide">분석법</th>
+          <th class="text-right px-4 py-3 text-[13px] text-dark-200 uppercase font-semibold tracking-wide">값</th>
         </tr>
       </thead>
       <tbody>
         {% for r in recent_results %}
         <tr class="border-b border-white/[0.03] hover:bg-blue-500/[0.03]">
-          <td class="px-4 py-2.5 font-mono text-[11px] text-blue-400">{{ r.lnp_id }}</td>
+          <td class="px-4 py-2.5 font-mono text-[14px] text-blue-400">{{ r.lnp_id }}</td>
           <td class="px-4 py-2.5 font-medium">{{ r.formulation.ionizable_lipid.name|truncatechars:25 }}</td>
           <td class="px-4 py-2.5">
-            <span class="px-2 py-0.5 rounded text-[10px] font-semibold
+            <span class="px-2 py-0.5 rounded text-[13px] font-semibold
               {% if r.experiment.cargo == 'mRNA' %}bg-blue-500/10 text-blue-400
               {% elif r.experiment.cargo == 'siRNA' %}bg-violet-500/10 text-violet-400
               {% else %}bg-teal-500/10 text-teal-400{% endif %}">{{ r.experiment.cargo }}</span>
           </td>
           <td class="px-4 py-2.5 text-dark-100">{{ r.experiment.model_name }}</td>
-          <td class="px-4 py-2.5 text-[10px] text-dark-200">{{ r.method }}</td>
+          <td class="px-4 py-2.5 text-[13px] text-dark-200">{{ r.method }}</td>
           <td class="px-4 py-2.5 text-right font-mono font-semibold">{{ r.value|floatformat:3 }}</td>
         </tr>
         {% empty %}
-        <tr><td colspan="6" class="px-4 py-8 text-center text-dark-200">No data loaded. Run seed_db.py to load LNPDB.</td></tr>
+        <tr><td colspan="6" class="px-4 py-8 text-center text-dark-200">데이터가 없습니다. seed_db.py를 실행하세요.</td></tr>
         {% endfor %}
       </tbody>
     </table>
